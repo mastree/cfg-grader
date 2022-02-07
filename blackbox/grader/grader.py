@@ -1,4 +1,5 @@
 import os
+import csv
 
 class OutputGenerator:
     def __init__(self):
@@ -18,21 +19,139 @@ class OutputGenerator:
     
     def generate_result(self, output_folder):
         result = []
-        os.system(f'mkdir -p {output_folder}')
+        os.system(f'mkdir "{output_folder}"')
         for item in os.listdir(self.tcpath):
-            itemabs = os.path.join(self.tcpath, item)
-            itemname = os.path.splitext(item)[0]
-            if (not os.path.isfile(itemabs)):
+            in_path = os.path.join(self.tcpath, item)
+            in_name = os.path.splitext(item)[0]
+            if (not os.path.isfile(in_path)):
                 continue
-            os.system(f'cat {itemabs} | python3 {self.solution} >> {output_folder}/{itemname}.out')
+            out_path = os.path.join(output_folder, f'{in_name}.out')
+            # os.system(f'cat {in_path} | python {self.solution} >> {out_path}') # use this for linux
+            os.system(f'python {self.solution} < {in_path} > {out_path}')
             # print(item)
+
+def get_file_contents(filename):
+    file = open(filename, "r")
+    file_contents = file.read()
+    file.close()
+    return file_contents
+
+class Grader:
+    def __init__(self):
+        pass
+
+    def set_tc_abs(self, path):
+        self.tcpath = path
+    
+    def set_tc_rel(self, path):
+        self.tcpath = os.path.join(os.path.dirname(__file__), path)
+        
+    def set_ans_abs(self, path):
+        self.anspath = path
+    
+    def set_ans_rel(self, path):
+        self.anspath = os.path.join(os.path.dirname(__file__), path)
+
+    def grade(self, solution_path):
+        correct_count = 0
+        output_count = 0
+
+        tempfolder = os.path.join(os.path.dirname(__file__), ".temp")
+        os.system(f'mkdir "{tempfolder}"')
+        for item in os.listdir(self.tcpath):
+            in_path = os.path.join(self.tcpath, item)
+            in_name = os.path.splitext(item)[0]
+            out_path = os.path.join(self.anspath, f'{in_name}.out')
+            if ((not os.path.isfile(in_path)) or (not os.path.isfile(out_path))):
+                continue
+            output_count += 1
+
+            sol_out_path = os.path.join(tempfolder, f'{in_name}.out')
+            os.system(f'python {solution_path} < {in_path} > {sol_out_path}')
+
+            ans_out = get_file_contents(out_path).rstrip()
+            sol_out = get_file_contents(sol_out_path).rstrip()
+
+            if (ans_out == sol_out):
+                correct_count += 1
+            # else:
+            #     continue
+            
+            os.system(f'del "{sol_out_path}"')
+
+        return correct_count / output_count
+
+def generate_outputs(input_path, output_path, solution_file):
+    ogenerator = OutputGenerator()
+    ogenerator.set_tc_rel(input_path)
+    ogenerator.set_solution_rel(solution_file)
+    ogenerator.generate_result(output_path)
+
+def grade(input_path, output_path, solution_file):
+    grader = Grader()
+    grader.set_tc_rel(input_path)
+    grader.set_ans_rel(output_path)
+    return grader.grade(solution_file)
+
+def generate_and_grade(input_path, output_path, jury_solution_file, solution_file):
+    generate_outputs(input_path, output_path, jury_solution_file)
+    return grade(input_path, output_path, solution_file)
+
+def grade_all(input_path, output_path, jury_solution_file, solution_path):
+    generate_outputs(input_path, output_path, jury_solution_file)
+    
+    ret = []
+    grader = Grader()
+    grader.set_tc_rel(input_path)
+    grader.set_ans_rel(output_path)
+    for item in os.listdir(solution_path):
+        py_path = os.path.join(solution_path, item)
+        extension = os.path.splitext(item)[1]
+        if ((not os.path.isfile(py_path)) or (not extension == ".py")):
+            continue
+        
+        score = grader.grade(py_path)
+        ret.append({
+            'filename': item,
+            'black_box_score': score
+        })
+        
+    return ret
+
+def grade_all_to_csv(input_path, output_path, jury_solution_file, solution_path, csv_file):
+    results = grade_all(input_path, output_path, jury_solution_file, solution_path)
+    fields = ['filename', 'black_box_score']
+
+    with open(csv_file, 'w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(results)
 
 if __name__ == '__main__':
     BASE_PATH = '../../datasets/segiempat'
     
-    ogenerator = OutputGenerator()
-    ogenerator.set_tc_rel(os.path.join(BASE_PATH, 'in'))
-    ogenerator.set_solution_rel(os.path.join(BASE_PATH, 'solution/segiempatcontoh.py'))
+    # ogenerator = OutputGenerator()
+    # ogenerator.set_tc_rel(os.path.join(BASE_PATH, 'in'))
+    # ogenerator.set_solution_rel(os.path.join(BASE_PATH, 'solution/segiempatcontoh.py'))
     
-    ogenerator.generate_result(os.path.join(BASE_PATH, 'out'))
+    # ogenerator.generate_result(os.path.join(BASE_PATH, 'out'))
+
+    # grader = Grader()
+    # grader.set_tc_rel(os.path.join(BASE_PATH, 'in'))
+    # grader.set_ans_rel(os.path.join(BASE_PATH, 'out'))
+
+    # print(grader.grade(os.path.join(BASE_PATH, 'solution/segiempatcontoh.py')))
+
+    # input_path = os.path.join(BASE_PATH, 'in')
+    # output_path = os.path.join(BASE_PATH, 'out')
+    # jury_solution_file = os.path.join(BASE_PATH, 'solution/segiempatcontoh.py')
+    # solution_file = os.path.join(BASE_PATH, 'answer/segiempat103.py')
+    # print(generate_and_grade(input_path, output_path, jury_solution_file, solution_file))
+
+    input_path = os.path.join(BASE_PATH, 'in')
+    output_path = os.path.join(BASE_PATH, 'out')
+    jury_solution_file = os.path.join(BASE_PATH, 'solution/segiempatcontoh.py')
+    solution_path = os.path.join(BASE_PATH, 'answer')
+    # print(grade_all(input_path, output_path, jury_solution_file, solution_path))
+    grade_all_to_csv(input_path, output_path, jury_solution_file, solution_path, "test.csv")
         
