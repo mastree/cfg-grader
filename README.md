@@ -8,12 +8,12 @@ Grader for Control Flow Graph similarity.
 ## create new virtual env
 you only need to do this once
 ```sh
-python3 -m venv virtualenv
+python3 -m venv .venv
 ```
 
 ## start virtualenv
 ```sh
-source virtualenv/bin/activate
+source .venv/bin/activate
 ```
 
 ## update dependencies
