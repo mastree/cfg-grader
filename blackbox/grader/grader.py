@@ -1,5 +1,6 @@
 import os
 import csv
+import subprocess
 
 class OutputGenerator:
     def __init__(self):
@@ -19,16 +20,22 @@ class OutputGenerator:
     
     def generate_result(self, output_folder):
         result = []
-        os.system(f'mkdir "{output_folder}"')
+        os.system(f'mkdir -p "{output_folder}"')
         for item in os.listdir(self.tcpath):
             in_path = os.path.join(self.tcpath, item)
             in_name = os.path.splitext(item)[0]
             if (not os.path.isfile(in_path)):
                 continue
             out_path = os.path.join(output_folder, f'{in_name}.out')
-            # os.system(f'cat {in_path} | python {self.solution} >> {out_path}') # use this for linux
-            os.system(f'python {self.solution} < {in_path} > {out_path}')
-            # print(item)
+            
+            infile = open(in_path, 'r')
+            command = ['python3', self.solution]
+            output = subprocess.check_output(command, input=infile.read().encode(), timeout=2)
+            infile.close()
+            
+            outfile = open(out_path, 'w')
+            outfile.write(str(output.decode()).rstrip())
+            outfile.close()
 
 def get_file_contents(filename):
     file = open(filename, "r")
@@ -56,8 +63,6 @@ class Grader:
         correct_count = 0
         output_count = 0
 
-        tempfolder = os.path.join(os.path.dirname(__file__), ".temp")
-        os.system(f'mkdir "{tempfolder}"')
         for item in os.listdir(self.tcpath):
             in_path = os.path.join(self.tcpath, item)
             in_name = os.path.splitext(item)[0]
@@ -66,18 +71,15 @@ class Grader:
                 continue
             output_count += 1
 
-            sol_out_path = os.path.join(tempfolder, f'{in_name}.out')
-            os.system(f'python {solution_path} < {in_path} > {sol_out_path}')
-
-            ans_out = get_file_contents(out_path).rstrip()
-            sol_out = get_file_contents(sol_out_path).rstrip()
-
-            if (ans_out == sol_out):
-                correct_count += 1
-            # else:
-            #     continue
+            infile = open(in_path, 'r')
+            command = ['python3', solution_path]
+            sol_out = str(subprocess.check_output(command, input=infile.read().encode(), timeout=2).decode()).rstrip()
+            infile.close()
             
-            os.system(f'del "{sol_out_path}"')
+            jurys_sol_out = get_file_contents(out_path).rstrip()
+
+            if (jurys_sol_out == sol_out):
+                correct_count += 1
 
         return correct_count / output_count
 
@@ -130,28 +132,9 @@ def grade_all_to_csv(input_path, output_path, jury_solution_file, solution_path,
 if __name__ == '__main__':
     BASE_PATH = '../../datasets/segiempat'
     
-    # ogenerator = OutputGenerator()
-    # ogenerator.set_tc_rel(os.path.join(BASE_PATH, 'in'))
-    # ogenerator.set_solution_rel(os.path.join(BASE_PATH, 'solution/segiempatcontoh.py'))
-    
-    # ogenerator.generate_result(os.path.join(BASE_PATH, 'out'))
-
-    # grader = Grader()
-    # grader.set_tc_rel(os.path.join(BASE_PATH, 'in'))
-    # grader.set_ans_rel(os.path.join(BASE_PATH, 'out'))
-
-    # print(grader.grade(os.path.join(BASE_PATH, 'solution/segiempatcontoh.py')))
-
-    # input_path = os.path.join(BASE_PATH, 'in')
-    # output_path = os.path.join(BASE_PATH, 'out')
-    # jury_solution_file = os.path.join(BASE_PATH, 'solution/segiempatcontoh.py')
-    # solution_file = os.path.join(BASE_PATH, 'answer/segiempat103.py')
-    # print(generate_and_grade(input_path, output_path, jury_solution_file, solution_file))
-
     input_path = os.path.join(BASE_PATH, 'in')
     output_path = os.path.join(BASE_PATH, 'out')
-    jury_solution_file = os.path.join(BASE_PATH, 'solution/segiempatcontoh.py')
-    solution_path = os.path.join(BASE_PATH, 'answer')
-    # print(grade_all(input_path, output_path, jury_solution_file, solution_path))
+    jury_solution_file = os.path.join(BASE_PATH, 'juryssolution/segiempatcontoh.py')
+    solution_path = os.path.join(BASE_PATH, 'solution')
     grade_all_to_csv(input_path, output_path, jury_solution_file, solution_path, "test.csv")
         
