@@ -5,6 +5,8 @@ Grader for Control Flow Graph similarity.
 
 # Python Dependencies
 
+Required to have python version 3.8 or later.
+
 ## update dependencies
 ```sh
 pip freeze > requirements.txt
@@ -13,6 +15,11 @@ pip freeze > requirements.txt
 ## install all dependencies
 ```sh
 pip install -r requirements.txt
+```
+
+on windows you might encounter problem when installing pygraphviz, you can solve it by informing pip on where is graphviz installed, e.g.
+```cmd
+python -m pip install --global-option=build_ext --global-option="-IC:\Program Files\Graphviz\include" --global-option="-LC:\Program Files\Graphviz\lib" pygraphviz
 ```
 
 # How to Use Virtualenv
@@ -24,8 +31,14 @@ python3 -m venv .venv
 ```
 
 ## start virtualenv
+On linux
 ```sh
 source .venv/bin/activate
+```
+
+On windows
+```cmd
+.venv\Scripts\activate.bat
 ```
 
 ## terminate Virtualenv
