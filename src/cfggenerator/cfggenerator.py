@@ -1,6 +1,6 @@
 from pycfg.pycfg import PyCFG, CFGNode, slurp
 
-class CfgGenerator:
+class PythonCfgGenerator:
     @classmethod
     def generate_pyton(cls, raw_code):
         CFGNode.cache = {}
