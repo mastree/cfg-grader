@@ -1,10 +1,15 @@
 class Node:
+    # label is id
+    # info is label
     def __init__(self, label: int, info=None):
         self.info: list[str] = []
         self.out_nodes: list[Node] = []
         self.in_nodes: list[Node] = []
         self.label: int = label
-        if info and len(info) > 0:
+
+        if isinstance(info, str) and len(info) > 0:
+            self.info = [info]
+        elif info and len(info) > 0:
             self.info = info
 
     def add_in_nodes(self, node):
@@ -55,6 +60,13 @@ class Node:
 
     def set_in_nodes(self, in_nodes):
         self.in_nodes = in_nodes
+
+    def __str__(self):
+        out_nodes = []
+        for out_node in self.out_nodes:
+            out_nodes.append((self.label, out_node.label))
+        ret = f'{self.label : <7} label: {self.info}\n{"adj:" : <7} {out_nodes}'
+        return ret
 
     # def traverse(self, is_visited, graph):
     #     is_visited[self.label] = True

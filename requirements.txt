@@ -1,8 +1,9 @@
-pycfg==0.1
 astunparse==1.6.3
 graphviz==0.19
-pygraphviz==1.9
-pillow==9.0.1
 munkres==1.1.4
-xlsxwriter==3.0.2 
+Pillow==9.0.1
+pycfg==0.1
+pygraphviz==1.9
+six==1.16.0
 typing-extensions==3.7.4.3
+XlsxWriter==3.0.2

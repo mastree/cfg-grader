@@ -1,4 +1,5 @@
 from classes.node import Node
+import copy
 
 
 class Graph:
@@ -21,19 +22,19 @@ class Graph:
     def get_edges(self):
         edges: list[tuple[Node, Node]] = []
         for u in self.nodes:
-            for v in u.get_adjacent():
+            for v in u.get_out_nodes():
                 edges.append((u, v))
         return edges
 
     def get_clone(self):
         g = Graph()
         for u in self.nodes:
-            new_node = Node(u.get_label(), u.get_info())
+            new_node = Node(u.get_label(), copy.deepcopy(u.get_info()))
             g.add_node(new_node)
 
-        for i, u in enumerate(self.nodes):
+        for u in self.nodes:
             cur_node = g.get_node(u.get_label())
-            for v in u.get_adjacent():
+            for v in u.get_out_nodes():
                 adj_node = g.get_node(v.get_label())
                 cur_node.add_adjacent(adj_node)
 
@@ -52,5 +53,14 @@ class Graph:
     def generate_to_cfg_graph(self):
         cfg = {}
         for node in self.nodes:
-            cfg[node] = node.get_adjacent()
+            cfg[node] = node.get_out_nodes()
         return cfg
+
+    def __str__(self):
+        ret = ""
+        for node in self.nodes:
+            if (len(ret) == 0):
+                ret = node.__str__()
+            else:
+                ret = f'{ret}\n{node}'
+        return ret
