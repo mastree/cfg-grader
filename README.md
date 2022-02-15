@@ -3,6 +3,18 @@ Author: Muhammad Kamal Shafi
 
 Grader for Control Flow Graph similarity.
 
+# Python Dependencies
+
+## update dependencies
+```sh
+pip freeze > requirements.txt
+```
+
+## install all dependencies
+```sh
+pip install -r requirements.txt
+```
+
 # How to Use Virtualenv
 
 ## create new virtual env
@@ -14,11 +26,6 @@ python3 -m venv .venv
 ## start virtualenv
 ```sh
 source .venv/bin/activate
-```
-
-## update dependencies
-```sh
-pip freeze > requirements.txt
 ```
 
 ## terminate Virtualenv
