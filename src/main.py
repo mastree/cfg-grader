@@ -11,11 +11,11 @@ graph = digraph_to_graph(cfg)
 cgraph = collapse(graph)
 
 digraph = graph_to_digraph(graph)
-digraph.draw('generatedimg/digraph.png', prog='dot')
+digraph.draw('generatedimg/digraph2.png', prog='dot')
 
 
 cdigraph = graph_to_digraph(cgraph)
-cdigraph.draw('generatedimg/digraph_collapsed.png', prog='dot')
+cdigraph.draw('generatedimg/digraph_collapsed2.png', prog='dot')
 
 # print(digraph)
 # print("====================================")
