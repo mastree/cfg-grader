@@ -17,6 +17,7 @@ digraph.draw('generatedimg/digraph2.png', prog='dot')
 cdigraph = graph_to_digraph(cgraph)
 cdigraph.draw('generatedimg/digraph_collapsed2.png', prog='dot')
 
+# print(cgraph)
 # print(digraph)
 # print("====================================")
 # print(cdigraph)

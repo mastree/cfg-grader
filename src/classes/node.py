@@ -2,14 +2,14 @@ class Node:
     # label is id
     # info is label
     def __init__(self, label: int, info=None):
-        self.info: list[str] = []
+        self.info: list[dict] = []
         self.out_nodes: list[Node] = []
         self.in_nodes: list[Node] = []
         self.label: int = label
 
-        if isinstance(info, str) and len(info) > 0:
+        if isinstance(info, dict) and len(info) > 0:
             self.info = [info]
-        elif info and len(info) > 0:
+        elif isinstance(info, list) and len(info) > 0:
             self.info = info
 
     def add_in_nodes(self, node):
