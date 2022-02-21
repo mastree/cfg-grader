@@ -2,18 +2,20 @@ from classes.graph import Graph
 from classes.node import Node
 import pygraphviz as pgv
 
+
 def remove_number_from_label(node_label):
     pos = node_label.find(':')
     if (pos == -1):
         return node_label
     return node_label[pos + 2:]
 
+
 def digraph_to_graph(digraph: pgv.agraph.AGraph):
     graph = Graph()
     digraph_nodes = digraph.nodes()
 
     edges_to_be_added = []
-    node_count = 1 # may be better to use 0-indexing (?)
+    node_count = 1  # may be better to use 0-indexing (?)
     id_to_new_id = {}
     for node_id in digraph_nodes:
         id_to_new_id[node_id] = node_count
@@ -29,7 +31,7 @@ def digraph_to_graph(digraph: pgv.agraph.AGraph):
         graph.add_node(node)
 
         node_count += 1
-    
+
     for edge in edges_to_be_added:
         try:
             graph.get_node(id_to_new_id[edge[0]]).add_adjacent(graph.get_node(id_to_new_id[edge[1]]))
@@ -37,6 +39,7 @@ def digraph_to_graph(digraph: pgv.agraph.AGraph):
             print(e)
 
     return graph
+
 
 def graph_to_digraph(graph: Graph):
     digraph = pgv.agraph.AGraph(directed=True)
@@ -49,6 +52,5 @@ def graph_to_digraph(graph: Graph):
 
     for edge in edges:
         digraph.add_edge(edge[0], edge[1])
-    
+
     return digraph
-    
