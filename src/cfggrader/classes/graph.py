@@ -5,8 +5,8 @@ import copy
 class Graph:
     def __init__(self):
         self.nodes: list[Node] = []
-        self.edges = list[Edge] = []
-        self.id = string = ''
+        self.edges: list[Edge] = []
+        self.id: str = ''
 
     def set_nodes(self, nodes: list):
         self.nodes = nodes
@@ -23,7 +23,7 @@ class Graph:
     def add_edge(self, edge: Edge):
         self.edges.append(edge)
 
-    def find_node_with_id(self, id: int):
+    def find_node_with_id(self, search_id: int):
         for node in self.nodes:
-            if (node.component_id == id):
+            if (node.component_id == search_id):
                 return node

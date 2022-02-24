@@ -9,15 +9,13 @@ def collapse(input_graph: Graph):
 
     # Merge nodes with the same flow
     for node in nodes:
-        adjacent = node.get_out_nodes()
-        if len(adjacent) > 1:
+        out_nodes = node.get_out_nodes()
+        if len(out_nodes) > 1:
             continue
         label = node.get_label()
-        for adj_node in adjacent:
-            if len(adj_node.get_out_nodes()) > 1:
-                continue
-            adj_label = adj_node.get_label()
-            if len(adj_node.get_in_nodes()) <= 1:
+        for out_node in out_nodes:
+            adj_label = out_node.get_label()
+            if len(out_node.get_in_nodes()) <= 1:
                 dsu.merge(label, adj_label)
 
     # Merge infos to parent node
@@ -51,7 +49,7 @@ def collapse(input_graph: Graph):
             if (adj_label == par_adj_label):
                 new_adj[par_label].add(adj_label)
 
-    # Reset adjacent and in nodes list for every node
+    # Reset out and in nodes list for every node
     for node in nodes:
         node.set_out_nodes([])
         node.set_in_nodes([])
