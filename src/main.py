@@ -24,8 +24,6 @@ def check_cfggenerator():
     # print(cdigraph)
 
 def check_munkres():
-    lsap_solver = Munkres()
-
     cost_matrix = [
         [9, 2, 7, 8],
         [6, 4, 3, 7],
@@ -33,7 +31,7 @@ def check_munkres():
         [7, 6, 9, 4],
     ]
 
-    costs, starred_indices = lsap_solver.compute(cost_matrix)
+    costs, starred_indices = Munkres.compute(cost_matrix)
     print(f'costs: {costs}')
     print(starred_indices)
 

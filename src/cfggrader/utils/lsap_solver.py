@@ -4,9 +4,6 @@ from munkres import Munkres
 class Munkres:
     solver = Munkres()
 
-    starred_indices: list = []
-    total_cost: int = 0
-
     @classmethod
     def compute(cls, matrix: list[list]):
         starred_indices = Munkres.solver.compute(matrix)

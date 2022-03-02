@@ -17,7 +17,6 @@ class EditPath:
         self.unused_nodes2: list[Node] = []
         self.unused_edges2: list[Edge] = []
 
-        self.lsap_solver = Munkres()
         self.cost_function = cost_function
 
     def init_root(self, sort_source: bool):
@@ -30,7 +29,7 @@ class EditPath:
             tmp_unused_nodes1.extend(self.source.nodes)
 
             matrix = self.build_node_matrix(tmp_unused_nodes1, self.unused_nodes2)
-            Constants.FIRST_UB, starred_indices = self.lsap_solver.compute(matrix)
+            Constants.FIRST_UB, starred_indices = Munkres.compute(matrix)
 
             starred_indices.sort(key=lambda x: matrix[x[0]][x[1]])
             for x in starred_indices:
@@ -54,7 +53,7 @@ class EditPath:
                 costs = self.cost_function.get_node_cost(u, v)
                 edge_matrix = self.build_edge_matrix(u, v)
 
-                edge_costs, _ = self.lsap_solver.compute(edge_matrix)
+                edge_costs, _ = Munkres.compute(edge_matrix)
                 costs += edge_costs
                 matrix[i][j] = costs
 
