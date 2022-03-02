@@ -1,7 +1,7 @@
 class GraphComponent:
-    def __init__(self, component_id=None, info={}):
+    def __init__(self, component_id=None, info=[]):
         self.component_id: int = component_id
-        self.info: dict = info
+        self.info: list[dict] = info
 
     def set_info(self, info):
         self.info = info
@@ -14,8 +14,8 @@ class GraphComponent:
 
 
 class Node(GraphComponent):
-    def __init__(self, component_id=None, info={}):
-        self(component_id, info)
+    def __init__(self, component_id=None, info=[]):
+        super().__init__(component_id, info)
         self.edges: list[Edge] = []
 
     def get_edges(self):
@@ -29,11 +29,14 @@ class Node(GraphComponent):
 
 
 class Edge(GraphComponent):
-    def __init__(self, info={}, from_node=None, to_node=None):
-        self()
+    def __init__(self, info=[], from_node=None, to_node=None):
+        super().__init__()
         self.set_info(info)
         self.from_node: Node = from_node
         self.to_node: Node = to_node
+
+    def set_id(self, component_id):
+        self.component_id = component_id
 
     def set_from_node(self, from_node):
         self.from_node = from_node
@@ -44,5 +47,5 @@ class Edge(GraphComponent):
     def get_from_node(self):
         return self.from_node
 
-    def set_to_node(self):
+    def get_to_node(self):
         return self.to_node

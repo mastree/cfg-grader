@@ -19,6 +19,10 @@ class EditPath:
 
         self.cost_function = cost_function
 
+        self.total_cost = 0.0
+        self.heuristic_cost = 0.0
+        self.is_heuristic_computed = False
+
     def init_root(self, sort_source: bool):
         tmp_unused_nodes1 = []
         self.unused_nodes2.extend(self.target.nodes)
@@ -29,7 +33,7 @@ class EditPath:
             tmp_unused_nodes1.extend(self.source.nodes)
 
             matrix = self.build_node_matrix(tmp_unused_nodes1, self.unused_nodes2)
-            Constants.FIRST_UB, starred_indices = Munkres.compute(matrix)
+            _, starred_indices = Munkres.compute(matrix)
 
             starred_indices.sort(key=lambda x: matrix[x[0]][x[1]])
             for x in starred_indices:

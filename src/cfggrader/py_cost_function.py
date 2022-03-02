@@ -48,6 +48,14 @@ class PyCostFunction(CostFunction):
             return Cost.NODE_COST
 
         # check if node is the same (TODO: use edit distance for multipe line)
-        if a.info["rawLine"] == b.info["rawLine"]:
-            return 0
+        # if a.info["rawLine"] == b.info["rawLine"]:
+        #     return 0
+        if len(a.info) == len(b.info):
+            n = len(a.info)
+            count = 0
+            for i in range(n):
+                if a.info[i]["rawLine"] == b.info[i]["rawLine"]:
+                    count += 1
+            return count / n
+
         return 1
