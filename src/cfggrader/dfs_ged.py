@@ -8,6 +8,28 @@ from classes.constants import *
 
 
 class EditPath:
+    @classmethod
+    def create_complete_edit_path(cls, cost_function: CostFunction, source: Graph, target: Graph,
+                                  starred_indices: list):
+        snode_len = len(source.nodes)
+        sedge_len = len(source.edges)
+        tnode_len = len(target.nodes)
+        tedge_len = len(target.edges)
+
+        edit_path = EditPath(cost_function, source, target)
+        for x in starred_indices:
+            snode = Constants.NODE_EPS
+            if x[0] < snode_len:
+                snode = source.nodes[x[0]]
+
+            tnode = Constants.NODE_EPS
+            if x[1] < tnode_len:
+                tnode = target.nodes[x[1]]
+
+            if snode.component_id is not None or tnode.component_id is not None:
+                # TODO: edit_path.add_distortion(snode, tnode)
+                pass
+
     def __init__(self, cost_function: CostFunction, source: Graph = None, target: Graph = None):
         self.source = source
         self.target = target
@@ -17,6 +39,11 @@ class EditPath:
         self.unused_nodes2: list[Node] = []
         self.unused_edges2: list[Edge] = []
 
+        self.unused_edges1.extend(self.source.edges)
+        self.unused_nodes2.extend(self.target.nodes)
+        self.unused_edges1.extend(self.source.edges)
+        self.unused_edges2.extend(self.target.edges)
+
         self.cost_function = cost_function
 
         self.total_cost = 0.0
@@ -24,16 +51,18 @@ class EditPath:
         self.is_heuristic_computed = False
 
     def init_root(self, sort_source: bool):
+        munkres = Munkres()
+
+        # clear
+        self.unused_nodes1 = []
         tmp_unused_nodes1 = []
-        self.unused_nodes2.extend(self.target.nodes)
-        self.unused_edges1.extend(self.source.edges)
-        self.unused_edges2.extend(self.target.edges)
 
         if sort_source:
             tmp_unused_nodes1.extend(self.source.nodes)
 
             matrix = self.build_node_matrix(tmp_unused_nodes1, self.unused_nodes2)
-            _, starred_indices = Munkres.compute(matrix)
+            total_cost = munkres.compute(matrix)
+            starred_indices = munkres.get_starred_indices()
 
             starred_indices.sort(key=lambda x: matrix[x[0]][x[1]])
             for x in starred_indices:
@@ -43,7 +72,21 @@ class EditPath:
         else:
             self.unused_nodes1.extend(self.source.nodes)
 
+    def add_distortion(self, component1: GraphComponent, component2: GraphComponent):
+        if isinstance(component1, Node):
+            self.add_node_distortion(component1, component2)
+        else:
+            self.add_edge_distortion(component1, component2)
+
+    def add_node_distortion(self, node1: Node, node2: Node):
+        pass
+
+    def add_edge_distortion(self, edge1: Edge, edge2: Edge):
+        pass
+
     def build_node_matrix(self, nodes1: list[Node], nodes2: list[Node]):
+        munkres = Munkres()
+
         size1 = len(nodes1)
         size2 = len(nodes2)
 
@@ -57,7 +100,7 @@ class EditPath:
                 costs = self.cost_function.get_node_cost(u, v)
                 edge_matrix = self.build_edge_matrix(u, v)
 
-                edge_costs, _ = Munkres.compute(edge_matrix)
+                edge_costs = munkres.compute(edge_matrix)
                 costs += edge_costs
                 matrix[i][j] = costs
 

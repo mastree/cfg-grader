@@ -30,8 +30,10 @@ def check_munkres():
         [5, 8, 1, 8],
         [7, 6, 9, 4],
     ]
+    munkres = Munkres()
 
-    costs, starred_indices = Munkres.compute(cost_matrix)
+    costs = munkres.compute(cost_matrix)
+    starred_indices = munkres.get_starred_indices()
     print(f'costs: {costs}')
     print(starred_indices)
 
