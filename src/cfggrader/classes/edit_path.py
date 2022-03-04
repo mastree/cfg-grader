@@ -25,8 +25,7 @@ class EditPath:
                 tnode = target.nodes[x[1]]
 
             if snode.component_id is not None or tnode.component_id is not None:
-                # TODO: edit_path.add_distortion(snode, tnode)
-                pass
+                edit_path.add_distortion(snode, tnode)
 
         return edit_path
 
