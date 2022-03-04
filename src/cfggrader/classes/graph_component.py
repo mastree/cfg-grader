@@ -12,6 +12,12 @@ class GraphComponent:
     def get_id(self):
         return self.component_id
 
+    def is_eps(self):
+        return self.component_id is None
+
+    def is_not_eps(self):
+        return self.component_id is not None
+
 
 class Node(GraphComponent):
     def __init__(self, component_id=None, info=[]):
@@ -26,6 +32,12 @@ class Node(GraphComponent):
 
     def add_edge(self, edge):
         self.edges.append(edge)
+
+    def get_edge_to(self, node):
+        for edge in self.edges:
+            if node.component_id == edge.to_node.component_id:
+                return edge
+        return None
 
 
 class Edge(GraphComponent):
@@ -49,3 +61,8 @@ class Edge(GraphComponent):
 
     def get_to_node(self):
         return self.to_node
+
+    def get_other_end(self, node: Node):
+        if node.component_id == self.from_node.component_id:
+            return self.to_node
+        return self.from_node

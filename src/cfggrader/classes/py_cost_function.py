@@ -13,11 +13,11 @@ class PyCostFunction(CostFunction):
 
     def get_edge_cost(self, a: Edge, b: Edge, a_node: Node, b_node: Node):
         # check if edge is epsilon
-        if a is Constants.EDGE_EPS:
-            if b is Constants.EDGE_EPS:
+        if a.is_eps():
+            if b.is_eps():
                 return 0
             return Cost.EDGE_COST
-        elif b is Constants.EDGE_EPS:
+        elif b.is_eps():
             return Cost.EDGE_COST
 
         # check if self loop
@@ -39,11 +39,11 @@ class PyCostFunction(CostFunction):
     def calculate_node_difference(cls, a, b):
         # TODO: change info key used
         # check if node is epsilon
-        if a is Constants.NODE_EPS:
-            if b is Constants.NODE_EPS:
+        if a.is_eps():
+            if b.is_eps():
                 return 0
             return Cost.NODE_COST
-        elif b is Constants.NODE_EPS:
+        elif b.is_eps():
             return Cost.NODE_COST
 
         # check if node is the same (TODO: use edit distance for multipe line)

@@ -24,7 +24,7 @@ class EditPath:
             if x[1] < tnode_len:
                 tnode = target.nodes[x[1]]
 
-            if snode.component_id is not None or tnode.component_id is not None:
+            if snode.is_not_eps() or tnode.is_not_eps():
                 edit_path.add_distortion(snode, tnode)
 
         return edit_path
@@ -69,11 +69,30 @@ class EditPath:
         self.unused_edges1.extend(self.source.edges)
         self.unused_edges2.extend(self.target.edges)
 
+        # cost related
         self.cost_function = cost_function
 
         self.total_cost = 0.0
         self.heuristic_cost = 0.0
         self.is_heuristic_computed = False
+
+        # distortion
+        self.snode_distortion = {}
+        self.sedge_distortion = {}
+        self.tnode_distortion = {}
+        self.tedge_distortion = {}
+
+    def use_source_node(self, node: Node):
+        self.unused_nodes1 = [x for x in self.unused_nodes1 if x.component_id != node.component_id]
+
+    def use_target_node(self, node: Node):
+        self.unused_nodes2 = [x for x in self.unused_nodes2 if x.component_id != node.component_id]
+
+    def use_source_edge(self, edge: Edge):
+        self.unused_edges1 = [x for x in self.unused_edges1 if x.component_id != edge.component_id]
+
+    def use_target_edge(self, edge: Edge):
+        self.unused_edges2 = [x for x in self.unused_edges2 if x.component_id != edge.component_id]
 
     def add_distortion(self, component1: GraphComponent, component2: GraphComponent):
         if isinstance(component1, Node):
@@ -82,10 +101,80 @@ class EditPath:
             self.add_edge_distortion(component1, component2)
 
     def add_node_distortion(self, node1: Node, node2: Node):
-        pass
+        self.is_heuristic_computed = False
 
-    def add_edge_distortion(self, edge1: Edge, edge2: Edge):
-        pass
+        self.total_cost += self.cost_function.get_node_cost(node1, node2)
+        if node1.is_not_eps():
+            self.snode_distortion[node1] = node2
+            self.use_source_node(node1)
+        if node2.is_not_eps():
+            self.tnode_distortion[node2] = node1
+            self.use_target_node(node2)
+
+        if node1.is_eps() and node2.is_eps():
+            return
+
+        # handle edges
+        # node deletion
+        if node2.is_eps():
+            for edge in node1.edges:
+                onode1 = edge.get_other_end(node1)
+                if onode1 in self.snode_distortion:
+                    self.add_edge_distortion(edge, Constants.EDGE_EPS, node1, Constants.NODE_EPS)
+            return
+
+        # node insertion
+        if node1.is_eps():
+            for edge in node2.edges:
+                onode2 = edge.get_other_end(node2)
+                if onode2 in self.tnode_distortion:
+                    self.add_edge_distortion(Constants.EDGE_EPS, edge, Constants.NODE_EPS, node2)
+            return
+
+        for edge1 in node1.edges:
+            onode1 = edge1.get_other_end(node1)
+            is_out_edge = edge1.from_node.component_id == node1.component_id
+            if onode1 in self.snode_distortion:
+                onode2 = self.snode_distortion[onode1]
+                if onode2.is_eps():
+                    self.add_edge_distortion(edge1, Constants.EDGE_EPS, node1, Constants.NODE_EPS)
+                else:
+                    edge2: Edge = None
+                    if is_out_edge:
+                        edge2 = node2.get_edge_to(onode2)
+                    else:
+                        edge2 = onode2.get_edge_to(node2)
+
+                    if edge2 is None:
+                        self.add_edge_distortion(edge1, Constants.EDGE_EPS, node1, Constants.NODE_EPS)
+                    else:
+                        self.add_edge_distortion(edge1, edge2, node1, node2)
+
+        for edge2 in node2.edges:
+            onode2 = edge2.get_other_end(node2)
+            is_out_edge = edge2.from_node.component_id == node2.component_id
+            if onode2 in self.tnode_distortion:
+                onode1 = self.tnode_distortion[onode2]
+                if onode1.is_not_eps():
+                    edge1: Edge = None
+                    if is_out_edge:
+                        edge1 = node1.get_edge_to(onode1)
+                    else:
+                        edge1 = onode1.get_edge_to(node1)
+
+                    if edge1 is None:
+                        self.add_edge_distortion(Constants.EDGE_EPS, edge2, Constants.NODE_EPS, node2)
+
+    def add_edge_distortion(self, edge1: Edge, edge2: Edge, node1: Node, node2: Node):
+        self.is_heuristic_computed = False
+
+        self.total_cost += self.cost_function.get_edge_cost(edge1, edge2, node1, node2)
+        if edge1.is_not_eps():
+            self.sedge_distortion[edge1] = edge2
+            self.use_source_edge(edge1)
+        if edge2.is_not_eps():
+            self.tedge_distortion[edge2] = edge1
+            self.use_target_node(edge2)
 
     def build_node_matrix(self, nodes1: list[Node], nodes2: list[Node]):
         munkres = Munkres()
