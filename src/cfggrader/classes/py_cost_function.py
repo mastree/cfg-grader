@@ -1,5 +1,4 @@
-from cfggrader.classes.graph_component import *
-from cfggrader.cost_function import CostFunction
+from cfggrader.classes.cost_function import CostFunction
 from classes.constants import *
 
 
