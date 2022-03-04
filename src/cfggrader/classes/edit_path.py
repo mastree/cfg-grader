@@ -28,6 +28,8 @@ class EditPath:
                 # TODO: edit_path.add_distortion(snode, tnode)
                 pass
 
+        return edit_path
+
     @classmethod
     def create_root(cls, cost_function: CostFunction, source: Graph, target: Graph, sort_source: bool = True):
         edit_path = EditPath(cost_function, source, target)
@@ -51,6 +53,8 @@ class EditPath:
 
         else:
             edit_path.unused_nodes1.extend(edit_path.source.nodes)
+
+        return edit_path
 
     def __init__(self, cost_function: CostFunction, source: Graph = None, target: Graph = None):
         self.source = source

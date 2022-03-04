@@ -69,7 +69,7 @@ class DFSGED:
         tedge_size = len(self.target.edges)
 
         ub_cost = Constants.INF
-        root = EditPath
+        root = EditPath.create_root(self.cost_function, self.source, self.target)
 
         # end timer
         end_time = time.time_ns()
