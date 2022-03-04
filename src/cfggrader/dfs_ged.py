@@ -2,6 +2,7 @@ import time
 
 from cfggrader.classes.edit_path import EditPath
 from cfggrader.classes.graph import Graph
+from cfggrader.classes.graph_component import *
 from cfggrader.classes.cost_function import CostFunction
 from classes.constants import Constants
 

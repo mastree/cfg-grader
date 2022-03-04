@@ -1,4 +1,5 @@
 from cfggrader.classes.graph import Graph
+from cfggrader.classes.graph_component import *
 from cfggrader.classes.cost_function import CostFunction
 from cfggrader.utils.lsap_solver import Munkres
 from classes.constants import Constants
