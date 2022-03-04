@@ -70,6 +70,9 @@ class DFSGED:
 
         ub_cost = Constants.INF
         root = EditPath.create_root(self.cost_function, self.source, self.target)
+        ub_path = EditPath.create_path(self.cost_function, self.source, self.target, root.first_ub)
 
         # end timer
         end_time = time.time_ns()
+
+        return ub_path.total_cost

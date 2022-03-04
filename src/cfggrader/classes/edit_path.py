@@ -42,8 +42,13 @@ class EditPath:
             tmp_unused_nodes1.extend(edit_path.source.nodes)
 
             matrix = edit_path.build_node_matrix(tmp_unused_nodes1, edit_path.unused_nodes2)
+            for i in range(len(matrix)):
+                print(f'{i}: {matrix[i][i]}')
             total_cost = munkres.compute(matrix)
+            print(total_cost)
             starred_indices = munkres.get_starred_indices()
+
+            edit_path.first_ub = starred_indices
 
             starred_indices.sort(key=lambda x: matrix[x[0]][x[1]])
             for x in starred_indices:
@@ -75,6 +80,8 @@ class EditPath:
         self.total_cost = 0.0
         self.heuristic_cost = 0.0
         self.is_heuristic_computed = False
+
+        self.first_ub = []
 
         # distortion
         self.snode_distortion = {}

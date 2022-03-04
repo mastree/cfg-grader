@@ -53,7 +53,7 @@ class PyCostFunction(CostFunction):
             n = len(a.info)
             count = 0
             for i in range(n):
-                if a.info[i]["rawLine"] == b.info[i]["rawLine"]:
+                if a.info[i]["rawLine"] != b.info[i]["rawLine"]:
                     count += 1
             return count / n
 

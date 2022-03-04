@@ -39,6 +39,13 @@ class Node(GraphComponent):
                 return edge
         return None
 
+    def __str__(self):
+        edges = []
+        for edge in self.edges:
+            edges.append(f'{edge.component_id : <3}: {(edge.from_node.component_id, edge.to_node.component_id)}')
+        ret = f'{self.component_id : <3} label: {self.info}\n{"edges:" : <7} {edges}'
+        return ret
+
 
 class Edge(GraphComponent):
     def __init__(self, info=[], from_node=None, to_node=None):

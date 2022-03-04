@@ -71,7 +71,6 @@ def graph_to_digraph(graph: Graph):
 def pygraph_to_ged_graph(graph: Graph):
     ged_graph: GEDGraph = GEDGraph()
 
-
     # build nodes
     id_node_dict = {}
     last_id = 0
@@ -79,7 +78,7 @@ def pygraph_to_ged_graph(graph: Graph):
         ged_node = GEDNode(node.label, node.info)
         ged_graph.add_node(ged_node)
         id_node_dict[ged_node.get_id()] = ged_node
-        last_id = max(last_id, ged_node)
+        last_id = max(last_id, ged_node.component_id)
 
     # build edges
     for node in graph.get_nodes():
