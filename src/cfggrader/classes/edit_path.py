@@ -218,7 +218,7 @@ class EditPath:
                 if onode2.is_eps():
                     self.add_edge_distortion(edge1, Constants.EDGE_EPS, node1, Constants.NODE_EPS)
                 else:
-                    edge2: Edge = None
+                    edge2 = None
                     if is_out_edge:
                         edge2 = node2.get_edge_to(onode2)
                     else:
@@ -235,7 +235,7 @@ class EditPath:
             if onode2 in self.tnode_distortion:
                 onode1 = self.tnode_distortion[onode2]
                 if onode1.is_not_eps():
-                    edge1: Edge = None
+                    edge1 = None
                     if is_out_edge:
                         edge1 = node1.get_edge_to(onode1)
                     else:
@@ -253,7 +253,7 @@ class EditPath:
             self.use_source_edge(edge1)
         if edge2.is_not_eps():
             self.tedge_distortion[edge2] = edge1
-            self.use_target_node(edge2)
+            self.use_target_edge(edge2)
 
     def build_node_matrix(self, nodes1: list[Node], nodes2: list[Node]):
         munkres = Munkres()
