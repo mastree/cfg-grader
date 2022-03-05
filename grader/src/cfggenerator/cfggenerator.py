@@ -1,4 +1,5 @@
 from pycfg.pycfg import PyCFG, CFGNode, slurp
+from staticfg import CFGBuilder
 
 
 class PythonCfgGenerator:
@@ -16,3 +17,7 @@ class PythonCfgGenerator:
         cfg.gen_cfg(slurp(filename).strip())
         g = CFGNode.to_graph([])
         return g
+
+    @classmethod
+    def generate_python_staticfg(cls, filename):
+        pass

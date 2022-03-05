@@ -10,11 +10,12 @@ from grader.src.cfggrader.dfs_ged import DFSGED
 def draw_graph(digraph, filename):
     digraph.draw(f'generatedimg/{filename}', prog='dot')
 
+
 def check_cfggenerator():
     cfg = PythonCfgGenerator.generate_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh.py")
     # print(cfg)
 
-    graph = digraph_to_graph(cfg)
+    graph = digraph_to_graph_for_pycfg(cfg)
     cgraph = collapse(graph)
 
     digraph = graph_to_digraph(graph)
@@ -28,9 +29,11 @@ def check_cfggenerator():
     # print("====================================")
     # print(cdigraph)
 
+
 def check_graph_draw():
     cfg = PythonCfgGenerator.generate_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh.py")
     draw_graph(cfg, "test_draw.png")
+
 
 def check_munkres():
     cost_matrix = [
@@ -49,6 +52,7 @@ def check_munkres():
     starred_indices.sort(key=lambda x: cost_matrix[x[0]][x[1]])
     print(starred_indices)
 
+
 def test_ged():
     # cfg_solution = PythonCfgGenerator.generate_python_from_file("../datasets/segiempat/solution/segiempat103.py")
     cfg_solution = PythonCfgGenerator.generate_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh_delta.py")
@@ -57,8 +61,8 @@ def test_ged():
     draw_graph(cfg_solution, "test_solution.png")
     draw_graph(cfg_jury, "test_jury.png")
 
-    graph_source = digraph_to_graph(cfg_solution)
-    graph_target = digraph_to_graph(cfg_jury)
+    graph_source = digraph_to_graph_for_pycfg(cfg_solution)
+    graph_target = digraph_to_graph_for_pycfg(cfg_jury)
 
     # cfg_solution = graph_to_digraph(graph_source)
     # cfg_jury = graph_to_digraph(graph_target)
@@ -79,4 +83,28 @@ def test_ged():
     print(f'GED: {dfs_ged.calculate_edit_distance()}')
     dfs_ged.print_matching()
 
-test_ged()
+
+def test_staticfg():
+    from staticfg import CFGBuilder
+    import pygraphviz as pgv
+
+    cfg = CFGBuilder().build_from_file("cfg", "./datasets/segiempat/juryssolution/segiempatcontoh.py")
+    # cfg.build_visual("generatedimg/test_lib", "png")
+    # cfg = cfg._build_visual()
+    # print(cfg.functioncfgs)
+
+    import ast
+    for block in cfg:
+        print(block.get_source())
+
+    # print(cfg)
+    #
+    # cfg = pgv.AGraph(cfg.__str__())
+    # graph_cfg = digraph_to_graph(cfg)
+    # print(graph_cfg)
+    # print(cfg)
+    # draw_graph(cfg, "test_lib.png")
+
+# test_ged()
+
+test_staticfg()
