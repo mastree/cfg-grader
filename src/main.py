@@ -62,7 +62,6 @@ def test_ged():
     #     print("=========== separate node ==========")
 
     dfs_ged = DFSGED(graph_source, graph_target, PyCostFunction())
-    dfs_ged.init()
     print(f'GED: {dfs_ged.calculate_edit_distance()}')
 
 test_ged()

@@ -13,4 +13,3 @@ class Constants:
 
     node_cost_matrix: list[list] = None
     edge_cost_matrix: list[list] = None
-

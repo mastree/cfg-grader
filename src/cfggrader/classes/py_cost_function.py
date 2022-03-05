@@ -9,6 +9,18 @@ class Cost:
 
 class PyCostFunction(CostFunction):
     def get_node_cost(self, a: Node, b: Node):
+        if self.do_node_precompute:
+            s_id = self.snode_size
+            if a.is_not_eps():
+                s_id = a.component_id
+            t_id = self.tnode_size
+            if b.is_not_eps():
+                t_id = b.component_id
+            if self.node_precompute[s_id][t_id] < 0.0:
+                self.node_precompute[s_id][t_id] = self.calculate_node_difference(a, b) * Cost.NODE_COST
+
+            return self.node_precompute[s_id][t_id]
+
         return self.calculate_node_difference(a, b) * Cost.NODE_COST
 
     def get_edge_cost(self, a: Edge, b: Edge, a_node: Node, b_node: Node):

@@ -4,6 +4,8 @@ from cfggrader.classes.cost_function import CostFunction
 from cfggrader.utils.lsap_solver import Munkres
 from classes.constants import Constants
 
+import numpy as np
+
 
 class EditPath:
     @classmethod
@@ -40,14 +42,12 @@ class EditPath:
 
         if sort_source:
             tmp_unused_nodes1.extend(edit_path.source.nodes)
-
             matrix = edit_path.build_node_matrix(tmp_unused_nodes1, edit_path.unused_nodes2)
-            for i in range(len(matrix)):
-                print(f'{i}: {matrix[i][i]}')
+            # for i in range(len(matrix)):
+            #     print(f'{i}: {matrix[i][i]}')
             total_cost = munkres.compute(matrix)
-            print(total_cost)
+            # print(total_cost)
             starred_indices = munkres.get_starred_indices()
-
             edit_path.first_ub = starred_indices
 
             starred_indices.sort(key=lambda x: matrix[x[0]][x[1]])
@@ -57,6 +57,10 @@ class EditPath:
 
         else:
             edit_path.unused_nodes1.extend(edit_path.source.nodes)
+            matrix = edit_path.build_node_matrix(edit_path.unused_nodes1, edit_path.unused_nodes2)
+            total_cost = munkres.compute(matrix)
+            starred_indices = munkres.get_starred_indices()
+            edit_path.first_ub = starred_indices
 
         return edit_path
 
@@ -190,7 +194,7 @@ class EditPath:
         size2 = len(nodes2)
 
         msize = size1 + size2
-        matrix = [[0.0] * msize for i in range(msize)]
+        matrix = np.zeros((msize, msize), float)  # [[0.0] * msize for i in range(msize)]
 
         for i in range(size1):
             u = nodes1[i]
@@ -260,7 +264,7 @@ class EditPath:
         size2 = len(edges2)
         msize = size1 + size2
 
-        edge_matrix = [[0.0] * msize for i in range(msize)]
+        edge_matrix = np.zeros((msize, msize), float)  # [[0.0] * msize for i in range(msize)]
 
         for i in range(size1):
             edge1 = edges1[i]
