@@ -64,6 +64,28 @@ class EditPath:
 
         return edit_path
 
+    @classmethod
+    def clone(cls, edit_path):
+        cloned = EditPath(edit_path.cost_function)
+        cloned.source = edit_path.source
+        cloned.target = edit_path.target
+        cloned.unused_nodes1.extend(edit_path.unused_edges1)
+        cloned.unused_edges1.extend(edit_path.unused_edges1)
+        cloned.unused_nodes2.extend(edit_path.unused_nodes2)
+        cloned.unused_edges2.extend(edit_path.unused_edges2)
+
+        cloned.total_cost = edit_path.total_cost
+        cloned.heuristic_type = edit_path.heuristic_type
+        cloned.heuristic_cost = edit_path.heuristic_cost
+        cloned.is_heuristic_computed = edit_path.is_heuristic_computed
+        cloned.first_ub = edit_path.first_ub
+        cloned.snode_distortion = edit_path.snode_distortion
+        cloned.sedge_distortion = edit_path.sedge_distortion
+        cloned.tnode_distortion = edit_path.tnode_distortion
+        cloned.tedge_distortion = edit_path.tedge_distortion
+
+        return cloned
+
     def __init__(self, cost_function: CostFunction, source: Graph = None, target: Graph = None,
                  heuristic_type: int = 1):
         self.source = source
@@ -74,10 +96,13 @@ class EditPath:
         self.unused_nodes2: list[Node] = []
         self.unused_edges2: list[Edge] = []
 
-        self.unused_edges1.extend(self.source.edges)
-        self.unused_nodes2.extend(self.target.nodes)
-        self.unused_edges1.extend(self.source.edges)
-        self.unused_edges2.extend(self.target.edges)
+        if self.source is not None:
+            self.unused_edges1.extend(self.source.edges)
+            self.unused_edges1.extend(self.source.edges)
+
+        if self.target is not None:
+            self.unused_nodes2.extend(self.target.nodes)
+            self.unused_edges2.extend(self.target.edges)
 
         # cost related
         self.cost_function = cost_function
@@ -102,7 +127,7 @@ class EditPath:
         self.is_heuristic_computed = True
         self.heuristic_cost = 0.0
         if self.heuristic_type == 1:
-            self.compute_heuristic_lsap()
+            self.heuristic_cost = self.compute_heuristic_lsap()
         return self.heuristic_cost
 
     def compute_heuristic_lsap(self):
@@ -110,6 +135,9 @@ class EditPath:
         node_size2 = len(self.unused_nodes2)
 
         msize = node_size1 + node_size2
+        if msize == 0:
+            return 0.0
+
         matrix = np.zeros((msize, msize), dtype=float)
         for i in range(msize):
             node1 = Constants.NODE_EPS
@@ -124,7 +152,14 @@ class EditPath:
                 matrix[i][j] = self.cost_function.get_node_cost(node1, node2)
                 matrix[i][j] += self.cost_function.get_edges_cost(edges1, edges2, node1, node2)
 
-        self.heuristic_cost = Munkres().compute(matrix)
+        return Munkres().compute(matrix)
+
+    def predict_cost(self):
+        return self.total_cost + self.compute_heuristic_cost()
+
+    def complete(self):
+        while len(self.unused_nodes2) > 0:
+            self.add_distortion(Constants.NODE_EPS, self.unused_nodes2[0])
 
     def use_source_node(self, node: Node):
         self.unused_nodes1 = [x for x in self.unused_nodes1 if x.component_id != node.component_id]

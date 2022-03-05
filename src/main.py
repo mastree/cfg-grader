@@ -6,7 +6,7 @@ from cfggrader.utils.lsap_solver import Munkres
 
 from cfggrader.dfs_ged import *
 from cfggrader.classes.cost_function import *
-from cfggrader.classes.py_cost_function import *
+from cfggrader.classes.general_cost_function import *
 
 def check_cfggenerator():
     cfg = PythonCfgGenerator.generate_python_from_file("../datasets/segiempat/juryssolution/segiempatcontoh.py")
@@ -61,7 +61,7 @@ def test_ged():
     #     print(node)
     #     print("=========== separate node ==========")
 
-    dfs_ged = DFSGED(graph_source, graph_target, PyCostFunction())
+    dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction())
     print(f'GED: {dfs_ged.calculate_edit_distance()}')
 
 test_ged()

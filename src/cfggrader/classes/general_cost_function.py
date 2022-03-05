@@ -7,7 +7,7 @@ class Cost:
     NODE_COST = 1
 
 
-class PyCostFunction(CostFunction):
+class GeneralCostFunction(CostFunction):
     def get_node_cost(self, a: Node, b: Node):
         if self.do_node_precompute:
             s_id = self.snode_size
