@@ -33,6 +33,13 @@ class Node(GraphComponent):
     def add_edge(self, edge):
         self.edges.append(edge)
 
+    def get_out_edges(self):
+        edges = []
+        for edge in self.edges:
+            if edge.from_node.component_id == self.component_id:
+                edges.append(edge)
+        return edges
+
     def get_edge_to(self, node):
         for edge in self.edges:
             if node.component_id == edge.to_node.component_id:
@@ -73,3 +80,12 @@ class Edge(GraphComponent):
         if node.component_id == self.from_node.component_id:
             return self.to_node
         return self.from_node
+
+    def get_edge_type(self, node: Node): # 0 out, 1 in, 2 self, 3 undef
+        if node.component_id == self.from_node.component_id:
+            if node.component_id == self.to_node.component_id:
+                return 2
+            return 0
+        elif node.component_id == self.to_node.component_id:
+            return 1
+        return 3

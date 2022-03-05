@@ -47,6 +47,35 @@ class PyCostFunction(CostFunction):
         # edge deletion
         return 2 * Cost.EDGE_COST
 
+    def get_edges_cost(self, a: list[Edge], b: list[Edge], a_node: Node, b_node: Node):
+        if a_node.is_eps():
+            if b_node.is_eps():
+                return 0
+            return Cost.EDGE_COST * len(b)
+        elif b_node.is_eps():
+            return Cost.EDGE_COST * len(a)
+
+        type_count1 = self.count_each_edges_type(a, a_node)
+        type_count2 = self.count_each_edges_type(b, b_node)
+        remainder1 = 0
+        remainder2 = 0
+        for i in range(3):
+            mn = min(type_count1[i], type_count2[i])
+            type_count1[i] -= mn
+            type_count2[i] -= mn
+            remainder1 += type_count1[i]
+            remainder2 += type_count2[i]
+
+        return Cost.EDGE_COST * (remainder1 + remainder2)
+
+    @classmethod
+    def count_each_edges_type(cls, edges: list[Edge], node: Node):
+        ret = [0, 0, 0]
+        for edge in edges:
+            t = edge.get_edge_type(node)
+            ret[t] += 1
+        return ret
+
     @classmethod
     def calculate_node_difference(cls, a, b):
         # TODO: change info key used

@@ -24,3 +24,6 @@ class CostFunction:
 
     def get_edge_cost(self, a: Edge, b: Edge, a_node: Node, b_node: Node):
         pass
+
+    def get_edges_cost(self, a: list[Edge], b: list[Edge], a_node: Node, b_node: Node):
+        pass

@@ -64,7 +64,8 @@ class EditPath:
 
         return edit_path
 
-    def __init__(self, cost_function: CostFunction, source: Graph = None, target: Graph = None):
+    def __init__(self, cost_function: CostFunction, source: Graph = None, target: Graph = None,
+                 heuristic_type: int = 1):
         self.source = source
         self.target = target
 
@@ -82,6 +83,7 @@ class EditPath:
         self.cost_function = cost_function
 
         self.total_cost = 0.0
+        self.heuristic_type = heuristic_type
         self.heuristic_cost = 0.0
         self.is_heuristic_computed = False
 
@@ -92,6 +94,37 @@ class EditPath:
         self.sedge_distortion = {}
         self.tnode_distortion = {}
         self.tedge_distortion = {}
+
+    def compute_heuristic_cost(self):
+        if self.is_heuristic_computed:
+            return self.heuristic_cost
+
+        self.is_heuristic_computed = True
+        self.heuristic_cost = 0.0
+        if self.heuristic_type == 1:
+            self.compute_heuristic_lsap()
+        return self.heuristic_cost
+
+    def compute_heuristic_lsap(self):
+        node_size1 = len(self.unused_nodes1)
+        node_size2 = len(self.unused_nodes2)
+
+        msize = node_size1 + node_size2
+        matrix = np.zeros((msize, msize), dtype=float)
+        for i in range(msize):
+            node1 = Constants.NODE_EPS
+            if i < node_size1:
+                node1 = self.unused_nodes1[i]
+            edges1 = node1.get_out_edges()
+            for j in range(msize):
+                node2 = Constants.NODE_EPS
+                if j < node_size2:
+                    node2 = self.unused_nodes2[j]
+                edges2 = node2.get_out_edges()
+                matrix[i][j] = self.cost_function.get_node_cost(node1, node2)
+                matrix[i][j] += self.cost_function.get_edges_cost(edges1, edges2, node1, node2)
+
+        self.heuristic_cost = Munkres().compute(matrix)
 
     def use_source_node(self, node: Node):
         self.unused_nodes1 = [x for x in self.unused_nodes1 if x.component_id != node.component_id]
