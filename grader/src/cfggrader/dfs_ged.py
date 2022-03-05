@@ -27,6 +27,10 @@ class DFSGED:
     def set_time_limit(self, time_limit):
         self.time_limit = time_limit
 
+    def print_matching(self):
+        for k, v in self.ub_path.snode_distortion.items():
+            print(f'{k.component_id : <4} -> {v.component_id}')
+
     def calculate_edit_distance(self):
         # start timer
         self.is_solution_optimal = True

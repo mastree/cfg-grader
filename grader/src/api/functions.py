@@ -57,7 +57,7 @@ def graph_to_digraph(graph: Graph):
 
     edges = []
     for node in graph.nodes:
-        digraph.add_node(str(node.get_label()), label=[info["rawLine"] for info in node.get_info()])
+        digraph.add_node(str(node.get_label()), label=f'{node.get_label()}: {[info["rawLine"] for info in node.get_info()]}')
         for out_node in node.out_nodes:
             edges.append((str(node.get_label()), str(out_node.get_label())))
 

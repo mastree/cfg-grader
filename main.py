@@ -3,11 +3,15 @@ from grader.src.api.functions import *
 
 from grader.src.cfggrader.classes.general_cost_function import GeneralCostFunction
 from grader.src.cfggrader.utils.lsap_solver import Munkres
+from grader.src.cfggrader.utils.graph_collapser import collapse
 from grader.src.cfggrader.dfs_ged import DFSGED
 
 
+def draw_graph(digraph, filename):
+    digraph.draw(f'generatedimg/{filename}', prog='dot')
+
 def check_cfggenerator():
-    cfg = PythonCfgGenerator.generate_python_from_file("../datasets/segiempat/juryssolution/segiempatcontoh.py")
+    cfg = PythonCfgGenerator.generate_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh.py")
     # print(cfg)
 
     graph = digraph_to_graph(cfg)
@@ -16,7 +20,6 @@ def check_cfggenerator():
     digraph = graph_to_digraph(graph)
     digraph.draw('generatedimg/digraph2.png', prog='dot')
 
-
     cdigraph = graph_to_digraph(cgraph)
     cdigraph.draw('generatedimg/digraph_collapsed2.png', prog='dot')
 
@@ -24,6 +27,10 @@ def check_cfggenerator():
     # print(digraph)
     # print("====================================")
     # print(cdigraph)
+
+def check_graph_draw():
+    cfg = PythonCfgGenerator.generate_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh.py")
+    draw_graph(cfg, "test_draw.png")
 
 def check_munkres():
     cost_matrix = [
@@ -44,11 +51,20 @@ def check_munkres():
 
 def test_ged():
     # cfg_solution = PythonCfgGenerator.generate_python_from_file("../datasets/segiempat/solution/segiempat103.py")
-    cfg_solution = PythonCfgGenerator.generate_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh.py")
+    cfg_solution = PythonCfgGenerator.generate_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh_delta.py")
     cfg_jury = PythonCfgGenerator.generate_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh.py")
+
+    draw_graph(cfg_solution, "test_solution.png")
+    draw_graph(cfg_jury, "test_jury.png")
 
     graph_source = digraph_to_graph(cfg_solution)
     graph_target = digraph_to_graph(cfg_jury)
+
+    # cfg_solution = graph_to_digraph(graph_source)
+    # cfg_jury = graph_to_digraph(graph_target)
+    # draw_graph(cfg_solution, "test_solution.png")
+    # draw_graph(cfg_jury, "test_jury.png")
+
 
     # print(graph_source)
     graph_source = pygraph_to_ged_graph(graph_source)
@@ -61,5 +77,6 @@ def test_ged():
 
     dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction())
     print(f'GED: {dfs_ged.calculate_edit_distance()}')
+    dfs_ged.print_matching()
 
 test_ged()

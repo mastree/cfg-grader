@@ -10,10 +10,10 @@ class Cost:
 class GeneralCostFunction(CostFunction):
     def get_node_cost(self, a: Node, b: Node):
         if self.do_node_precompute:
-            s_id = self.snode_size
+            s_id = 0
             if a.is_not_eps():
                 s_id = a.component_id
-            t_id = self.tnode_size
+            t_id = 0
             if b.is_not_eps():
                 t_id = b.component_id
             if self.node_precompute[s_id][t_id] < 0.0:

@@ -20,6 +20,6 @@ class SearchNode:
 
     def remove_min_child(self):
         if not self.sorted:
-            self.children.sort(key=lambda x: x.predict_cost())
+            self.children.sort(key=lambda x: x.edit_path.predict_cost())
             self.sorted = True
         return self.children.pop()
