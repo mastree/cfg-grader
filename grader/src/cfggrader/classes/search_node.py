@@ -1,4 +1,4 @@
-from cfggrader.classes.edit_path import EditPath
+from grader.src.cfggrader.classes.edit_path import EditPath
 
 
 class SearchNode:

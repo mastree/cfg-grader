@@ -1,5 +1,5 @@
+from grader.src.cfggrader.classes.graph_component import *
 import math
-from cfggrader.classes.graph_component import *
 
 
 class Constants:

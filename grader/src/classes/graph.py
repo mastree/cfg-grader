@@ -1,4 +1,4 @@
-from classes.node import Node
+from grader.src.classes.node import Node
 import copy
 
 

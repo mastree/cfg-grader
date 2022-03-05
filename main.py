@@ -1,12 +1,10 @@
-from cfggenerator.python.cfggenerator import PythonCfgGenerator
-from api.functions import *
+from grader.src.cfggenerator.cfggenerator import PythonCfgGenerator
+from grader.src.api.functions import *
 
-from cfggrader.utils.graph_collapser import *
-from cfggrader.utils.lsap_solver import Munkres
+from grader.src.cfggrader.classes.general_cost_function import GeneralCostFunction
+from grader.src.cfggrader.utils.lsap_solver import Munkres
+from grader.src.cfggrader.dfs_ged import DFSGED
 
-from cfggrader.dfs_ged import *
-from cfggrader.classes.cost_function import *
-from cfggrader.classes.general_cost_function import *
 
 def check_cfggenerator():
     cfg = PythonCfgGenerator.generate_python_from_file("../datasets/segiempat/juryssolution/segiempatcontoh.py")
@@ -46,8 +44,8 @@ def check_munkres():
 
 def test_ged():
     # cfg_solution = PythonCfgGenerator.generate_python_from_file("../datasets/segiempat/solution/segiempat103.py")
-    cfg_solution = PythonCfgGenerator.generate_python_from_file("../datasets/segiempat/juryssolution/segiempatcontoh.py")
-    cfg_jury = PythonCfgGenerator.generate_python_from_file("../datasets/segiempat/juryssolution/segiempatcontoh.py")
+    cfg_solution = PythonCfgGenerator.generate_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh.py")
+    cfg_jury = PythonCfgGenerator.generate_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh.py")
 
     graph_source = digraph_to_graph(cfg_solution)
     graph_target = digraph_to_graph(cfg_jury)

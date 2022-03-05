@@ -1,11 +1,10 @@
 import time
 
-from cfggrader.classes.edit_path import EditPath
-from cfggrader.classes.graph import Graph
-from cfggrader.classes.graph_component import *
-from cfggrader.classes.cost_function import CostFunction
-from cfggrader.classes.search_node import SearchNode
-from classes.constants import Constants
+from grader.src.cfggrader.classes.edit_path import EditPath
+from grader.src.cfggrader.classes.graph import Graph
+from grader.src.cfggrader.classes.cost_function import CostFunction
+from grader.src.cfggrader.classes.search_node import SearchNode
+from grader.src.classes.constants import Constants
 
 
 class DFSGED:

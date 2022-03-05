@@ -1,7 +1,6 @@
-from classes.graph import Graph
-from classes.node import Node
-from cfggrader.classes.graph import Graph as GEDGraph, Node as GEDNode, Edge as GEDEdge
-from cfggrader.classes.graph_component import GraphComponent
+from grader.src.classes.graph import Graph
+from grader.src.classes.node import Node
+from grader.src.cfggrader.classes.graph import Graph as GEDGraph, Node as GEDNode, Edge as GEDEdge
 import pygraphviz as pgv
 
 
@@ -37,8 +36,8 @@ def digraph_to_graph(digraph: pgv.agraph.AGraph):
     for edge in edges_to_be_added:
         try:
             graph.get_node(id_to_new_id[edge[0]]).add_adjacent(graph.get_node(id_to_new_id[edge[1]]))
-        except e:
-            print(e)
+        except (ValueError, Exception):
+            pass
 
     return graph
 

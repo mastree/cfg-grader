@@ -1,5 +1,5 @@
-from cfggrader.classes.graph_component import *
-from cfggrader.classes.graph import Graph
+from grader.src.cfggrader.classes.graph import Graph
+from grader.src.cfggrader.classes.graph_component import *
 import numpy as np
 
 

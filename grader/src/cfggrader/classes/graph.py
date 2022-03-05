@@ -1,5 +1,4 @@
-from cfggrader.classes.graph_component import *
-import copy
+from grader.src.cfggrader.classes.graph_component import *
 
 
 class Graph:
