@@ -69,7 +69,7 @@ class EditPath:
         cloned = EditPath(edit_path.cost_function)
         cloned.source = edit_path.source
         cloned.target = edit_path.target
-        cloned.unused_nodes1.extend(edit_path.unused_edges1)
+        cloned.unused_nodes1.extend(edit_path.unused_nodes1)
         cloned.unused_edges1.extend(edit_path.unused_edges1)
         cloned.unused_nodes2.extend(edit_path.unused_nodes2)
         cloned.unused_edges2.extend(edit_path.unused_edges2)
