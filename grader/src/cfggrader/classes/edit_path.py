@@ -36,28 +36,22 @@ class EditPath:
         edit_path = EditPath(cost_function, source, target)
         munkres = Munkres()
 
-        # clear
-        edit_path.unused_nodes1 = []
-        tmp_unused_nodes1 = []
-
         if sort_source:
-            tmp_unused_nodes1.extend(edit_path.source.nodes)
-            matrix = edit_path.build_node_matrix(tmp_unused_nodes1, edit_path.unused_nodes2)
-            # for i in range(len(matrix)):
-            #     print(f'{i}: {matrix[i][i]}')
+            edit_path.pending_nodes1 = []
+            tmp_pending_nodes1 = []
+
+            tmp_pending_nodes1.extend(edit_path.source.nodes)
+            matrix = edit_path.build_node_matrix(tmp_pending_nodes1, edit_path.pending_nodes2)
             total_cost = munkres.compute(matrix)
-            # print(total_cost)
             starred_indices = munkres.get_starred_indices()
             edit_path.first_ub = starred_indices
 
             starred_indices.sort(key=lambda x: matrix[x[0]][x[1]])
             for x in starred_indices:
                 if x[0] < len(edit_path.source.nodes):
-                    edit_path.unused_nodes1.append(tmp_unused_nodes1[x[0]])
-
+                    edit_path.pending_nodes1.append(tmp_pending_nodes1[x[0]])
         else:
-            edit_path.unused_nodes1.extend(edit_path.source.nodes)
-            matrix = edit_path.build_node_matrix(edit_path.unused_nodes1, edit_path.unused_nodes2)
+            matrix = edit_path.build_node_matrix(edit_path.pending_nodes1, edit_path.pending_nodes2)
             total_cost = munkres.compute(matrix)
             starred_indices = munkres.get_starred_indices()
             edit_path.first_ub = starred_indices
@@ -69,10 +63,10 @@ class EditPath:
         cloned = EditPath(edit_path.cost_function)
         cloned.source = edit_path.source
         cloned.target = edit_path.target
-        cloned.unused_nodes1.extend(edit_path.unused_nodes1)
-        cloned.unused_edges1.extend(edit_path.unused_edges1)
-        cloned.unused_nodes2.extend(edit_path.unused_nodes2)
-        cloned.unused_edges2.extend(edit_path.unused_edges2)
+        cloned.pending_nodes1.extend(edit_path.pending_nodes1)
+        cloned.pending_edges1.extend(edit_path.pending_edges1)
+        cloned.pending_nodes2.extend(edit_path.pending_nodes2)
+        cloned.pending_edges2.extend(edit_path.pending_edges2)
 
         cloned.total_cost = edit_path.total_cost
         cloned.heuristic_type = edit_path.heuristic_type
@@ -91,18 +85,18 @@ class EditPath:
         self.source = source
         self.target = target
 
-        self.unused_nodes1: list[Node] = []
-        self.unused_edges1: list[Edge] = []
-        self.unused_nodes2: list[Node] = []
-        self.unused_edges2: list[Edge] = []
+        self.pending_nodes1: list[Node] = []
+        self.pending_edges1: list[Edge] = []
+        self.pending_nodes2: list[Node] = []
+        self.pending_edges2: list[Edge] = []
 
         if self.source is not None:
-            self.unused_edges1.extend(self.source.edges)
-            self.unused_edges1.extend(self.source.edges)
+            self.pending_edges1.extend(self.source.edges)
+            self.pending_edges1.extend(self.source.edges)
 
         if self.target is not None:
-            self.unused_nodes2.extend(self.target.nodes)
-            self.unused_edges2.extend(self.target.edges)
+            self.pending_nodes2.extend(self.target.nodes)
+            self.pending_edges2.extend(self.target.edges)
 
         # cost related
         self.cost_function = cost_function
@@ -131,8 +125,8 @@ class EditPath:
         return self.heuristic_cost
 
     def compute_heuristic_lsap(self):
-        node_size1 = len(self.unused_nodes1)
-        node_size2 = len(self.unused_nodes2)
+        node_size1 = len(self.pending_nodes1)
+        node_size2 = len(self.pending_nodes2)
 
         msize = node_size1 + node_size2
         if msize == 0:
@@ -142,12 +136,12 @@ class EditPath:
         for i in range(msize):
             node1 = Constants.NODE_EPS
             if i < node_size1:
-                node1 = self.unused_nodes1[i]
+                node1 = self.pending_nodes1[i]
             edges1 = node1.get_out_edges()
             for j in range(msize):
                 node2 = Constants.NODE_EPS
                 if j < node_size2:
-                    node2 = self.unused_nodes2[j]
+                    node2 = self.pending_nodes2[j]
                 edges2 = node2.get_out_edges()
                 matrix[i][j] = self.cost_function.get_node_cost(node1, node2)
                 matrix[i][j] += self.cost_function.get_edges_cost(edges1, edges2, node1, node2)
@@ -158,20 +152,20 @@ class EditPath:
         return self.total_cost + self.compute_heuristic_cost()
 
     def complete(self):
-        while len(self.unused_nodes2) > 0:
-            self.add_distortion(Constants.NODE_EPS, self.unused_nodes2[0])
+        while len(self.pending_nodes2) > 0:
+            self.add_distortion(Constants.NODE_EPS, self.pending_nodes2[0])
 
     def use_source_node(self, node: Node):
-        self.unused_nodes1 = [x for x in self.unused_nodes1 if x.component_id != node.component_id]
+        self.pending_nodes1 = [x for x in self.pending_nodes1 if x.component_id != node.component_id]
 
     def use_target_node(self, node: Node):
-        self.unused_nodes2 = [x for x in self.unused_nodes2 if x.component_id != node.component_id]
+        self.pending_nodes2 = [x for x in self.pending_nodes2 if x.component_id != node.component_id]
 
     def use_source_edge(self, edge: Edge):
-        self.unused_edges1 = [x for x in self.unused_edges1 if x.component_id != edge.component_id]
+        self.pending_edges1 = [x for x in self.pending_edges1 if x.component_id != edge.component_id]
 
     def use_target_edge(self, edge: Edge):
-        self.unused_edges2 = [x for x in self.unused_edges2 if x.component_id != edge.component_id]
+        self.pending_edges2 = [x for x in self.pending_edges2 if x.component_id != edge.component_id]
 
     def add_distortion(self, component1: GraphComponent, component2: GraphComponent):
         if isinstance(component1, Node):
