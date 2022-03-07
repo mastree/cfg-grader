@@ -10,8 +10,8 @@ from grader.src.classes.constants import Constants
 class DFSGED:
     """
     precondition:
-    - each graph nodes should have continous component_id of [1, len(nodes)]
-    - each graph edges should have continous component_id of [len(nodes) + 1, len(nodes) + len(edges)]
+    - each graph nodes should have component_id in the range [1, len(nodes)]
+    - each graph edges should have component_id in the range [len(nodes) + 1, len(nodes) + len(edges)]
 
     reason for these precondition is to sped up computation
     """
