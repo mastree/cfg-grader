@@ -1,8 +1,11 @@
+import math
+
+from grader.src.api.functions import edit_distance_to_similarity_score
 from grader.src.cfggenerator.cfggenerator import PythonCfgGenerator
 
-from grader.src.cfggrader.classes.general_cost_function import GeneralCostFunction
-from grader.src.cfggrader.utils.lsap_solver import Munkres
-from grader.src.cfggrader.dfs_ged import DFSGED
+from grader.src.ged.classes.general_cost_function import GeneralCostFunction
+from grader.src.ged.utils.lsap_solver import Munkres
+from grader.src.ged.dfs_ged import DFSGED
 
 
 def draw_digraph(digraph, filename):
@@ -48,6 +51,10 @@ solutions = ["./datasets/segiempat/solution/segiempat103.py",
              "./datasets/segiempat/solution/segiempat107.py"]
 
 
+def bias_func(x):
+    return math.sqrt(x)
+
+
 def test_all():
     scores = []
     for jury in jurys:
@@ -55,17 +62,17 @@ def test_all():
 
         for solution in solutions:
             graph_source = PythonCfgGenerator.generate_python_from_file(solution)
-            dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction())
-            dfs_ged.set_use_node_relabel(False)
+            dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(False))
+            # dfs_ged.set_use_node_relabel(False)
 
             approx_ed = dfs_ged.calculate_edit_distance(False)
-            approx_normalized_ed = 1 - dfs_ged.get_normalized_edit_distance()
+            approx_normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), bias_func)
 
             approx_ed_rel = dfs_ged.calculate_edit_distance(False, True)
-            approx_normalized_ed_rel = 1 - dfs_ged.get_normalized_edit_distance()
+            approx_normalized_ed_rel = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), bias_func)
 
             ed = dfs_ged.calculate_edit_distance()
-            normalized_ed = 1 - dfs_ged.get_normalized_edit_distance()
+            normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), bias_func)
 
             # print(f'jury: {jury}')
             # print(f'solution: {solution}')

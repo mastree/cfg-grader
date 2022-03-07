@@ -1,5 +1,5 @@
-from grader.src.cfggrader.classes.graph import Graph
-from grader.src.cfggrader.classes.graph_component import *
+from grader.src.ged.classes.graph import Graph
+from grader.src.ged.classes.graph_component import *
 import numpy as np
 
 
@@ -18,6 +18,9 @@ class CostFunction:
         self.tnode_size = len(target.nodes)
 
         self.node_precompute = np.ndarray(shape=(self.snode_size + 1, self.tnode_size + 1), dtype=float)
+        self.node_precompute.fill(-1.0)
+
+    def clear_precompute(self):
         self.node_precompute.fill(-1.0)
 
     def get_node_cost(self, a: Node, b: Node):

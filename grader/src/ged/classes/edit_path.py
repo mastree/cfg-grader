@@ -1,7 +1,7 @@
-from grader.src.cfggrader.classes.graph import Graph
-from grader.src.cfggrader.classes.graph_component import *
-from grader.src.cfggrader.classes.cost_function import CostFunction
-from grader.src.cfggrader.utils.lsap_solver import Munkres
+from grader.src.ged.classes.graph import Graph
+from grader.src.ged.classes.graph_component import *
+from grader.src.ged.classes.cost_function import CostFunction
+from grader.src.ged.utils.lsap_solver import Munkres
 from grader.src.classes.constants import Constants
 
 import numpy as np

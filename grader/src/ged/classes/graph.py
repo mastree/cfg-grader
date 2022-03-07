@@ -1,4 +1,4 @@
-from grader.src.cfggrader.classes.graph_component import *
+from grader.src.ged.classes.graph_component import *
 
 
 class Graph:

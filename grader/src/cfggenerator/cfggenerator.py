@@ -1,8 +1,8 @@
 import astor
 from staticfg import CFGBuilder, CFG, Block
 
-from grader.src.cfggrader.classes.graph import Graph
-from grader.src.cfggrader.classes.graph_component import Node, Edge
+from grader.src.ged.classes.graph import Graph
+from grader.src.ged.classes.graph_component import Node, Edge
 
 
 class PythonCfgGenerator:

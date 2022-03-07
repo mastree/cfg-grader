@@ -1,5 +1,5 @@
-from grader.src.cfggrader.classes.cost_function import CostFunction
-from grader.src.cfggrader.classes.graph_component import *
+from grader.src.ged.classes.cost_function import CostFunction
+from grader.src.ged.classes.graph_component import *
 
 
 class GeneralCostFunction(CostFunction):
@@ -7,8 +7,17 @@ class GeneralCostFunction(CostFunction):
         EDGE_COST = 1
         NODE_COST = 1
 
-    def __init__(self, use_node_relabel=True):
+    class RelabelMethod:
+        NONE = 0
+        COUNTER = 1
+        DAMERAU_LD = 2
+        EXACT = 3
+
+    def __init__(self, use_node_relabel=False, relabel_method=RelabelMethod.COUNTER):
         super().__init__(use_node_relabel)
+        self.relabel_method = self.RelabelMethod.NONE
+        if use_node_relabel:
+            self.relabel_method = relabel_method
 
     def get_node_cost(self, a: Node, b: Node):
         if self.do_node_precompute:
@@ -79,7 +88,7 @@ class GeneralCostFunction(CostFunction):
         return ret
 
     def _calculate_node_difference(self, a, b):
-        if not self.use_node_relabel:
+        if not self.use_node_relabel or self.relabel_method == self.RelabelMethod.NONE:
             return 0
 
         if a.is_eps():
@@ -90,37 +99,77 @@ class GeneralCostFunction(CostFunction):
             return 1
 
         key = "label"
-        n = len(a.info)
-        m = len(b.info)
-        max_dp = n + m
+        if self.relabel_method == self.RelabelMethod.COUNTER:
+            n = len(a.info)
+            m = len(b.info)
+            total = n + m
 
-        dp = [[max_dp] * (m + 2) for i in range(n + 2)]  # dp[n + 2][m + 2]
-        dpos_a = {}
-        for i in range(n + 1):
-            dp[i][0] = i
+            diff = {}
+            for info in a.info:
+                label = info[key]
+                if label not in diff:
+                    diff[label] = 1
+                else:
+                    diff[label] += 1
 
-        for i in range(m + 1):
-            dp[0][i] = i
+            for info in b.info:
+                label = info[key]
+                if label not in diff:
+                    diff[label] = -1
+                else:
+                    diff[label] -= 1
 
-        for i in range(1, n + 1):
-            ca = a.info[i - 1][key]
-            pos_b = 0
-            for j in range(1, m + 1):
-                cb = b.info[j - 1][key]
-                pos_a = 0
-                if cb in dpos_a:
-                    pos_a = dpos_a[cb]
+            tot_diff = 0
+            for k, v in diff.items():
+                tot_diff += abs(v)
 
-                diff = 1
-                if ca == cb:
-                    pos_b = j
-                    diff = 0
+            return tot_diff / total
+        elif self.relabel_method == self.RelabelMethod.DAMERAU_LD:
+            n = len(a.info)
+            m = len(b.info)
+            max_dp = n + m
 
-                dp[i][j] = min(dp[i - 1][j] + 1,
-                               dp[i][j - 1] + 1,
-                               dp[i - 1][j - 1] + diff,
-                               dp[pos_a - 1][pos_b - 1] + (i - pos_a - 1) + (j - pos_b - 1) + 1)
+            dp = [[max_dp] * (m + 2) for i in range(n + 2)]  # dp[n + 2][m + 2]
+            dpos_a = {}
+            for i in range(n + 1):
+                dp[i][0] = i
 
-            dpos_a[ca] = i
+            for i in range(m + 1):
+                dp[0][i] = i
 
-        return dp[n][m] / max_dp
+            for i in range(1, n + 1):
+                ca = a.info[i - 1][key]
+                pos_b = 0
+                for j in range(1, m + 1):
+                    cb = b.info[j - 1][key]
+                    pos_a = 0
+                    if cb in dpos_a:
+                        pos_a = dpos_a[cb]
+
+                    diff = 1
+                    if ca == cb:
+                        pos_b = j
+                        diff = 0
+
+                    dp[i][j] = min(dp[i - 1][j] + 1,
+                                   dp[i][j - 1] + 1,
+                                   dp[i - 1][j - 1] + diff,
+                                   dp[pos_a - 1][pos_b - 1] + (i - pos_a - 1) + (j - pos_b - 1) + 1)
+
+                dpos_a[ca] = i
+
+            return dp[n][m] / max(n, m)
+        elif self.relabel_method == self.RelabelMethod.EXACT:
+            n = len(a.info)
+            m = len(b.info)
+            if n != m:
+                return 1
+
+            count = 0
+            for i in range(n):
+                if a.info[i][key] != b.info[i][key]:
+                    count += 1
+
+            return count / n
+
+        return 0

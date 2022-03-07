@@ -1,6 +1,8 @@
+from typing import Callable
+
 from grader.src.classes.graph import Graph
 from grader.src.classes.node import Node
-from grader.src.cfggrader.classes.graph import Graph as GEDGraph, Node as GEDNode, Edge as GEDEdge
+from grader.src.ged.classes.graph import Graph as GEDGraph, Node as GEDNode, Edge as GEDEdge
 import pygraphviz as pgv
 
 
@@ -124,3 +126,9 @@ def pygraph_to_ged_graph(graph: Graph):
             ged_graph.add_edge(ged_edge)
 
     return ged_graph
+
+
+def edit_distance_to_similarity_score(dist, func: Callable[[float], float]):
+    if func is None:
+        return 1 - dist
+    return func(1 - dist)

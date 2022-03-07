@@ -1,9 +1,9 @@
 import time
 
-from grader.src.cfggrader.classes.edit_path import EditPath
-from grader.src.cfggrader.classes.graph import Graph
-from grader.src.cfggrader.classes.cost_function import CostFunction
-from grader.src.cfggrader.classes.search_node import SearchNode
+from grader.src.ged.classes.edit_path import EditPath
+from grader.src.ged.classes.graph import Graph
+from grader.src.ged.classes.cost_function import CostFunction
+from grader.src.ged.classes.search_node import SearchNode
 from grader.src.classes.constants import Constants
 
 
@@ -33,6 +33,7 @@ class DFSGED:
         self.sort_node_dfs = sort_node_dfs
 
     def set_use_node_relabel(self, use_node_relabel: bool):
+        self.cost_function.clear_precompute()
         self.cost_function.use_node_relabel = use_node_relabel
 
     def set_time_limit(self, time_limit):
@@ -46,6 +47,8 @@ class DFSGED:
                 print(f'{"EPS" : <4} -> {k.component_id}')
 
     def calculate_edit_distance(self, is_exact_computation=True, approximation_use_node_relabel=None) -> float:
+        self.cost_function.clear_precompute()
+
         # start timer
         self.is_solution_optimal = True
         self.start_time = time.time_ns()
