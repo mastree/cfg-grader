@@ -1,11 +1,11 @@
+astor==0.8.1
 astunparse==1.6.3
 graphviz==0.19
 munkres==1.1.4
 numpy==1.22.2
 Pillow==9.0.1
-pycfg==0.1
 pygraphviz==1.9
 six==1.16.0
-staticfg
+staticfg~=0.9.5
 typing-extensions==3.7.4.3
 XlsxWriter==3.0.2

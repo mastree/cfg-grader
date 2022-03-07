@@ -8,7 +8,7 @@ from grader.src.classes.constants import Constants
 
 
 class DFSGED:
-    def __init__(self, source: Graph, target: Graph, cost_function: CostFunction):
+    def __init__(self, source: Graph, target: Graph, cost_function: CostFunction, time_limit: int = 500):
         self.source = source
         self.target = target
         self.cost_function = cost_function
@@ -16,7 +16,7 @@ class DFSGED:
 
         # time limit in milliseconds
         self.start_time = None
-        self.time_limit = 500
+        self.time_limit = time_limit
 
         # bound
         self.ub_path: EditPath = None
