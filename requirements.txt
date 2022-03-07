@@ -6,6 +6,6 @@ numpy==1.22.2
 Pillow==9.0.1
 pygraphviz==1.9
 six==1.16.0
-staticfg~=0.9.5
+staticfg==0.9.5
 typing-extensions==3.7.4.3
 XlsxWriter==3.0.2
