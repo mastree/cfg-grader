@@ -15,7 +15,7 @@ class DFSGED:
 
     reason for these precondition is to sped up computation
     """
-    def __init__(self, source: Graph, target: Graph, cost_function: CostFunction, time_limit: int = 500):
+    def __init__(self, source: Graph, target: Graph, cost_function: CostFunction, time_limit=500, sort_node_dfs=False):
         self.source = source
         self.target = target
         self.cost_function = cost_function
@@ -30,6 +30,10 @@ class DFSGED:
         self.ub_cost: float = Constants.INF
 
         self.is_solution_optimal = False
+        self.sort_node_dfs = sort_node_dfs
+
+    def set_use_node_relabel(self, use_node_relabel: bool):
+        self.cost_function.use_node_relabel = use_node_relabel
 
     def set_time_limit(self, time_limit):
         self.time_limit = time_limit
@@ -37,8 +41,11 @@ class DFSGED:
     def print_matching(self):
         for k, v in self.ub_path.snode_distortion.items():
             print(f'{k.component_id : <4} -> {v.component_id}')
+        for k, v in self.ub_path.tnode_distortion.items():
+            if v.is_eps():
+                print(f'{"EPS" : <4} -> {k.component_id}')
 
-    def calculate_edit_distance(self) -> float:
+    def calculate_edit_distance(self, is_exact_computation=True, approximation_use_node_relabel=None) -> float:
         # start timer
         self.is_solution_optimal = True
         self.start_time = time.time_ns()
@@ -50,10 +57,22 @@ class DFSGED:
         tedge_size = len(self.target.edges)
 
         ub_cost = Constants.INF
-        root = EditPath.create_root(self.cost_function, self.source, self.target)
+
+        # creates root
+        root = None
+        if approximation_use_node_relabel is not None:
+            use_node_relabel = self.cost_function.use_node_relabel
+            self.set_use_node_relabel(approximation_use_node_relabel)
+            root = EditPath.create_root(self.cost_function, self.source, self.target, self.sort_node_dfs)
+            self.set_use_node_relabel(use_node_relabel)
+        else:
+            root = EditPath.create_root(self.cost_function, self.source, self.target, self.sort_node_dfs)
+
         self.ub_path = EditPath.create_path(self.cost_function, self.source, self.target, root.first_ub)
         self.ub_cost = self.ub_path.predict_cost()
-        self._search_ged(root)
+
+        if is_exact_computation:
+            self._search_ged(root)
 
         return self.ub_cost
 

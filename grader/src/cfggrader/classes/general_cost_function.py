@@ -8,8 +8,7 @@ class GeneralCostFunction(CostFunction):
         NODE_COST = 1
 
     def __init__(self, use_node_relabel=True):
-        super().__init__(True)
-        self.use_node_relabel = use_node_relabel
+        super().__init__(use_node_relabel)
 
     def get_node_cost(self, a: Node, b: Node):
         if self.do_node_precompute:
@@ -86,9 +85,9 @@ class GeneralCostFunction(CostFunction):
         if a.is_eps():
             if b.is_eps():
                 return 0
-            return self.Cost.NODE_COST
+            return 1
         elif b.is_eps():
-            return self.Cost.NODE_COST
+            return 1
 
         key = "label"
         n = len(a.info)

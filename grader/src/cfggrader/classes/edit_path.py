@@ -32,7 +32,7 @@ class EditPath:
         return edit_path
 
     @classmethod
-    def create_root(cls, cost_function: CostFunction, source: Graph, target: Graph, sort_source: bool = True):
+    def create_root(cls, cost_function: CostFunction, source: Graph, target: Graph, sort_source=False):
         edit_path = EditPath(cost_function, source, target)
         munkres = Munkres()
 
