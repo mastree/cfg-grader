@@ -2,12 +2,15 @@ from grader.src.cfggrader.classes.cost_function import CostFunction
 from grader.src.cfggrader.classes.graph_component import *
 
 
-class Cost:
-    EDGE_COST = 1
-    NODE_COST = 1
-
-
 class GeneralCostFunction(CostFunction):
+    class Cost:
+        EDGE_COST = 1
+        NODE_COST = 1
+
+    def __init__(self, use_node_relabel=True):
+        super().__init__(True)
+        self.use_node_relabel = use_node_relabel
+
     def get_node_cost(self, a: Node, b: Node):
         if self.do_node_precompute:
             s_id = 0
@@ -17,43 +20,43 @@ class GeneralCostFunction(CostFunction):
             if b.is_not_eps():
                 t_id = b.component_id
             if self.node_precompute[s_id][t_id] < 0.0:
-                self.node_precompute[s_id][t_id] = self.calculate_node_difference(a, b) * Cost.NODE_COST
+                self.node_precompute[s_id][t_id] = self._calculate_node_difference(a, b) * self.Cost.NODE_COST
 
             return self.node_precompute[s_id][t_id]
 
-        return self.calculate_node_difference(a, b) * Cost.NODE_COST
+        return self._calculate_node_difference(a, b) * self.Cost.NODE_COST
 
     def get_edge_cost(self, a: Edge, b: Edge, a_node: Node, b_node: Node):
         # check if edge is epsilon
         if a.is_eps():
             if b.is_eps():
                 return 0
-            return Cost.EDGE_COST
+            return self.Cost.EDGE_COST
         elif b.is_eps():
-            return Cost.EDGE_COST
+            return self.Cost.EDGE_COST
 
         # check if self loop
         if (a.from_node.get_id(), a.to_node.get_id()) == (a_node.get_id(), a_node.get_id()):
             if (b.from_node.get_id(), b.to_node.get_id()) == (b_node.get_id(), b_node.get_id()):
                 return 0
-            return 2 * Cost.EDGE_COST
+            return 2 * self.Cost.EDGE_COST
         elif (b.from_node.get_id(), b.to_node.get_id()) == (b_node.get_id(), b_node.get_id()):
-            return 2 * Cost.EDGE_COST
+            return 2 * self.Cost.EDGE_COST
 
         # check if edge direction is the same
         if (a.from_node.get_id() == a_node.get_id()) == (b.from_node.get_id() == b_node.get_id()):
             return 0
 
         # edge deletion
-        return 2 * Cost.EDGE_COST
+        return 2 * self.Cost.EDGE_COST
 
     def get_edges_cost(self, a: list[Edge], b: list[Edge], a_node: Node, b_node: Node):
         if a_node.is_eps():
             if b_node.is_eps():
                 return 0
-            return Cost.EDGE_COST * len(b)
+            return self.Cost.EDGE_COST * len(b)
         elif b_node.is_eps():
-            return Cost.EDGE_COST * len(a)
+            return self.Cost.EDGE_COST * len(a)
 
         type_count1 = self.count_each_edges_type(a, a_node)
         type_count2 = self.count_each_edges_type(b, b_node)
@@ -66,7 +69,7 @@ class GeneralCostFunction(CostFunction):
             remainder1 += type_count1[i]
             remainder2 += type_count2[i]
 
-        return Cost.EDGE_COST * (remainder1 + remainder2)
+        return self.Cost.EDGE_COST * (remainder1 + remainder2)
 
     @classmethod
     def count_each_edges_type(cls, edges: list[Edge], node: Node):
@@ -76,26 +79,49 @@ class GeneralCostFunction(CostFunction):
             ret[t] += 1
         return ret
 
-    @classmethod
-    def calculate_node_difference(cls, a, b):
-        # TODO: change info key used
-        # check if node is epsilon
+    def _calculate_node_difference(self, a, b):
+        if not self.use_node_relabel:
+            return 0
+
         if a.is_eps():
             if b.is_eps():
                 return 0
-            return Cost.NODE_COST
+            return self.Cost.NODE_COST
         elif b.is_eps():
-            return Cost.NODE_COST
+            return self.Cost.NODE_COST
 
-        # check if node is the same (TODO: use edit distance for multipe line)
-        # if a.info["rawLine"] == b.info["rawLine"]:
-        #     return 0
-        if len(a.info) == len(b.info):
-            n = len(a.info)
-            count = 0
-            for i in range(n):
-                if a.info[i]["rawLine"] != b.info[i]["rawLine"]:
-                    count += 1
-            return count / n
+        key = "label"
+        n = len(a.info)
+        m = len(b.info)
+        max_dp = n + m
 
-        return 1
+        dp = [[max_dp] * (m + 2) for i in range(n + 2)]  # dp[n + 2][m + 2]
+        dpos_a = {}
+        for i in range(n + 1):
+            dp[i][0] = i
+
+        for i in range(m + 1):
+            dp[0][i] = i
+
+        for i in range(1, n + 1):
+            ca = a.info[i - 1][key]
+            pos_b = 0
+            for j in range(1, m + 1):
+                cb = b.info[j - 1][key]
+                pos_a = 0
+                if cb in dpos_a:
+                    pos_a = dpos_a[cb]
+
+                diff = 1
+                if ca == cb:
+                    pos_b = j
+                    diff = 0
+
+                dp[i][j] = min(dp[i - 1][j] + 1,
+                               dp[i][j - 1] + 1,
+                               dp[i - 1][j - 1] + diff,
+                               dp[pos_a - 1][pos_b - 1] + (i - pos_a - 1) + (j - pos_b - 1) + 1)
+
+            dpos_a[ca] = i
+
+        return dp[n][m] / max_dp

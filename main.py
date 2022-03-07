@@ -39,8 +39,11 @@ def test_ged():
     print(f'size1: {len(graph_source.nodes)}, size2: {len(graph_target.nodes)}')
 
     dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(), 2000)
-    print(f'GED: {dfs_ged.calculate_edit_distance()}')
+    ed = dfs_ged.calculate_edit_distance()
+    normalized_ed = dfs_ged.get_normalized_edit_distance()
     dfs_ged.print_matching()
+    print(f'GED: {ed}')
+    print(f'similarity score: {1 - normalized_ed}')
 
 
 test_ged()

@@ -8,6 +8,13 @@ from grader.src.classes.constants import Constants
 
 
 class DFSGED:
+    """
+    precondition:
+    - each graph nodes should have continous component_id of [1, len(nodes)]
+    - each graph edges should have continous component_id of [len(nodes) + 1, len(nodes) + len(edges)]
+
+    reason for these precondition is to sped up computation
+    """
     def __init__(self, source: Graph, target: Graph, cost_function: CostFunction, time_limit: int = 500):
         self.source = source
         self.target = target
@@ -49,6 +56,18 @@ class DFSGED:
         self.search_ged(root)
 
         return self.ub_cost
+
+    def get_edit_distance(self):
+        return self.ub_cost
+
+    def get_normalized_edit_distance(self):
+        snode_size = len(self.source.nodes)
+        tnode_size = len(self.target.nodes)
+        sedge_size = len(self.source.edges)
+        tedge_size = len(self.target.edges)
+
+        return self.ub_cost / ((snode_size + tnode_size) * self.cost_function.Cost.NODE_COST +
+                               (sedge_size + tedge_size) * self.cost_function.Cost.EDGE_COST)
 
     def search_ged(self, no_edit: EditPath):
         cur_node = SearchNode(no_edit)
