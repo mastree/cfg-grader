@@ -101,7 +101,7 @@ def test_ged(file1, file2):
     dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction())
     ed = dfs_ged.calculate_edit_distance()
     normalized_ed = dfs_ged.get_normalized_edit_distance()
-    dfs_ged.print_matching()
+    print(dfs_ged.get_node_matching_string())
     print(f'GED: {ed}')
     print(f'similarity score: {1 - normalized_ed}')
 

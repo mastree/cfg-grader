@@ -27,10 +27,6 @@ class Node:
         self.add_out_nodes(node)
         node.add_in_nodes(self)
 
-    def print_info(self):
-        for info in self.info:
-            print(info)
-
     def get_label(self):
         return self.label
 

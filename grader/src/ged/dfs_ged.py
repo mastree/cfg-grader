@@ -39,12 +39,14 @@ class DFSGED:
     def set_time_limit(self, time_limit):
         self.time_limit = time_limit
 
-    def print_matching(self):
+    def get_node_matching_string(self):
+        ret = []
         for k, v in self.ub_path.snode_distortion.items():
-            print(f'{k.component_id : <4} -> {v.component_id}')
+            ret.append(f'{k.component_id : <4} -> {v.component_id}')
         for k, v in self.ub_path.tnode_distortion.items():
             if v.is_eps():
-                print(f'{"EPS" : <4} -> {k.component_id}')
+                ret.append(f'{"EPS" : <4} -> {k.component_id}')
+        return '\n'.join(ret)
 
     def calculate_edit_distance(self, is_exact_computation=True, approximation_use_node_relabel=None) -> float:
         self.cost_function.clear_precompute()
