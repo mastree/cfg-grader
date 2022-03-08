@@ -156,16 +156,16 @@ class EditPath:
             self.add_distortion(Constants.NODE_EPS, self.pending_nodes2[0])
 
     def use_source_node(self, node: Node):
-        self.pending_nodes1 = [x for x in self.pending_nodes1 if x.component_id != node.component_id]
+        self.pending_nodes1 = [x for x in self.pending_nodes1 if x.get_id() != node.get_id()]
 
     def use_target_node(self, node: Node):
-        self.pending_nodes2 = [x for x in self.pending_nodes2 if x.component_id != node.component_id]
+        self.pending_nodes2 = [x for x in self.pending_nodes2 if x.get_id() != node.get_id()]
 
     def use_source_edge(self, edge: Edge):
-        self.pending_edges1 = [x for x in self.pending_edges1 if x.component_id != edge.component_id]
+        self.pending_edges1 = [x for x in self.pending_edges1 if x.get_id() != edge.get_id()]
 
     def use_target_edge(self, edge: Edge):
-        self.pending_edges2 = [x for x in self.pending_edges2 if x.component_id != edge.component_id]
+        self.pending_edges2 = [x for x in self.pending_edges2 if x.get_id() != edge.get_id()]
 
     def add_distortion(self, component1: GraphComponent, component2: GraphComponent):
         if isinstance(component1, Node):
@@ -206,7 +206,7 @@ class EditPath:
 
         for edge1 in node1.edges:
             onode1 = edge1.get_other_end(node1)
-            is_out_edge = edge1.from_node.component_id == node1.component_id
+            is_out_edge = edge1.from_node.get_id() == node1.get_id()
             if onode1 in self.snode_distortion:
                 onode2 = self.snode_distortion[onode1]
                 if onode2.is_eps():
@@ -225,7 +225,7 @@ class EditPath:
 
         for edge2 in node2.edges:
             onode2 = edge2.get_other_end(node2)
-            is_out_edge = edge2.from_node.component_id == node2.component_id
+            is_out_edge = edge2.from_node.get_id() == node2.get_id()
             if onode2 in self.tnode_distortion:
                 onode1 = self.tnode_distortion[onode2]
                 if onode1.is_not_eps():

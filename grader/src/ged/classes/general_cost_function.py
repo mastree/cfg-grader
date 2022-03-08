@@ -24,10 +24,10 @@ class GeneralCostFunction(CostFunction):
         if self.do_node_precompute:
             s_id = 0
             if a.is_not_eps():
-                s_id = a.component_id
+                s_id = a.get_id()
             t_id = 0
             if b.is_not_eps():
-                t_id = b.component_id
+                t_id = b.get_id()
             if self.node_precompute[s_id][t_id] < 0.0:
                 self.node_precompute[s_id][t_id] = self._calculate_node_difference(a, b) * self.Cost.NODE_COST
 

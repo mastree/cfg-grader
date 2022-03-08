@@ -42,10 +42,10 @@ class DFSGED:
     def get_node_matching_string(self):
         ret = []
         for k, v in self.ub_path.snode_distortion.items():
-            ret.append(f'{k.component_id : <4} -> {v.component_id}')
+            ret.append(f'{k.get_id() : <4} -> {v.get_id()}')
         for k, v in self.ub_path.tnode_distortion.items():
             if v.is_eps():
-                ret.append(f'{"EPS" : <4} -> {k.component_id}')
+                ret.append(f'{"EPS" : <4} -> {k.get_id()}')
         return '\n'.join(ret)
 
     def calculate_edit_distance(self, is_exact_computation=True, approximation_use_node_relabel=None) -> float:

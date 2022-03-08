@@ -24,7 +24,7 @@ class Graph:
 
     def find_node_with_id(self, search_id: int):
         for node in self.nodes:
-            if node.component_id == search_id:
+            if node.get_id() == search_id:
                 return node
         return None
 

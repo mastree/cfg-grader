@@ -12,20 +12,20 @@ def compress_graph_component_id(graph: Graph, start_id=1) -> Graph:
     for node in graph.nodes:
         last_id += 1
         new_node = Node(last_id, copy.deepcopy(node.info))
-        id_node[node.component_id] = new_node
+        id_node[node.get_id()] = new_node
         result.add_node(new_node)
 
     for edge in graph.edges:
         last_id += 1
 
-        from_node = id_node[edge.from_node.component_id]
-        to_node = id_node[edge.to_node.component_id]
+        from_node = id_node[edge.from_node.get_id()]
+        to_node = id_node[edge.to_node.get_id()]
 
         new_edge = Edge(to_node, from_node, copy.deepcopy(edge.info))
         new_edge.set_id(last_id)
 
         from_node.add_edge(new_edge)
-        if from_node.component_id != to_node.component_id:
+        if from_node.get_id() != to_node.get_id():
             to_node.add_edge(new_edge)
 
         result.add_edge(new_edge)

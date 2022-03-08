@@ -47,7 +47,7 @@ def collapse(input_graph: Graph):
             new_edge = Edge(to_node, from_node, copy.deepcopy(edge.info))
 
             from_node.add_edge(new_edge)
-            if from_node.component_id != to_node.component_id:
+            if from_node.get_id() != to_node.get_id():
                 to_node.add_edge(new_edge)
 
             new_graph.add_edge(new_edge)

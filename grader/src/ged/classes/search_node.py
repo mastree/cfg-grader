@@ -9,6 +9,7 @@ class SearchNode:
         self.sorted = False
 
     def add_child(self, child_edit_path: EditPath):
+        self.sorted = False
         self.children.append(SearchNode(child_edit_path, self))
         return self.children[-1]
 

@@ -41,7 +41,7 @@ class PythonCfgGenerator:
         for block in cfg:
             node = cls._block_to_node(block)
             id_node[node.get_id()] = node
-            last_id = max(last_id, node.component_id)
+            last_id = max(last_id, node.get_id())
             graph.add_node(node)
 
         for block in cfg:
@@ -54,7 +54,7 @@ class PythonCfgGenerator:
                 edge.set_id(last_id)
 
                 from_node.add_edge(edge)
-                if from_node.component_id != to_node.component_id:
+                if from_node.get_id() != to_node.get_id():
                     to_node.add_edge(edge)
 
                 graph.add_edge(edge)
