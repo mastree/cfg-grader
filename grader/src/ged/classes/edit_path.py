@@ -91,7 +91,7 @@ class EditPath:
         self.pending_edges2: list[Edge] = []
 
         if self.source is not None:
-            self.pending_edges1.extend(self.source.edges)
+            self.pending_nodes1.extend(self.source.nodes)
             self.pending_edges1.extend(self.source.edges)
 
         if self.target is not None:
@@ -190,18 +190,18 @@ class EditPath:
         # handle edges
         # node deletion
         if node2.is_eps():
-            for edge in node1.edges:
-                onode1 = edge.get_other_end(node1)
+            for edge1 in node1.edges:
+                onode1 = edge1.get_other_end(node1)
                 if onode1 in self.snode_distortion:
-                    self.add_edge_distortion(edge, Constants.EDGE_EPS, node1, Constants.NODE_EPS)
+                    self.add_edge_distortion(edge1, Constants.EDGE_EPS, node1, Constants.NODE_EPS)
             return
 
         # node insertion
         if node1.is_eps():
-            for edge in node2.edges:
-                onode2 = edge.get_other_end(node2)
+            for edge2 in node2.edges:
+                onode2 = edge2.get_other_end(node2)
                 if onode2 in self.tnode_distortion:
-                    self.add_edge_distortion(Constants.EDGE_EPS, edge, Constants.NODE_EPS, node2)
+                    self.add_edge_distortion(Constants.EDGE_EPS, edge2, Constants.NODE_EPS, node2)
             return
 
         for edge1 in node1.edges:
@@ -226,7 +226,7 @@ class EditPath:
         for edge2 in node2.edges:
             onode2 = edge2.get_other_end(node2)
             is_out_edge = edge2.from_node.get_id() == node2.get_id()
-            if onode2 in self.tnode_distortion:
+            if onode2 in self.tnode_distortion:  # TODO: needs further checking
                 onode1 = self.tnode_distortion[onode2]
                 if onode1.is_not_eps():
                     edge1 = None
@@ -277,7 +277,6 @@ class EditPath:
                     v = nodes2[j]
                     costs = self.cost_function.get_node_cost(u, v)
 
-                    # TODO: can be improved
                     edges = v.get_edges()
                     for edge2 in edges:
                         costs += self.cost_function.get_edge_cost(
@@ -300,7 +299,6 @@ class EditPath:
                     edge2 = Constants.EDGE_EPS
                     costs = self.cost_function.get_node_cost(u, v)
 
-                    # TODO: can be improved
                     for edge1 in edges:
                         costs += self.cost_function.get_edge_cost(
                             edge1,

@@ -94,8 +94,7 @@ def test_all():
 
 
 def test_ged(file1, file2):
-    print(f'solution: {file1}')
-    print(f'jury: {file2}')
+    print(f'sol: {file1.split("/")[-1]}, jury: {file2.split("/")[-1]}')
 
     graph_source = PythonCfgGenerator.generate_python_from_file(file1)
     graph_target = PythonCfgGenerator.generate_python_from_file(file2)
