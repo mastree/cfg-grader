@@ -1,131 +1,35 @@
+import copy
 from typing import Callable
 
-from grader.src.classes.graph import Graph
-from grader.src.classes.node import Node
-from grader.src.ged.classes.graph import Graph as GEDGraph, Node as GEDNode, Edge as GEDEdge
-import pygraphviz as pgv
+from grader.src.ged.classes.graph import Graph
+from grader.src.ged.classes.graph_component import *
 
 
-def remove_number_from_label(node_label):
-    pos = node_label.find(':')
-    if (pos == -1):
-        return node_label
-    return node_label[pos + 2:]
-
-
-def digraph_to_graph_for_pycfg(digraph: pgv.agraph.AGraph):
-    graph = Graph()
-    digraph_nodes = digraph.nodes()
-
-    edges_to_be_added = []
-    node_count = 1  # may be better to use 0-indexing (?)
-    id_to_new_id = {}
-    for node_id in digraph_nodes:
-        id_to_new_id[node_id] = node_count
-
-        node_label = digraph.get_node(node_id).attr['label']
-        node_label = remove_number_from_label(node_label)
-
-        out_edges = digraph.out_edges(node_id)
-        for out_edge in out_edges:
-            edges_to_be_added.append(out_edge)
-
-        node = Node(int(node_count), {"rawLine": node_label})
-        graph.add_node(node)
-
-        node_count += 1
-
-    for edge in edges_to_be_added:
-        try:
-            graph.get_node(id_to_new_id[edge[0]]).add_adjacent(graph.get_node(id_to_new_id[edge[1]]))
-        except (ValueError, Exception):
-            pass
-
-    return graph
-
-
-def digraph_to_graph(digraph: pgv.agraph.AGraph):
-    graph = Graph()
-    digraph_nodes = digraph.nodes()
-
-    edges_to_be_added = []
-    node_count = 1  # may be better to use 0-indexing (?)
-    id_to_new_id = {}
-    for node_id in digraph_nodes:
-        id_to_new_id[node_id] = node_count
-
-        node_label = digraph.get_node(node_id).attr['label']
-
-        out_edges = digraph.out_edges(node_id)
-        for out_edge in out_edges:
-            edges_to_be_added.append(out_edge)
-
-        node = Node(int(node_count), {"rawLine": node_label})
-        graph.add_node(node)
-
-        node_count += 1
-
-    for edge in edges_to_be_added:
-        try:
-            graph.get_node(id_to_new_id[edge[0]]).add_adjacent(graph.get_node(id_to_new_id[edge[1]]))
-        except (ValueError, Exception):
-            pass
-
-    return graph
-
-
-def node_raw_info_to_str(node: Node):
-    str_info = ''
-    for info in node.get_info():
-        if str_info == '':
-            str_info += info["rawLine"]
-        else:
-            str_info += f'\n{info["rawLine"]}'
-    return str_info
-
-
-def graph_to_digraph(graph: Graph):
-    digraph = pgv.agraph.AGraph(directed=True)
-
-    edges = []
+def compress_graph_component_id(graph: Graph, start_id=1) -> Graph:
+    result = Graph()
+    last_id = start_id - 1
+    id_node = {}
     for node in graph.nodes:
-        digraph.add_node(str(node.get_label()), label=f'{node.get_label()}: {[info["rawLine"] for info in node.get_info()]}')
-        for out_node in node.out_nodes:
-            edges.append((str(node.get_label()), str(out_node.get_label())))
+        last_id += 1
+        id_node[node.component_id] = Node(last_id, copy.deepcopy(node.info))
+        result.add_node(id_node[node.component_id])
 
-    for edge in edges:
-        digraph.add_edge(edge[0], edge[1])
+    for edge in graph.edges:
+        last_id += 1
 
-    return digraph
+        from_node = id_node[edge.from_node.component_id]
+        to_node = id_node[edge.to_node.component_id]
 
+        new_edge = Edge(copy.deepcopy(edge.info), from_node, to_node)
+        new_edge.set_id(last_id)
 
-def pygraph_to_ged_graph(graph: Graph):
-    ged_graph: GEDGraph = GEDGraph()
+        from_node.add_edge(new_edge)
+        if from_node.component_id != to_node.component_id:
+            to_node.add_edge(new_edge)
 
-    # build nodes
-    id_node_dict = {}
-    last_id = 0
-    for node in graph.get_nodes():
-        ged_node = GEDNode(node.label, node.info)
-        ged_graph.add_node(ged_node)
-        id_node_dict[ged_node.get_id()] = ged_node
-        last_id = max(last_id, ged_node.component_id)
+        result.add_edge(new_edge)
 
-    # build edges
-    for node in graph.get_nodes():
-        for edge in node.get_out_nodes():
-            from_node = id_node_dict[node.get_label()]
-            to_node = id_node_dict[edge.get_label()]
-
-            ged_edge = GEDEdge(from_node=from_node, to_node=to_node)
-            last_id += 1
-            ged_edge.set_id(last_id)
-
-            from_node.add_edge(ged_edge)
-            to_node.add_edge(ged_edge)
-            ged_graph.add_edge(ged_edge)
-
-    return ged_graph
+    return result
 
 
 def edit_distance_to_similarity_score(dist, func: Callable[[float], float]):

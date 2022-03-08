@@ -4,7 +4,7 @@ from grader.src.ged.classes.edit_path import EditPath
 from grader.src.ged.classes.graph import Graph
 from grader.src.ged.classes.cost_function import CostFunction
 from grader.src.ged.classes.search_node import SearchNode
-from grader.src.classes.constants import Constants
+from grader.src.ged.utils.constants import Constants
 
 
 class DFSGED:

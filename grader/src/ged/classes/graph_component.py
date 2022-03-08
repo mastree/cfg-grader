@@ -1,3 +1,6 @@
+import copy
+
+
 class GraphComponent:
     def __init__(self, component_id=None, info=[]):
         self.component_id: int = component_id
@@ -23,28 +26,44 @@ class Node(GraphComponent):
     def __init__(self, component_id=None, info=[]):
         super().__init__(component_id, info)
         self.edges: list[Edge] = []
+        self.out_edges: list[Edge] = []
+        self.in_edges: list[Edge] = []
 
     def get_edges(self):
         return self.edges
 
     def set_edges(self, edges: list):
         self.edges = edges
+        self.out_edges = []
+        self.in_edges = []
+        for edge in self.edges:
+            if edge.from_node.component_id == self.component_id:
+                self.out_edges.append(edge)
+            if edge.to_node.component_id == self.component_id:
+                self.in_edges.append(edge)
 
     def add_edge(self, edge):
         self.edges.append(edge)
+        if edge.from_node.component_id == self.component_id:
+            self.out_edges.append(edge)
+        if edge.to_node.component_id == self.component_id:
+            self.in_edges.append(edge)
 
     def get_out_edges(self):
-        edges = []
-        for edge in self.edges:
-            if edge.from_node.component_id == self.component_id:
-                edges.append(edge)
-        return edges
+        return self.out_edges
+
+    def get_in_edges(self):
+        return self.in_edges
 
     def get_edge_to(self, node):
-        for edge in self.edges:
+        for edge in self.out_edges:
             if node.component_id == edge.to_node.component_id:
                 return edge
         return None
+
+    def clone_node_only(self):
+        node = Node(self.component_id, copy.deepcopy(self.info))
+        return node
 
     def __str__(self):
         edges = []

@@ -1,6 +1,6 @@
 import math
 
-from grader.src.api.functions import edit_distance_to_similarity_score
+from grader.src.api.functions import *
 from grader.src.cfggenerator.cfggenerator import PythonCfgGenerator
 
 from grader.src.ged.classes.general_cost_function import GeneralCostFunction
@@ -59,9 +59,11 @@ def test_all():
     scores = []
     for jury in jurys:
         graph_target = PythonCfgGenerator.generate_python_from_file(jury)
+        graph_target = compress_graph_component_id(graph_target)
 
         for solution in solutions:
             graph_source = PythonCfgGenerator.generate_python_from_file(solution)
+            graph_source = compress_graph_component_id(graph_source)
             dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(False))
             # dfs_ged.set_use_node_relabel(False)
 

@@ -54,7 +54,8 @@ class PythonCfgGenerator:
                 edge.set_to_node(to_node)
 
                 from_node.add_edge(edge)
-                to_node.add_edge(edge)
+                if from_node.component_id != to_node.component_id:
+                    to_node.add_edge(edge)
 
                 graph.add_edge(edge)
 
