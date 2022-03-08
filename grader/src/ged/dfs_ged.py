@@ -52,16 +52,9 @@ class DFSGED:
         self.cost_function.clear_precompute()
 
         # start timer
-        self.is_solution_optimal = True
         self.start_time = time.time_ns()
 
-        # process
-        snode_size = len(self.source.nodes)
-        tnode_size = len(self.target.nodes)
-        sedge_size = len(self.source.edges)
-        tedge_size = len(self.target.edges)
-
-        ub_cost = Constants.INF
+        self.ub_cost = Constants.INF
 
         # creates root
         root = None
@@ -77,6 +70,7 @@ class DFSGED:
         self.ub_cost = self.ub_path.predict_cost()
 
         if is_exact_computation:
+            self.is_solution_optimal = True
             self._search_ged(root)
 
         return self.ub_cost
@@ -102,7 +96,9 @@ class DFSGED:
                 self.is_solution_optimal = False
                 break
 
-            self._generate_children(cur_node)
+            if len(cur_node.children) == 0:  # check if not generated yet
+                self._generate_children(cur_node)
+
             if len(cur_node.children) == 0:
                 edit_path = cur_node.edit_path
                 edit_path.complete()

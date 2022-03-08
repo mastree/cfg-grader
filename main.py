@@ -57,6 +57,7 @@ def bias_func(x):
 
 def test_all():
     scores = []
+    mx = 0
     for jury in jurys:
         graph_target = PythonCfgGenerator.generate_python_from_file(jury)
         graph_target = compress_graph_component_id(graph_target)
@@ -85,10 +86,11 @@ def test_all():
 
             assert (normalized_ed >= approx_normalized_ed)
             # if normalized_ed != approx_normalized_ed:
-            print(f'{normalized_ed} -> {approx_normalized_ed} -> {approx_normalized_ed_rel}')
-            print(jury)
-            print(solution)
-    print(f'average: {sum(scores) / len(scores)}')
+            mx = max(mx, normalized_ed)
+            print(f'{jury.split("/")[-1]} {solution.split("/")[-1]}')
+            print(f'optimal? {dfs_ged.is_solution_optimal}: {normalized_ed} -> {approx_normalized_ed} -> {approx_normalized_ed_rel}')
+
+    print(f'average: {sum(scores) / len(scores)}, max: {mx}')
 
 
 def test_ged(file1, file2):
@@ -119,7 +121,7 @@ def test_json():
     print(json_data)
 
 
-# test_ged(solutions[0], jurys[0])
+# test_ged(solutions[1], jurys[0])
 # test_ged(jurys[0], solutions[0])
 test_all()
 # test_json()
