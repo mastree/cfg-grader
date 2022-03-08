@@ -2,6 +2,7 @@ import math
 
 from grader.src.api.functions import edit_distance_to_similarity_score
 from grader.src.classes.graph import Graph
+from grader.src.constants import Constants
 from grader.src.ged.classes.cost_function import CostFunction
 from grader.src.ged.classes.general_cost_function import GeneralCostFunction
 from grader.src.ged.dfs_ged import DFSGED
@@ -15,7 +16,7 @@ def grade_one_on_one(graph_source: Graph, graph_target: Graph, cost_function: Co
     dfs_ged.calculate_edit_distance()
     score = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), math.sqrt)
 
-    return score
+    return score * Constants.MAX_SCORE
 
 
 def grade(graph_source: Graph, graph_targets: list[Graph]):

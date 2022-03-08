@@ -18,7 +18,6 @@ class Grader(Resource):
         data = request.data
         self.logger.info("Grading control flow graph...")
 
-        req_data: GraderRequest = None
         try:
             req_data = json.loads(data)
             req_data = GraderRequest(**req_data)
@@ -32,4 +31,4 @@ class Grader(Resource):
             return response
         except Exception as e:
             self.logger.error(f'failed to load json: {e}')
-            return get_response(err=True, msg='Unknown error occurred', status_code=500)
+            return get_response(err=True, msg='Failed to parse control flow graph', status_code=500)
