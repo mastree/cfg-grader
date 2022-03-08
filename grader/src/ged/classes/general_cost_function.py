@@ -9,11 +9,12 @@ class GeneralCostFunction(CostFunction):
 
     class RelabelMethod:
         NONE = 0
-        COUNTER = 1
-        DAMERAU_LD = 2
-        EXACT = 3
+        BOOLEAN_COUNT = 1
+        COUNTER = 2
+        DAMERAU_LD = 3
+        EXACT = 4
 
-    def __init__(self, use_node_relabel=False, relabel_method=RelabelMethod.COUNTER):
+    def __init__(self, use_node_relabel=False, relabel_method=RelabelMethod.BOOLEAN_COUNT):
         super().__init__(use_node_relabel)
         self.relabel_method = self.RelabelMethod.NONE
         if use_node_relabel:
@@ -99,7 +100,27 @@ class GeneralCostFunction(CostFunction):
             return 1
 
         key = "label"
-        if self.relabel_method == self.RelabelMethod.COUNTER:
+        if self.relabel_method == self.RelabelMethod.BOOLEAN_COUNT:
+            a_dict = {}
+            b_dict = {}
+            all_dict = {}
+            for info in a.info:
+                label = info[key]
+                a_dict[label] = 1
+                all_dict[label] = 1
+
+            for info in b.info:
+                label = info[key]
+                b_dict[label] = 1
+                all_dict[label] = 1
+
+            count = 0
+            for k in all_dict:
+                if (k in a_dict) != (k in b_dict):
+                    count += 1
+
+            return count / len(all_dict)
+        elif self.relabel_method == self.RelabelMethod.COUNTER:
             n = len(a.info)
             m = len(b.info)
             total = n + m
