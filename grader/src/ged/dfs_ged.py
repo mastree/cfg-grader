@@ -119,7 +119,7 @@ class DFSGED:
 
     def _generate_children(self, search_node: SearchNode):
         edit_path = search_node.edit_path
-        if len(edit_path.pending_nodes1):
+        if len(edit_path.pending_nodes1) > 0:
             node1 = edit_path.pending_nodes1[0]
             for node2 in edit_path.pending_nodes2:
                 ch_edit_path = EditPath.clone(edit_path)
