@@ -108,9 +108,21 @@ def test_ged(file1, file2):
     print(f'similarity score: {1 - normalized_ed}')
 
 
+def test_json():
+    import json
+
+    raw_string = ""
+    with open("webservice/tests/json/grader-sample.json", "r") as f:
+        raw_string = f.read()
+
+    json_data = json.loads(raw_string)
+    print(json_data)
+
+
 # test_ged(solutions[0], jurys[0])
 # test_ged(jurys[0], solutions[0])
 test_all()
+# test_json()
 
 # draw_graph(solutions[0], "generatedimg/solution")
 # draw_graph(jurys[0], "generatedimg/jury")

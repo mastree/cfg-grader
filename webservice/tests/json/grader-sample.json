@@ -1,0 +1,60 @@
+{
+  "solution": {
+    "nodes": [
+      {
+        "id": 1,
+        "info": [
+          {
+            "rawLine": "print(something)",
+            "label": "expr"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "info": [
+          {
+            "rawLine": "print(something2)",
+            "label": "expr"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from_node": 1,
+        "to_node": 2
+      }
+    ]
+  },
+  "jury_solutions": [
+    {
+      "nodes": [
+        {
+          "id": 1,
+          "info": [
+            {
+              "rawLine": "print(something)",
+              "label": "expr"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "info": [
+            {
+              "rawLine": "print(something2)",
+              "label": "expr"
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "from_node": 2,
+          "to_node": 1
+        }
+      ]
+    }
+  ]
+}

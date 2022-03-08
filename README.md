@@ -45,3 +45,13 @@ On windows
 ```sh
 deactivate
 ```
+
+## Run Project
+
+Run the service by using this command:
+
+```bash
+PYTHONPATH=$(pwd) python webservice/src/main.py
+```
+
+You can then try to hit the endpoint `localhost:5000/healthcheck` to see if it's working or not.

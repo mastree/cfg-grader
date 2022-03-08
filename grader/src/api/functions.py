@@ -20,7 +20,7 @@ def compress_graph_component_id(graph: Graph, start_id=1) -> Graph:
         from_node = id_node[edge.from_node.component_id]
         to_node = id_node[edge.to_node.component_id]
 
-        new_edge = Edge(copy.deepcopy(edge.info), from_node, to_node)
+        new_edge = Edge(to_node, from_node, copy.deepcopy(edge.info))
         new_edge.set_id(last_id)
 
         from_node.add_edge(new_edge)
