@@ -1,11 +1,11 @@
 # CFG Grader
 Author: Muhammad Kamal Shafi
 
-Grader for Control Flow Graph similarity.
+Grader for Control Flow Graph similarity, calculated using Graph Edit Distance exact calculation with upper bound approximation and time limit.
 
 # Python Dependencies
 
-Required to have python version 3.8 or later.
+Required to have python version 3.10 or later (due to type hinting).
 
 ## update dependencies
 ```sh
