@@ -120,7 +120,7 @@ def test_json():
     print(json_data)
 
 
-# test_ged(solutions[1], jurys[0])
+# test_ged(solutions[0], jurys[0])
 # test_ged(jurys[0], solutions[0])
 test_all()
 # test_json()

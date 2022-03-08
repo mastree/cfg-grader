@@ -155,6 +155,9 @@ class EditPath:
         while len(self.pending_nodes2) > 0:
             self.add_distortion(Constants.NODE_EPS, self.pending_nodes2[0])
 
+        while len(self.pending_nodes1) > 0:
+            self.add_distortion(self.pending_nodes1[0], Constants.NODE_EPS)
+
     def use_source_node(self, node: Node):
         self.pending_nodes1 = [x for x in self.pending_nodes1 if x.get_id() != node.get_id()]
 
@@ -226,7 +229,7 @@ class EditPath:
         for edge2 in node2.edges:
             onode2 = edge2.get_other_end(node2)
             is_out_edge = edge2.from_node.get_id() == node2.get_id()
-            if onode2 in self.tnode_distortion:  # TODO: needs further checking
+            if onode2 in self.tnode_distortion:
                 onode1 = self.tnode_distortion[onode2]
                 if onode1.is_not_eps():
                     edge1 = None
@@ -237,6 +240,8 @@ class EditPath:
 
                     if edge1 is None:
                         self.add_edge_distortion(Constants.EDGE_EPS, edge2, Constants.NODE_EPS, node2)
+                else:
+                    self.add_edge_distortion(Constants.EDGE_EPS, edge2, Constants.NODE_EPS, node2)
 
     def add_edge_distortion(self, edge1: Edge, edge2: Edge, node1: Node, node2: Node):
         self.is_heuristic_computed = False

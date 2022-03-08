@@ -101,11 +101,12 @@ class DFSGED:
 
             if len(cur_node.children) == 0:
                 edit_path = cur_node.edit_path
-                edit_path.complete()
-                total_edit_cost = edit_path.predict_cost()
-                if self.ub_cost > total_edit_cost:
-                    self.ub_cost = total_edit_cost
-                    self.ub_path = edit_path
+                if len(edit_path.pending_nodes1) == 0:
+                    edit_path.complete()
+                    total_edit_cost = edit_path.predict_cost()
+                    if self.ub_cost > total_edit_cost:
+                        self.ub_cost = total_edit_cost
+                        self.ub_path = edit_path
                 cur_node = cur_node.parent
                 continue
 
