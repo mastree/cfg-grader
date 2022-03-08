@@ -1,3 +1,5 @@
+import copy
+
 from grader.src.ged.classes.graph_component import Node
 
 
@@ -27,7 +29,7 @@ class CollapserDSU:
         self.par = [i for i in range(N + 1)]
         self.info = [[] for i in range(N + 1)]
         for node in nodes:
-            self.info[node.get_id()] = node.get_info()
+            self.info[node.get_id()] = copy.deepcopy(node.get_info())
 
     def find_par(self, u: int):
         if self.par[u] == u:

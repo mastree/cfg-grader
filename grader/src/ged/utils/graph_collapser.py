@@ -26,7 +26,7 @@ def collapse(input_graph: Graph):
         for out_edge in out_edges:
             out_node = out_edge.to_node
             adj_id = out_node.get_id()
-            if len(out_node.get_in_edges()):
+            if len(out_node.get_in_edges()) <= 1:
                 dsu.merge(id, adj_id)
 
     new_graph = Graph()
