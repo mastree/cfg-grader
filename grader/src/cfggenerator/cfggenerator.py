@@ -37,21 +37,21 @@ class PythonCfgGenerator:
 
         graph = Graph()
         last_id = 0
+        id_node = {}
         for block in cfg:
             node = cls._block_to_node(block)
+            id_node[node.get_id()] = node
             last_id = max(last_id, node.component_id)
             graph.add_node(node)
 
         for block in cfg:
             for out_edge in block.exits:
-                from_node = graph.find_node_with_id(out_edge.source.id)
-                to_node = graph.find_node_with_id(out_edge.target.id)
+                from_node = id_node[out_edge.source.id]  # graph.find_node_with_id(out_edge.source.id)
+                to_node = id_node[out_edge.target.id]  # graph.find_node_with_id(out_edge.target.id)
 
                 last_id += 1
-                edge = Edge()
+                edge = Edge(from_node, to_node)
                 edge.set_id(last_id)
-                edge.set_from_node(from_node)
-                edge.set_to_node(to_node)
 
                 from_node.add_edge(edge)
                 if from_node.component_id != to_node.component_id:

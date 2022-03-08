@@ -26,6 +26,7 @@ class Graph:
         for node in self.nodes:
             if node.component_id == search_id:
                 return node
+        return None
 
     def __str__(self):
         ret = ""

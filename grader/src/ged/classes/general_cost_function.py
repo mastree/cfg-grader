@@ -44,16 +44,8 @@ class GeneralCostFunction(CostFunction):
         elif b.is_eps():
             return self.Cost.EDGE_COST
 
-        # check if self loop
-        if (a.from_node.get_id(), a.to_node.get_id()) == (a_node.get_id(), a_node.get_id()):
-            if (b.from_node.get_id(), b.to_node.get_id()) == (b_node.get_id(), b_node.get_id()):
-                return 0
-            return 2 * self.Cost.EDGE_COST
-        elif (b.from_node.get_id(), b.to_node.get_id()) == (b_node.get_id(), b_node.get_id()):
-            return 2 * self.Cost.EDGE_COST
-
-        # check if edge direction is the same
-        if (a.from_node.get_id() == a_node.get_id()) == (b.from_node.get_id() == b_node.get_id()):
+        # check if edge of the same type (direction)
+        if a.get_edge_type(a_node) == b.get_edge_type(b_node):
             return 0
 
         # edge deletion
@@ -69,16 +61,14 @@ class GeneralCostFunction(CostFunction):
 
         type_count1 = self.count_each_edges_type(a, a_node)
         type_count2 = self.count_each_edges_type(b, b_node)
-        remainder1 = 0
-        remainder2 = 0
+        remainder = 0
         for i in range(3):
             mn = min(type_count1[i], type_count2[i])
             type_count1[i] -= mn
             type_count2[i] -= mn
-            remainder1 += type_count1[i]
-            remainder2 += type_count2[i]
+            remainder += type_count1[i] + type_count2[i]
 
-        return self.Cost.EDGE_COST * (remainder1 + remainder2)
+        return self.Cost.EDGE_COST * remainder
 
     @classmethod
     def count_each_edges_type(cls, edges: list[Edge], node: Node):
@@ -141,7 +131,7 @@ class GeneralCostFunction(CostFunction):
                     diff[label] -= 1
 
             tot_diff = 0
-            for k, v in diff.items():
+            for v in diff.values():
                 tot_diff += abs(v)
 
             return tot_diff / total

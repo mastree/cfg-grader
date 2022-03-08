@@ -11,7 +11,7 @@ class CostFunction:
         self.tnode_size: int = None
         self.node_precompute: list[list] = None
 
-    def set_precompute(self, source: Graph, target: Graph):  # Graph component_id should be continuous from 0 to N - 1
+    def set_precompute(self, source: Graph, target: Graph):  # Graph component_id should be continuous from 1 to N
         self.do_node_precompute = True
 
         self.snode_size = len(source.nodes)

@@ -12,6 +12,9 @@ class GraphComponent:
     def get_info(self):
         return self.info
 
+    def set_id(self, component_id):
+        self.component_id = component_id
+
     def get_id(self):
         return self.component_id
 
@@ -79,9 +82,6 @@ class Edge(GraphComponent):
         self.from_node: Node = from_node
         self.to_node: Node = to_node
 
-    def set_id(self, component_id):
-        self.component_id = component_id
-
     def set_from_node(self, from_node):
         self.from_node = from_node
 
@@ -99,7 +99,7 @@ class Edge(GraphComponent):
             return self.to_node
         return self.from_node
 
-    def get_edge_type(self, node: Node): # 0 out, 1 in, 2 self, 3 undef
+    def get_edge_type(self, node: Node):  # 0 out, 1 in, 2 self, 3 undef
         if node.component_id == self.from_node.component_id:
             if node.component_id == self.to_node.component_id:
                 return 2
