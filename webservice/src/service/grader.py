@@ -28,7 +28,7 @@ def graph_view_to_graph(graph_view: GraphView) -> Graph:
         from_node = id_node[edge_view.from_node]
         to_node = id_node[edge_view.to_node]
 
-        edge = Edge(to_node, from_node, info)
+        edge = Edge(from_node, to_node, info)
         from_node.add_edge(edge)
         if from_node.get_id() != to_node:
             to_node.add_edge(edge)

@@ -4,6 +4,7 @@ from grader.src.api.functions import *
 from grader.src.cfggenerator.cfggenerator import PythonCfgGenerator
 
 from grader.src.ged.classes.general_cost_function import GeneralCostFunction
+from grader.src.ged.utils.graph_collapser import uncollapse, collapse
 from grader.src.ged.utils.lsap_solver import Munkres
 from grader.src.ged.dfs_ged import DFSGED
 
@@ -55,16 +56,23 @@ def bias_func(x):
     return math.sqrt(x)
 
 
-def test_all():
+def test_all(graph_collapsed: bool = True):
     scores = []
     mx = 0
     for jury in jurys:
         graph_target = PythonCfgGenerator.generate_python_from_file(jury)
-        graph_target = compress_graph_component_id(graph_target)
+        if graph_collapsed:
+            graph_target = collapse(graph_target)
+        else:
+            graph_target = uncollapse(graph_target)
 
         for solution in solutions:
             graph_source = PythonCfgGenerator.generate_python_from_file(solution)
-            graph_source = compress_graph_component_id(graph_source)
+            if graph_collapsed:
+                graph_source = collapse(graph_source)
+            else:
+                graph_source = uncollapse(graph_source)
+
             dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(False))
             # dfs_ged.set_use_node_relabel(False)
 
@@ -77,18 +85,12 @@ def test_all():
             ed = dfs_ged.calculate_edit_distance()
             normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), bias_func)
 
-            # print(f'jury: {jury}')
-            # print(f'solution: {solution}')
-            # print(f'{normalized_ed} -> {approx_normalized_ed}')
             scores.append(normalized_ed)
-            # if normalized_ed < 0.5:
-            #     dfs_ged.print_matching()
-
-            assert (normalized_ed >= approx_normalized_ed)
-            # if normalized_ed != approx_normalized_ed:
+            assert(normalized_ed >= approx_normalized_ed)
             mx = max(mx, normalized_ed)
-            print(f'{jury.split("/")[-1]} {solution.split("/")[-1]}')
-            print(f'optimal? {dfs_ged.is_solution_optimal}: {normalized_ed} -> {approx_normalized_ed} -> {approx_normalized_ed_rel}')
+            if normalized_ed != approx_normalized_ed:
+                print(f'{jury.split("/")[-1]} {solution.split("/")[-1]}')
+                print(f'optimal? {dfs_ged.is_solution_optimal}: {normalized_ed} -> {approx_normalized_ed} -> {approx_normalized_ed_rel}')
 
     print(f'average: {sum(scores) / len(scores)}, max: {mx}')
 
@@ -122,7 +124,8 @@ def test_json():
 
 # test_ged(solutions[0], jurys[0])
 # test_ged(jurys[0], solutions[0])
-test_all()
+test_all(True)
+test_all(False)
 # test_json()
 
 # draw_graph(solutions[0], "generatedimg/solution")

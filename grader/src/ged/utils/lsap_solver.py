@@ -10,6 +10,10 @@ class Munkres:
         self.starred_indices: list = []
 
     def compute(self, matrix: list[list]) -> float:
+        if len(matrix) == 0:
+            self.starred_indices = []
+            return 0
+
         self.starred_indices = self.solver.compute(matrix)
         total_cost = 0.0
         for x in self.starred_indices:

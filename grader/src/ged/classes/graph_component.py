@@ -77,7 +77,7 @@ class Node(GraphComponent):
 
 
 class Edge(GraphComponent):
-    def __init__(self, to_node=None, from_node=None, info=[]):
+    def __init__(self, from_node=None, to_node=None, info=[]):
         super().__init__(info=info)
         self.from_node: Node = from_node
         self.to_node: Node = to_node

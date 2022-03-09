@@ -1,4 +1,6 @@
 import copy
+import pygraphviz as pgv
+
 from typing import Callable
 
 from grader.src.ged.classes.graph import Graph
@@ -21,7 +23,7 @@ def compress_graph_component_id(graph: Graph, start_id=1) -> Graph:
         from_node = id_node[edge.from_node.get_id()]
         to_node = id_node[edge.to_node.get_id()]
 
-        new_edge = Edge(to_node, from_node, copy.deepcopy(edge.info))
+        new_edge = Edge(from_node, to_node, copy.deepcopy(edge.info))
         new_edge.set_id(last_id)
 
         from_node.add_edge(new_edge)
@@ -37,3 +39,19 @@ def edit_distance_to_similarity_score(dist, func: Callable[[float], float]):
     if func is None:
         return 1 - dist
     return func(1 - dist)
+
+
+def graph_to_digraph(graph: Graph):
+    digraph = pgv.agraph.AGraph(directed=True)
+
+    edges = []
+    for node in graph.nodes:
+        digraph.add_node(str(node.get_id()), label=f'{node.get_id()}: {[info["rawLine"] for info in node.info]}')
+        for out_edge in node.out_edges:
+            out_node = out_edge.to_node
+            edges.append((str(node.get_id()), str(out_node.get_id())))
+
+    for edge in edges:
+        digraph.add_edge(edge[0], edge[1])
+
+    return digraph

@@ -20,7 +20,7 @@ class GeneralCostFunction(CostFunction):
         if use_node_relabel:
             self.relabel_method = relabel_method
 
-    def get_node_cost(self, a: Node, b: Node):
+    def get_node_cost(self, a: Node, b: Node) -> float:
         if self.do_node_precompute:
             s_id = 0
             if a.is_not_eps():
@@ -35,7 +35,7 @@ class GeneralCostFunction(CostFunction):
 
         return self._calculate_node_difference(a, b) * self.Cost.NODE_COST
 
-    def get_edge_cost(self, a: Edge, b: Edge, a_node: Node, b_node: Node):
+    def get_edge_cost(self, a: Edge, b: Edge, a_node: Node, b_node: Node) -> float:
         # check if edge is epsilon
         if a.is_eps():
             if b.is_eps():
@@ -51,7 +51,7 @@ class GeneralCostFunction(CostFunction):
         # edge deletion
         return 2 * self.Cost.EDGE_COST
 
-    def get_edges_cost(self, a: list[Edge], b: list[Edge], a_node: Node, b_node: Node):
+    def get_edges_cost(self, a: list[Edge], b: list[Edge], a_node: Node, b_node: Node) -> float:
         if a_node.is_eps():
             if b_node.is_eps():
                 return 0
@@ -78,7 +78,7 @@ class GeneralCostFunction(CostFunction):
             ret[t] += 1
         return ret
 
-    def _calculate_node_difference(self, a, b):
+    def _calculate_node_difference(self, a: Node, b: Node) -> float:
         if not self.use_node_relabel or self.relabel_method == self.RelabelMethod.NONE:
             return 0
 
