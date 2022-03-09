@@ -8,7 +8,7 @@ from webservice.src.resources.python_source_grader import PythonSourceGrader
 app = Flask(__name__)
 api = Api(app)
 
-api.add_resource(HealthCheck, '/healthcheck')
+api.add_resource(HealthCheck, '/health-check')
 api.add_resource(PythonSourceGrader, '/grade-source')
 api.add_resource(Grader, '/grade')
 

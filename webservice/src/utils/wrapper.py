@@ -1,4 +1,4 @@
-def get_response(err: bool, msg: str, data, status_code: int = 200):
+def get_response(err: bool, msg: str, data=None, status_code: int = 200):
     ret = {
         "error": err,
         "message": msg
