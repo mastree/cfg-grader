@@ -1,6 +1,5 @@
 import copy
-import pygraphviz as pgv
-
+import graphviz
 from typing import Callable
 
 from grader.src.ged.classes.graph import Graph
@@ -41,17 +40,15 @@ def edit_distance_to_similarity_score(dist, func: Callable[[float], float]):
     return func(1 - dist)
 
 
-def graph_to_digraph(graph: Graph):
-    digraph = pgv.agraph.AGraph(directed=True)
+def graph_to_digraph(graph: Graph) -> graphviz.Digraph:
+    digraph = graphviz.Digraph()
 
     edges = []
     for node in graph.nodes:
-        digraph.add_node(str(node.get_id()), label=f'{node.get_id()}: {[info["rawLine"] for info in node.info]}')
+        digraph.node(str(node.get_id()), label=f'{node.get_id()}: {[info["rawLine"] for info in node.info]}')
         for out_edge in node.out_edges:
             out_node = out_edge.to_node
             edges.append((str(node.get_id()), str(out_node.get_id())))
 
-    for edge in edges:
-        digraph.add_edge(edge[0], edge[1])
-
+    digraph.edges(edges)
     return digraph

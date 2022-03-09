@@ -9,10 +9,6 @@ from grader.src.ged.utils.lsap_solver import Munkres
 from grader.src.ged.dfs_ged import DFSGED
 
 
-def draw_digraph(digraph, filename):
-    digraph.draw(f'generatedimg/{filename}', prog='dot')
-
-
 def draw_graph(src, filename):
     PythonCfgGenerator.draw_python_from_file(src, filename)
 
@@ -50,6 +46,12 @@ solutions = ["./datasets/segiempat/solution/segiempat103.py",
              "./datasets/segiempat/solution/segiempat104.py",
              "./datasets/segiempat/solution/segiempat105.py",
              "./datasets/segiempat/solution/segiempat107.py"]
+
+
+def check_digraph():
+    cfg = PythonCfgGenerator.generate_python_from_file(jurys[0])
+    digraph = graph_to_digraph(cfg)
+    digraph.render(filename="generatedimg/something", format="jpg")
 
 
 def bias_func(x):
@@ -122,11 +124,12 @@ def test_json():
     print(json_data)
 
 
-# test_ged(solutions[0], jurys[0])
-# test_ged(jurys[0], solutions[0])
-test_all(True)
-test_all(False)
-# test_json()
+if __name__ == '__main__':
+    # test_ged(solutions[0], jurys[0])
+    # test_ged(jurys[0], solutions[0])
+    test_all(True)
+    test_all(False)
+    # test_json()
 
-# draw_graph(solutions[0], "generatedimg/solution")
-# draw_graph(jurys[0], "generatedimg/jury")
+    # draw_graph(solutions[0], "generatedimg/solution")
+    # draw_graph(jurys[0], "generatedimg/jury")
