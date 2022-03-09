@@ -37,17 +37,17 @@ Now you can open `localhost:5000/health-check` to see if it's successfully runni
 
 ---
 
-# Running on Local
+## Running on Local
 
-## How to Use Virtualenv
+### How to Use Virtualenv
 
-### Create a New Virtualenv
+#### Create a New Virtualenv
 you only need to do this once
 ```sh
 python3 -m venv .venv
 ```
 
-### Start Virtualenv
+#### Start Virtualenv
 On linux
 ```sh
 source .venv/bin/activate
@@ -58,21 +58,21 @@ On windows
 .venv\Scripts\activate.bat
 ```
 
-### Terminate Virtualenv
+#### Terminate Virtualenv
 ```sh
 deactivate
 ```
 
-## Python Dependencies
+### Python Dependencies
 
 Required to have **python** version **3.9** or **later**.
 
-### Install All Dependencies
+#### Install All Dependencies
 ```sh
 pip install -r requirements.txt
 ```
 
-### Update Dependencies
+#### Update Dependencies
 ```sh
 pip freeze > requirements.txt
 ```
@@ -82,7 +82,7 @@ On windows you might encounter problem when installing pygraphviz, you can solve
 python -m pip install --global-option=build_ext --global-option="-IC:\Program Files\Graphviz\include" --global-option="-LC:\Program Files\Graphviz\lib" pygraphviz
 ```
 
-## Run the Projects
+### Run the Projects
 
 Run the service by using this command:
 
