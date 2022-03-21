@@ -17,3 +17,5 @@ elif((n == 1) and (c1 != c2) and (len(c1) == 1) and (len(c2) == 1)):
     print(c1)
 else:
     print("Masukan tidak valid")
+
+x = n + 5

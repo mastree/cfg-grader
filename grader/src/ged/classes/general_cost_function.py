@@ -16,9 +16,7 @@ class GeneralCostFunction(CostFunction):
 
     def __init__(self, use_node_relabel=False, relabel_method=RelabelMethod.BOOLEAN_COUNT):
         super().__init__(use_node_relabel)
-        self.relabel_method = self.RelabelMethod.NONE
-        if use_node_relabel:
-            self.relabel_method = relabel_method
+        self.relabel_method = relabel_method
 
     def get_node_cost(self, a: Node, b: Node) -> float:
         if self.do_node_precompute:

@@ -58,7 +58,7 @@ def bias_func(x):
     return math.sqrt(x)
 
 
-def test_all(graph_collapsed: bool = True):
+def test_all(graph_collapsed: bool = True, print_result = False):
     scores = []
     mx = 0
     for jury in jurys:
@@ -76,23 +76,23 @@ def test_all(graph_collapsed: bool = True):
                 graph_source = uncollapse(graph_source)
 
             dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(False))
-            # dfs_ged.set_use_node_relabel(False)
+            dfs_ged.set_use_node_relabel(True)
 
             approx_ed = dfs_ged.calculate_edit_distance(False)
-            approx_normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), bias_func)
+            approx_normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
 
             approx_ed_rel = dfs_ged.calculate_edit_distance(False, True)
-            approx_normalized_ed_rel = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), bias_func)
+            approx_normalized_ed_rel = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
 
             ed = dfs_ged.calculate_edit_distance()
-            normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), bias_func)
+            normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
 
             scores.append(normalized_ed)
             assert(normalized_ed >= approx_normalized_ed)
             mx = max(mx, normalized_ed)
-            if normalized_ed != approx_normalized_ed:
+            if print_result:
                 print(f'{jury.split("/")[-1]} {solution.split("/")[-1]}')
-                print(f'optimal? {dfs_ged.is_solution_optimal}: {normalized_ed} -> {approx_normalized_ed} -> {approx_normalized_ed_rel}')
+                print(f'optimal? {dfs_ged.is_solution_optimal}: {normalized_ed}')
 
     print(f'average: {sum(scores) / len(scores)}, max: {mx}')
 
@@ -127,9 +127,10 @@ def test_json():
 if __name__ == '__main__':
     # test_ged(solutions[0], jurys[0])
     # test_ged(jurys[0], solutions[0])
-    test_all(True)
-    test_all(False)
+    # test_all(True)
+    # test_all(False)
+    # test_all(True, print_result=True)
     # test_json()
 
     # draw_graph(solutions[0], "generatedimg/solution")
-    # draw_graph(jurys[0], "generatedimg/jury")
+    draw_graph(jurys[2], "generatedimg/jury_delta")

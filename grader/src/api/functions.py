@@ -34,7 +34,7 @@ def compress_graph_component_id(graph: Graph, start_id=1) -> Graph:
     return result
 
 
-def edit_distance_to_similarity_score(dist, func: Callable[[float], float]):
+def edit_distance_to_similarity_score(dist, func: Callable[[float], float]=None):
     if func is None:
         return 1 - dist
     return func(1 - dist)
