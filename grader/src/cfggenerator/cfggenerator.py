@@ -17,10 +17,15 @@ class PythonCfgGenerator:
     def _block_to_node(cls, block: Block):
         info = []
         for statement in block.statements:
-            info.append({
+            current = {
                 "rawLine": (astor.to_source(statement)).split('\n')[0],
                 "label": cls._get_statement_type_string(statement)
-            })
+            }
+            if current["rawLine"] == "START_BLOCK()":
+                current["label"] = "start"
+            elif current["rawLine"] == "END_BLOCK()":
+                current["label"] = "end"
+            info.append(current)
         node = Node(block.id, info)
         return node
 
@@ -68,11 +73,15 @@ class PythonCfgGenerator:
         cfg.build_visual(img_filename, "jpg")
 
     @classmethod
-    def generate_pyton(cls, raw_code) -> Graph:
+    def generate_python(cls, raw_code) -> Graph:
+        raw_code = f'START_BLOCK()\n{raw_code}\nEND_BLOCK()\n'
         cfg = CFGBuilder().build_from_src("", raw_code)
         return cls._cfg_to_graph(cfg)
 
     @classmethod
     def generate_python_from_file(cls, filename) -> Graph:
-        cfg = CFGBuilder().build_from_file("", filename)
-        return cls._cfg_to_graph(cfg)
+        # cfg = CFGBuilder().build_from_file("", filename)
+        # return cls._cfg_to_graph(cfg)
+        with open(filename, 'r') as file:
+            raw_code = file.read()
+            return cls.generate_python(raw_code)

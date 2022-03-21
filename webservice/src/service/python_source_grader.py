@@ -4,12 +4,12 @@ from grader.src.grader import grade
 
 
 def get_python_scores(solution_source, jury_solution_sources) -> tuple[float, float, float]:
-    graph_source = PythonCfgGenerator.generate_pyton(solution_source)
+    graph_source = PythonCfgGenerator.generate_python(solution_source)
     graph_targets: list[Graph] = []
 
     for jury_solution in jury_solution_sources:
         try:
-            graph_targets.append(PythonCfgGenerator.generate_pyton(jury_solution))
+            graph_targets.append(PythonCfgGenerator.generate_python(jury_solution))
         except Exception as e:
             continue
 
