@@ -7,6 +7,21 @@ class Graph:
         self.edges: list[Edge] = []
         self.id: str = ''
 
+    def erase_edge(self, edge_id: int):
+        self.edges = list(filter(lambda x: x.get_id() != edge_id, self.edges))
+
+    def erase_node(self, node_id: int):
+        node = self.find_node_with_id(node_id)
+        if node is None:
+            return
+
+        for edge in node.edges:
+            onode = edge.get_other_end(node)
+            onode.erase_edge(edge.get_id())
+            self.erase_edge(edge.get_id())
+
+        self.nodes = list(filter(lambda x: x.get_id() != node_id, self.nodes))
+
     def set_nodes(self, nodes: list):
         self.nodes = nodes
 

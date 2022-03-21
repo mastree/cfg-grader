@@ -45,6 +45,11 @@ class Node(GraphComponent):
             if edge.to_node.get_id() == self.get_id():
                 self.in_edges.append(edge)
 
+    def erase_edge(self, edge_id: int):
+        self.edges = list(filter(lambda x: x.get_id() != edge_id, self.edges))
+        self.out_edges = list(filter(lambda x: x.get_id() != edge_id, self.out_edges))
+        self.in_edges = list(filter(lambda x: x.get_id() != edge_id, self.in_edges))
+
     def add_edge(self, edge):
         self.edges.append(edge)
         if edge.from_node.get_id() == self.get_id():

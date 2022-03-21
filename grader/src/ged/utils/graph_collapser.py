@@ -55,6 +55,54 @@ def collapse(input_graph: Graph):
     return compress_graph_component_id(graph)
 
 
+"""
+Propagate branching on if statement
+"""
+def propagate_branching(input_graph: Graph, node_key: str = "label"):
+    graph = collapse(input_graph)
+    last_id = 0
+    for node in graph.nodes:
+        new_info = []
+        for info in node.info:
+            new_info.append({ikey: info[ikey] for ikey in info if ikey == node_key})
+        node.set_info(new_info)
+        last_id = max(last_id, node.get_id())
+        for edge in node.out_edges:
+            last_id = max(last_id, edge.get_id())
+
+    snode = len(graph.nodes)
+    for i in range(snode):
+        erase_nodes = []
+        for node in graph.nodes:
+            if not (len(node.in_edges) == 1 and len(node.out_edges) > 1):
+                continue
+
+            parent = node.in_edges[0].from_node
+            parent_last = parent.info[-1][node_key]
+            last = node.info[-1][node_key]
+            if last != parent_last or node.get_id() == parent.get_id():
+                continue
+
+            for edge in node.out_edges:
+                onode = edge.to_node
+                new_oinfo = copy.deepcopy(node.info[:-1])
+                for oinfo in onode.info:
+                    new_oinfo.append(oinfo)
+                onode.set_info(new_oinfo)
+                new_edge = Edge(parent, onode)
+                last_id += 1
+                new_edge.set_id(last_id)
+                parent.add_edge(new_edge)
+                onode.add_edge(new_edge)
+                graph.add_edge(new_edge)
+            erase_nodes.append(node)
+
+        for erase_node in erase_nodes:
+            graph.erase_node(erase_node.get_id())
+
+    return compress_graph_component_id(graph)
+
+
 def uncollapse(input_graph: Graph):
     input_graph = compress_graph_component_id(input_graph)
     graph = Graph()

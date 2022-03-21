@@ -4,7 +4,7 @@ from grader.src.api.functions import *
 from grader.src.cfggenerator.cfggenerator import PythonCfgGenerator
 
 from grader.src.ged.classes.general_cost_function import GeneralCostFunction
-from grader.src.ged.utils.graph_collapser import uncollapse, collapse
+from grader.src.ged.utils.graph_collapser import uncollapse, collapse, propagate_branching
 from grader.src.ged.utils.lsap_solver import Munkres
 from grader.src.ged.dfs_ged import DFSGED
 
@@ -133,4 +133,9 @@ if __name__ == '__main__':
     # test_json()
 
     # draw_graph(solutions[0], "generatedimg/solution")
-    draw_graph(jurys[2], "generatedimg/jury_delta")
+    # draw_graph(jurys[2], "generatedimg/jury_delta")
+
+    cfg = PythonCfgGenerator.generate_python_from_file(jurys[1])
+    cfg = propagate_branching(cfg, node_key="label")
+    digraph = graph_to_digraph(cfg, node_key="label")
+    digraph.render(filename="generatedimg/something", format="jpg")

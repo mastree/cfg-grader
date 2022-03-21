@@ -40,12 +40,12 @@ def edit_distance_to_similarity_score(dist, func: Callable[[float], float]=None)
     return func(1 - dist)
 
 
-def graph_to_digraph(graph: Graph) -> graphviz.Digraph:
+def graph_to_digraph(graph: Graph, node_key: str = "rawLine") -> graphviz.Digraph:
     digraph = graphviz.Digraph()
 
     edges = []
     for node in graph.nodes:
-        digraph.node(str(node.get_id()), label=f'{node.get_id()}: {[info["rawLine"] for info in node.info]}')
+        digraph.node(str(node.get_id()), label=f'{node.get_id()}: {[info[node_key] for info in node.info]}')
         for out_edge in node.out_edges:
             out_node = out_edge.to_node
             edges.append((str(node.get_id()), str(out_node.get_id())))
