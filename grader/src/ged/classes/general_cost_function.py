@@ -14,9 +14,13 @@ class GeneralCostFunction(CostFunction):
         DAMERAU_LD = 3
         EXACT = 4
 
-    def __init__(self, use_node_relabel=False, relabel_method=RelabelMethod.BOOLEAN_COUNT):
+    def __init__(self, use_node_relabel=False, relabel_method=RelabelMethod.BOOLEAN_COUNT, node_key: str = "label"):
         super().__init__(use_node_relabel)
         self.relabel_method = relabel_method
+        self.node_key = node_key
+
+    def set_node_key(self, node_key: str):
+        self.node_key = node_key
 
     def get_node_cost(self, a: Node, b: Node) -> float:
         if self.do_node_precompute:
@@ -87,7 +91,7 @@ class GeneralCostFunction(CostFunction):
         elif b.is_eps():
             return 1
 
-        key = "label"
+        key = self.node_key
         if self.relabel_method == self.RelabelMethod.BOOLEAN_COUNT:
             a_dict = {}
             b_dict = {}

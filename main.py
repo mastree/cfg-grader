@@ -7,6 +7,7 @@ from grader.src.ged.classes.general_cost_function import GeneralCostFunction
 from grader.src.ged.utils.graph_collapser import uncollapse, collapse, propagate_branching
 from grader.src.ged.utils.lsap_solver import Munkres
 from grader.src.ged.dfs_ged import DFSGED
+from grader.src.grader import grade
 
 
 def draw_graph(src, filename):
@@ -64,14 +65,14 @@ def test_all(graph_collapsed: bool = True, print_result = False):
     for jury in jurys:
         graph_target = PythonCfgGenerator.generate_python_from_file(jury)
         if graph_collapsed:
-            graph_target = collapse(graph_target)
+            graph_target = propagate_branching(graph_target)
         else:
             graph_target = uncollapse(graph_target)
 
         for solution in solutions:
             graph_source = PythonCfgGenerator.generate_python_from_file(solution)
             if graph_collapsed:
-                graph_source = collapse(graph_source)
+                graph_source = propagate_branching(graph_source)
             else:
                 graph_source = uncollapse(graph_source)
 
@@ -79,13 +80,13 @@ def test_all(graph_collapsed: bool = True, print_result = False):
             dfs_ged.set_use_node_relabel(True)
 
             approx_ed = dfs_ged.calculate_edit_distance(False)
-            approx_normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
+            approx_normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), bias_func)
 
             approx_ed_rel = dfs_ged.calculate_edit_distance(False, True)
-            approx_normalized_ed_rel = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
+            approx_normalized_ed_rel = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), bias_func)
 
             ed = dfs_ged.calculate_edit_distance()
-            normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
+            normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), bias_func)
 
             scores.append(normalized_ed)
             assert(normalized_ed >= approx_normalized_ed)
@@ -97,11 +98,17 @@ def test_all(graph_collapsed: bool = True, print_result = False):
     print(f'average: {sum(scores) / len(scores)}, max: {mx}')
 
 
-def test_ged(file1, file2):
+def test_ged(file1, file2, graph_collapsed=True):
     print(f'sol: {file1.split("/")[-1]}, jury: {file2.split("/")[-1]}')
 
     graph_source = PythonCfgGenerator.generate_python_from_file(file1)
     graph_target = PythonCfgGenerator.generate_python_from_file(file2)
+    if graph_collapsed:
+        graph_source = propagate_branching(graph_source)
+        graph_target = propagate_branching(graph_target)
+    else:
+        graph_source = uncollapse(graph_source)
+        graph_target = uncollapse(graph_target)
 
     print(f'size1: {len(graph_source.nodes)}, size2: {len(graph_target.nodes)}')
 
@@ -126,16 +133,24 @@ def test_json():
 
 if __name__ == '__main__':
     # test_ged(solutions[0], jurys[0])
-    # test_ged(jurys[0], solutions[0])
-    # test_all(True)
+    # test_ged(jurys[1], solutions[3])
+    # test_all(True, print_result=False)
     # test_all(False)
-    # test_all(True, print_result=True)
+    # test_all(False, print_result=True)
     # test_json()
 
     # draw_graph(solutions[0], "generatedimg/solution")
     # draw_graph(jurys[2], "generatedimg/jury_delta")
 
-    cfg = PythonCfgGenerator.generate_python_from_file(jurys[1])
-    cfg = propagate_branching(cfg, node_key="label")
-    digraph = graph_to_digraph(cfg, node_key="label")
-    digraph.render(filename="generatedimg/something", format="jpg")
+    # cfg = PythonCfgGenerator.generate_python_from_file(solutions[3])
+    # cfg = propagate_branching(cfg, node_key="label")
+    # digraph = graph_to_digraph(cfg, node_key="label")
+    # digraph.render(filename="generatedimg/something2", format="jpg")
+
+    jury_cfgs = []
+    for jury_file in jurys:
+        jury_cfgs.append(PythonCfgGenerator.generate_python_from_file(jury_file))
+
+    for solution_file in solutions:
+        solution_cfg = PythonCfgGenerator.generate_python_from_file(solution_file)
+        print(f'{solution_file : <10}: {grade(solution_cfg, jury_cfgs)}')
