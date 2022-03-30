@@ -96,7 +96,7 @@ class DFSGED:
                 self.is_solution_optimal = False
                 break
 
-            if len(cur_node.children) == 0:  # check if not generated yet
+            if len(cur_node.children) == 0 and not cur_node.sorted:  # check if not generated yet
                 self._generate_children(cur_node)
 
             if len(cur_node.children) == 0:

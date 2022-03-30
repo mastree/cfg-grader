@@ -73,10 +73,10 @@ class EditPath:
         cloned.heuristic_cost = edit_path.heuristic_cost
         cloned.is_heuristic_computed = edit_path.is_heuristic_computed
         cloned.first_ub = edit_path.first_ub
-        cloned.snode_distortion = edit_path.snode_distortion
-        cloned.sedge_distortion = edit_path.sedge_distortion
-        cloned.tnode_distortion = edit_path.tnode_distortion
-        cloned.tedge_distortion = edit_path.tedge_distortion
+        cloned.snode_distortion = copy.deepcopy(edit_path.snode_distortion)
+        cloned.sedge_distortion = copy.deepcopy(edit_path.sedge_distortion)
+        cloned.tnode_distortion = copy.deepcopy(edit_path.tnode_distortion)
+        cloned.tedge_distortion = copy.deepcopy(edit_path.tedge_distortion)
 
         return cloned
 
