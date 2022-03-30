@@ -287,8 +287,8 @@ class EditPath:
                         costs += self.cost_function.get_edge_cost(
                             edge1,
                             edge2,
-                            edge1.from_node,
-                            edge2.from_node
+                            u,
+                            v
                         )
 
                     matrix[i][j] = costs
@@ -308,8 +308,8 @@ class EditPath:
                         costs += self.cost_function.get_edge_cost(
                             edge1,
                             edge2,
-                            edge1.from_node,
-                            edge2.from_node
+                            u,
+                            v
                         )
 
                     matrix[i][j] = costs
@@ -338,8 +338,8 @@ class EditPath:
                 edge_matrix[i][j] = self.cost_function.get_edge_cost(
                     edge1,
                     edge2,
-                    edge1.from_node,
-                    edge2.from_node
+                    node1,
+                    node2
                 )
 
         for i in range(size1, msize):
@@ -350,8 +350,8 @@ class EditPath:
                     edge_matrix[i][j] = self.cost_function.get_edge_cost(
                         edge1,
                         edge2,
-                        edge1.from_node,
-                        edge2.from_node
+                        node1,
+                        node2
                     )
                 else:
                     edge_matrix[i][j] = Constants.INF
@@ -364,8 +364,8 @@ class EditPath:
                     edge_matrix[i][j] = self.cost_function.get_edge_cost(
                         edge1,
                         edge2,
-                        edge1.from_node,
-                        edge2.from_node
+                        node1,
+                        node2
                     )
                 else:
                     edge_matrix[i][j] = Constants.INF
