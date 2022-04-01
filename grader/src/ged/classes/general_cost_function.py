@@ -14,7 +14,7 @@ class GeneralCostFunction(CostFunction):
         DAMERAU_LD = 3
         EXACT = 4
 
-    def __init__(self, use_node_relabel=False, relabel_method=RelabelMethod.BOOLEAN_COUNT, node_key: str = "label"):
+    def __init__(self, use_node_relabel=True, relabel_method=RelabelMethod.BOOLEAN_COUNT, node_key: str = "label"):
         super().__init__(use_node_relabel)
         self.relabel_method = relabel_method
         self.node_key = node_key

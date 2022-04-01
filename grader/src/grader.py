@@ -1,10 +1,10 @@
 import math
 
 from grader.src.api.functions import edit_distance_to_similarity_score
-from grader.src.classes.graph import Graph
 from grader.src.constants import Constants
 from grader.src.ged.classes.cost_function import CostFunction
 from grader.src.ged.classes.general_cost_function import GeneralCostFunction
+from grader.src.ged.classes.graph import Graph
 from grader.src.ged.dfs_ged import DFSGED
 from grader.src.ged.utils.graph_collapser import *
 
