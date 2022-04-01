@@ -13,14 +13,16 @@ class SearchNode:
         self.children.append(SearchNode(child_edit_path, self))
         return self.children[-1]
 
-    def get_min_child(self):
+    def sort_children(self):
         if not self.sorted:
-            self.children.sort(key=lambda x: -x.predict_cost())
+            self.children.sort(key=lambda x: x.edit_path.predict_cost())
+            self.children.reverse()
             self.sorted = True
+
+    def get_min_child(self):
+        self.sort_children()
         return self.children[-1]
 
     def remove_min_child(self):
-        if not self.sorted:
-            self.children.sort(key=lambda x: -x.edit_path.predict_cost())
-            self.sorted = True
+        self.sort_children()
         return self.children.pop()

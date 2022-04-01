@@ -76,7 +76,7 @@ def test_all(graph_collapsed: bool = True, print_result = False):
             else:
                 graph_source = uncollapse(graph_source)
 
-            dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(False), time_limit=5000)
+            dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(False), time_limit=3000)
             dfs_ged.set_use_node_relabel(True)
 
             approx_ed = dfs_ged.calculate_edit_distance(False)
@@ -112,7 +112,7 @@ def test_ged(file1, file2, graph_collapsed=True):
 
     print(f'size1: {len(graph_source.nodes)}, size2: {len(graph_target.nodes)}')
 
-    dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(True), time_limit=500)
+    dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(True), time_limit=1000)
     ed = dfs_ged.calculate_edit_distance()
     normalized_score = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
     print(dfs_ged.get_node_matching_string())

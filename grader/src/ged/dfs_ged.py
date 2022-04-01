@@ -15,7 +15,7 @@ class DFSGED:
 
     reason for these precondition is to sped up computation
     """
-    def __init__(self, source: Graph, target: Graph, cost_function: CostFunction, time_limit=500, sort_node_dfs=False):
+    def __init__(self, source: Graph, target: Graph, cost_function: CostFunction, time_limit=1000, sort_node_dfs=False):
         self.source = source
         self.target = target
         self.cost_function = cost_function
