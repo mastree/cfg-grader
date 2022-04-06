@@ -64,11 +64,13 @@ class GeneralCostFunction(CostFunction):
         type_count1 = self.count_each_edges_type(a, a_node)
         type_count2 = self.count_each_edges_type(b, b_node)
         remainder = 0
-        for i in range(3):
+        i = 0
+        while i < 3:
             mn = min(type_count1[i], type_count2[i])
             type_count1[i] -= mn
             type_count2[i] -= mn
             remainder += type_count1[i] + type_count2[i]
+            i += 1
 
         return self.Cost.EDGE_COST * remainder
 

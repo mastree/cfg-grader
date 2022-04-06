@@ -98,6 +98,36 @@ def test_all(graph_collapsed: bool = True, print_result = False):
     print(f'average: {sum(scores) / len(scores)}, max: {mx}')
 
 
+def test_approximate_all(graph_collapsed: bool = True, print_result = False):
+    scores = []
+    mx = 0
+    for jury in jurys:
+        graph_target = PythonCfgGenerator.generate_python_from_file(jury)
+        if graph_collapsed:
+            graph_target = propagate_branching(graph_target)
+        else:
+            graph_target = uncollapse(graph_target)
+
+        for solution in solutions:
+            graph_source = PythonCfgGenerator.generate_python_from_file(solution)
+            if graph_collapsed:
+                graph_source = propagate_branching(graph_source)
+            else:
+                graph_source = uncollapse(graph_source)
+
+            dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(True), time_limit=3000)
+            ed = dfs_ged.calculate_edit_distance(False)
+            normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
+
+            scores.append(normalized_ed)
+            mx = max(mx, normalized_ed)
+            if print_result:
+                print(f'{jury.split("/")[-1]} {solution.split("/")[-1]}')
+                print(f'GED: {ed}, score: {normalized_ed}')
+
+    print(f'average: {sum(scores) / len(scores)}, max: {mx}')
+
+
 def test_ged(file1, file2, graph_collapsed=True):
     print(f'sol: {file1.split("/")[-1]}, jury: {file2.split("/")[-1]}')
 
@@ -136,6 +166,7 @@ if __name__ == '__main__':
     # test_ged(solutions[0], jurys[0])
     # test_ged(jurys[0], solutions[0])
     test_all(True, print_result=True)
+    # test_approximate_all(True, print_result=True)
     # test_all(False)
     # test_all(False, print_result=True)
     # test_json()

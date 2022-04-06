@@ -132,7 +132,7 @@ class EditPath:
         if msize == 0:
             return 0.0
 
-        matrix = np.zeros((msize, msize), dtype=float)
+        matrix = np.zeros(shape=(msize, msize), dtype=float)
         for i in range(msize):
             node1 = Constants.NODE_EPS
             if i < node_size1:
@@ -143,8 +143,8 @@ class EditPath:
                 if j < node_size2:
                     node2 = self.pending_nodes2[j]
                 edges2 = node2.get_out_edges()
-                matrix[i][j] = self.cost_function.get_node_cost(node1, node2)
-                matrix[i][j] += self.cost_function.get_edges_cost(edges1, edges2, node1, node2)
+                matrix[i][j] = self.cost_function.get_node_cost(node1, node2) \
+                               + self.cost_function.get_edges_cost(edges1, edges2, node1, node2)
 
         return Munkres().compute(matrix)
 
@@ -261,58 +261,32 @@ class EditPath:
         size2 = len(nodes2)
 
         msize = size1 + size2
-        matrix = np.zeros((msize, msize), float)  # [[0.0] * msize for i in range(msize)]
+        matrix = np.zeros(shape=(msize, msize), dtype=float)  # [[0.0] * msize for i in range(msize)]
 
         for i in range(size1):
             u = nodes1[i]
             for j in range(size2):
                 v = nodes2[j]
-                costs = self.cost_function.get_node_cost(u, v)
-                edge_matrix = self.build_edge_matrix(u, v)
-
-                edge_costs = munkres.compute(edge_matrix)
-                costs += edge_costs
-                matrix[i][j] = costs
+                matrix[i][j] = self.cost_function.get_node_cost(u, v) \
+                               + self.cost_function.get_edges_cost(u.get_edges(), v.get_edges(), u, v)
 
         for i in range(size1, msize):
             u = Constants.NODE_EPS
-            edge1 = Constants.EDGE_EPS
             for j in range(size2):
                 if i - size1 == j:
                     v = nodes2[j]
-                    costs = self.cost_function.get_node_cost(u, v)
-
-                    edges = v.get_edges()
-                    for edge2 in edges:
-                        costs += self.cost_function.get_edge_cost(
-                            edge1,
-                            edge2,
-                            u,
-                            v
-                        )
-
-                    matrix[i][j] = costs
+                    matrix[i][j] = self.cost_function.get_node_cost(u, v) \
+                                   + self.cost_function.get_edges_cost(u.get_edges(), v.get_edges(), u, v)
                 else:
                     matrix[i][j] = Constants.INF
 
         for i in range(size1):
             u = nodes1[i]
-            edges = u.get_edges()
             for j in range(size2, msize):
                 if j - size2 == i:
                     v = Constants.NODE_EPS
-                    edge2 = Constants.EDGE_EPS
-                    costs = self.cost_function.get_node_cost(u, v)
-
-                    for edge1 in edges:
-                        costs += self.cost_function.get_edge_cost(
-                            edge1,
-                            edge2,
-                            u,
-                            v
-                        )
-
-                    matrix[i][j] = costs
+                    matrix[i][j] = self.cost_function.get_node_cost(u, v) \
+                                   + self.cost_function.get_edges_cost(u.get_edges(), v.get_edges(), u, v)
                 else:
                     matrix[i][j] = Constants.INF
 
@@ -322,56 +296,56 @@ class EditPath:
 
         return matrix
 
-    def build_edge_matrix(self, node1: Node, node2: Node):
-        edges1 = node1.get_edges()
-        edges2 = node2.get_edges()
-        size1 = len(edges1)
-        size2 = len(edges2)
-        msize = size1 + size2
-
-        edge_matrix = np.zeros((msize, msize), float)  # [[0.0] * msize for i in range(msize)]
-
-        for i in range(size1):
-            edge1 = edges1[i]
-            for j in range(size2):
-                edge2 = edges2[j]
-                edge_matrix[i][j] = self.cost_function.get_edge_cost(
-                    edge1,
-                    edge2,
-                    node1,
-                    node2
-                )
-
-        for i in range(size1, msize):
-            edge1 = Constants.EDGE_EPS
-            for j in range(size2):
-                if i - size1 == j:
-                    edge2 = edges2[j]
-                    edge_matrix[i][j] = self.cost_function.get_edge_cost(
-                        edge1,
-                        edge2,
-                        node1,
-                        node2
-                    )
-                else:
-                    edge_matrix[i][j] = Constants.INF
-
-        for i in range(size1):
-            edge1 = edges1[i]
-            for j in range(size2, msize):
-                if j - size2 == i:
-                    edge2 = Constants.EDGE_EPS
-                    edge_matrix[i][j] = self.cost_function.get_edge_cost(
-                        edge1,
-                        edge2,
-                        node1,
-                        node2
-                    )
-                else:
-                    edge_matrix[i][j] = Constants.INF
-
-        for i in range(size1, msize):
-            for j in range(size2, msize):
-                edge_matrix[i][j] = 0.0
-
-        return edge_matrix
+    # def build_edge_matrix(self, node1: Node, node2: Node):
+    #     edges1 = node1.get_edges()
+    #     edges2 = node2.get_edges()
+    #     size1 = len(edges1)
+    #     size2 = len(edges2)
+    #     msize = size1 + size2
+    #
+    #     edge_matrix = np.zeros(shape=(msize, msize), dtype=float)  # [[0.0] * msize for i in range(msize)]
+    #
+    #     for i in range(size1):
+    #         edge1 = edges1[i]
+    #         for j in range(size2):
+    #             edge2 = edges2[j]
+    #             edge_matrix[i][j] = self.cost_function.get_edge_cost(
+    #                 edge1,
+    #                 edge2,
+    #                 node1,
+    #                 node2
+    #             )
+    #
+    #     for i in range(size1, msize):
+    #         edge1 = Constants.EDGE_EPS
+    #         for j in range(size2):
+    #             if i - size1 == j:
+    #                 edge2 = edges2[j]
+    #                 edge_matrix[i][j] = self.cost_function.get_edge_cost(
+    #                     edge1,
+    #                     edge2,
+    #                     node1,
+    #                     node2
+    #                 )
+    #             else:
+    #                 edge_matrix[i][j] = Constants.INF
+    #
+    #     for i in range(size1):
+    #         edge1 = edges1[i]
+    #         for j in range(size2, msize):
+    #             if j - size2 == i:
+    #                 edge2 = Constants.EDGE_EPS
+    #                 edge_matrix[i][j] = self.cost_function.get_edge_cost(
+    #                     edge1,
+    #                     edge2,
+    #                     node1,
+    #                     node2
+    #                 )
+    #             else:
+    #                 edge_matrix[i][j] = Constants.INF
+    #
+    #     for i in range(size1, msize):
+    #         for j in range(size2, msize):
+    #             edge_matrix[i][j] = 0.0
+    #
+    #     return edge_matrix

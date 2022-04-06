@@ -9,12 +9,12 @@ class Munkres:
     def __init__(self):
         self.starred_indices: list = []
 
-    def compute(self, matrix: list[list]) -> float:
+    def compute(self, matrix) -> float:
         if len(matrix) == 0:
             self.starred_indices = []
             return 0
 
-        self.starred_indices = self.solver.compute(matrix)
+        self.starred_indices = self.solver.compute(matrix.copy())
         total_cost = 0.0
         for x in self.starred_indices:
             total_cost += matrix[x[0]][x[1]]
