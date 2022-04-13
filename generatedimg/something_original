@@ -1,0 +1,44 @@
+digraph {
+	1 [label="1: ['start', 'import', 'functiondef']"]
+	2 [label="2: ['for/while']"]
+	3 [label="3: ['assign', 'if']"]
+	4 [label="4: ['expr', 'assign', 'assign', 'if']"]
+	5 [label="5: ['expr']"]
+	6 [label="6: ['expr', 'expr']"]
+	7 [label="7: ['expr', 'assign', 'assign', 'if']"]
+	8 [label="8: ['if']"]
+	9 [label="9: ['expr']"]
+	10 [label="10: ['if']"]
+	11 [label="11: ['expr']"]
+	12 [label="12: ['if']"]
+	13 [label="13: ['assign', 'assign', 'if']"]
+	14 [label="14: ['expr']"]
+	15 [label="15: ['expr']"]
+	16 [label="16: ['expr']"]
+	17 [label="17: ['end']"]
+	18 [label="18: ['expr']"]
+	1 -> 2
+	2 -> 3
+	2 -> 4
+	3 -> 5
+	3 -> 6
+	4 -> 7
+	4 -> 8
+	5 -> 2
+	6 -> 2
+	7 -> 9
+	7 -> 10
+	8 -> 11
+	8 -> 12
+	9 -> 13
+	10 -> 14
+	10 -> 13
+	11 -> 13
+	12 -> 15
+	12 -> 13
+	13 -> 16
+	13 -> 17
+	14 -> 13
+	15 -> 13
+	16 -> 17
+}

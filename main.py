@@ -39,6 +39,8 @@ def check_munkres():
     print(starred_indices)
 
 
+test_src = "./datasets/segiempat/juryssolution/test.py"
+
 jurys = ["./datasets/segiempat/juryssolution/segiempatcontoh.py",
          "./datasets/segiempat/juryssolution/segiempatcontoh2.py",
          "./datasets/segiempat/juryssolution/segiempatcontoh_delta.py"]
@@ -162,10 +164,20 @@ def test_json():
     print(json_data)
 
 
+def test_draw_preprocessed_cfg(src):
+    cfg = PythonCfgGenerator.generate_python_from_file(src)
+    # cfg = collapse(cfg)
+    cfg = propagate_branching(cfg)
+    digraph = graph_to_digraph(cfg, node_key="label")
+    # digraph.render(filename="generatedimg/something_original", format="jpg")
+    digraph.render(filename="generatedimg/something", format="jpg")
+
+
 if __name__ == '__main__':
+    test_draw_preprocessed_cfg(test_src)
     # test_ged(solutions[0], jurys[0])
     # test_ged(jurys[0], solutions[0])
-    test_all(True, print_result=True)
+    # test_all(True, print_result=True)
     # test_approximate_all(True, print_result=True)
     # test_all(False)
     # test_all(False, print_result=True)

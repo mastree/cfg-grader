@@ -1,4 +1,5 @@
 import copy
+from collections import deque
 
 from grader.src.api.functions import *
 
@@ -55,6 +56,24 @@ def collapse(input_graph: Graph):
     return compress_graph_component_id(graph)
 
 
+def __flood_fill(graph: Graph, root: Node) -> set:
+    ret = set()
+    q = deque()
+    q.append(root)
+    ret.add(root.get_id())
+
+    while len(q) > 0:
+        node = q.popleft()
+        for edge in node.out_edges:
+            nnode = edge.to_node
+            if nnode.get_id() in ret:
+                continue
+            q.append(nnode)
+            ret.add(nnode.get_id())
+
+    return ret
+
+
 """
 Propagate branching on if statement
 """
@@ -80,8 +99,58 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
             parent = node.in_edges[0].from_node
             parent_last = parent.info[-1][node_key]
             last = node.info[-1][node_key]
-            if last != parent_last or node.get_id() == parent.get_id():
+            if last != parent_last:
                 continue
+
+            # Handle Diamond Branching
+            vis_counter = {}
+            for edge in node.out_edges:
+                onode = edge.to_node
+                vis = __flood_fill(graph, onode)
+                for x in vis:
+                    if x not in vis_counter:
+                        vis_counter[x] = 0
+                    vis_counter[x] += 1
+
+            if node.get_id() in vis_counter:
+                continue
+
+            erase_edges = []
+            new_edges = []
+            for edge in node.out_edges:
+                onode = edge.to_node
+                if vis_counter[onode.get_id()] <= 1:
+                    continue
+
+                last_id += 1
+                new_node = Node(last_id)
+                last_id += 1
+                new_edge = Edge(node, new_node)
+                new_edge.set_id(last_id)
+                last_id += 1
+                new_oedge = Edge(new_node, onode)
+                new_oedge.set_id(last_id)
+
+                new_edges.append(new_edge)
+                new_node.add_edge(new_edge)
+                new_node.add_edge(new_oedge)
+                onode.add_edge(new_oedge)
+
+                graph.add_node(new_node)
+                graph.add_edge(new_edge)
+                graph.add_edge(new_oedge)
+
+                erase_edges.append(edge)
+
+            for new_edge in new_edges:
+                node.add_edge(new_edge)
+
+            for erase_edge in erase_edges:
+                edge_id = erase_edge.get_id()
+                graph.erase_edge(edge_id)
+                erase_edge.from_node.erase_edge(edge_id)
+                erase_edge.to_node.erase_edge(edge_id)
+            # End of Transformation (Diamond Branching Handling)
 
             for edge in node.out_edges:
                 onode = edge.to_node
@@ -99,6 +168,25 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
 
         for erase_node in erase_nodes:
             graph.erase_node(erase_node.get_id())
+
+    # Erase Redundant Nodes
+    erase_nodes = []
+    for node in graph.nodes:
+        if len(node.edges) == 2 and len(node.out_edges) == 1 and len(node.in_edges) == 1 and len(node.info) == 0:
+            erase_nodes.append(node)
+
+    for erase_node in erase_nodes:
+        parent = node.in_edges[0].from_node
+        child = node.out_edges[0].to_node
+        last_id += 1
+        new_edge = Edge(parent, child)
+        new_edge.set_id(last_id)
+
+        parent.add_edge(new_edge)
+        child.add_edge(new_edge)
+        graph.add_edge(new_edge)
+
+        graph.erase_node(erase_node.get_id())
 
     return compress_graph_component_id(graph)
 
