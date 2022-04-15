@@ -45,7 +45,7 @@ def get_scores(grader_request: GraderRequest) -> tuple[int, int, int]:
     for jury_solution in grader_request.jury_solutions:
         graph_targets.append(graph_view_to_graph(jury_solution))
 
-    scores = grade(graph_source, graph_targets)
+    scores, _ = grade(graph_source, graph_targets)
     max_score = max(scores)
     min_score = min(scores)
     avg_score = sum(scores) / len(scores)

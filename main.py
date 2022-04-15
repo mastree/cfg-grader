@@ -165,12 +165,15 @@ def test_json():
 
 
 def test_draw_preprocessed_cfg(src):
-    cfg = PythonCfgGenerator.generate_python_from_file(src)
-    # cfg = collapse(cfg)
-    cfg = propagate_branching(cfg)
-    digraph = graph_to_digraph(cfg, node_key="label")
-    # digraph.render(filename="generatedimg/something_original", format="jpg")
-    digraph.render(filename="generatedimg/something", format="jpg")
+    try:
+        cfg = PythonCfgGenerator.generate_python_from_file(src)
+        # cfg = collapse(cfg)
+        cfg = propagate_branching(cfg)
+        digraph = graph_to_digraph(cfg, node_key="label")
+        # digraph.render(filename="generatedimg/something_original", format="jpg")
+        digraph.render(filename="generatedimg/something", format="jpg")
+    except Exception as e:
+        print(e)
 
 
 if __name__ == '__main__':

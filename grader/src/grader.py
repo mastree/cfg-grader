@@ -34,7 +34,7 @@ def grade_one_on_one(graph_source: Graph,
 
     dfs_ged = DFSGED(graph_source, graph_target, cost_function)
     dfs_ged.calculate_edit_distance()
-    score = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), math.sqrt)
+    score = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
 
     return score * Constants.MAX_SCORE
 
@@ -43,13 +43,18 @@ def grade(graph_source: Graph,
           graph_targets: list[Graph],
           use_node_relabel=True,
           graph_preprocess=GraphPreprocess.COLLAPSE_AND_PROPAGATE_BRANCHING,
-          node_key: str = "label"):
+          node_key: str = "label") -> tuple[list, list]:
     graph_source = preprocess_graph(graph_source, graph_preprocess)
     cost_function = GeneralCostFunction(use_node_relabel=use_node_relabel, node_key=node_key)
     scores = []
+    errors = []
 
     for rgraph_target in graph_targets:
         graph_target = preprocess_graph(rgraph_target, graph_preprocess)
-        scores.append(grade_one_on_one(graph_source, graph_target, cost_function))
+        try:
+            score = grade_one_on_one(graph_source, graph_target, cost_function)
+            scores.append(score)
+        except Exception as e:
+            errors.append(e)
 
-    return scores
+    return scores, errors

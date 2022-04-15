@@ -13,7 +13,7 @@ def get_python_scores(solution_source, jury_solution_sources) -> tuple[float, fl
         except Exception as e:
             continue
 
-    scores = grade(graph_source, graph_targets)
+    scores, _ = grade(graph_source, graph_targets)
     max_score = max(scores)
     min_score = min(scores)
     avg_score = sum(scores) / len(scores)
