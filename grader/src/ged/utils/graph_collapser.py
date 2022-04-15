@@ -56,11 +56,12 @@ def collapse(input_graph: Graph):
     return compress_graph_component_id(graph)
 
 
-def __flood_fill(graph: Graph, root: Node) -> set:
+def __flood_fill(graph: Graph, root: Node, parent: Node) -> set:
     ret = set()
     q = deque()
     q.append(root)
     ret.add(root.get_id())
+    ret.add(parent.get_id())
 
     while len(q) > 0:
         node = q.popleft()
@@ -99,21 +100,18 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
             parent = node.in_edges[0].from_node
             parent_last = parent.info[-1][node_key]
             last = node.info[-1][node_key]
-            if last != parent_last:
+            if last != parent_last or node.get_id() == parent.get_id():
                 continue
 
             # Handle Diamond Branching
             vis_counter = {}
             for edge in node.out_edges:
                 onode = edge.to_node
-                vis = __flood_fill(graph, onode)
+                vis = __flood_fill(graph, onode, node)
                 for x in vis:
                     if x not in vis_counter:
                         vis_counter[x] = 0
                     vis_counter[x] += 1
-
-            if node.get_id() in vis_counter:
-                continue
 
             erase_edges = []
             new_edges = []
