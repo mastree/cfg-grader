@@ -98,6 +98,9 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
                 continue
 
             parent = node.in_edges[0].from_node
+            if len(node.info) and len(parent.info):
+                continue
+
             parent_last = parent.info[-1][node_key]
             last = node.info[-1][node_key]
             if last != parent_last or node.get_id() == parent.get_id():
