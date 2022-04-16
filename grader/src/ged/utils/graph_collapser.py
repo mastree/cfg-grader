@@ -90,9 +90,9 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
         for edge in node.out_edges:
             last_id = max(last_id, edge.get_id())
 
-    snode = len(graph.nodes)
-    for i in range(snode):
+    while (1):
         erase_nodes = []
+        found = 0
         for node in graph.nodes:
             if not (len(node.in_edges) == 1 and len(node.out_edges) > 1):
                 continue
@@ -103,22 +103,16 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
             if last != parent_last or node.get_id() == parent.get_id():
                 continue
 
-            # Handle Diamond Branching
-            vis_counter = {}
-            for edge in node.out_edges:
-                onode = edge.to_node
-                vis = __flood_fill(graph, onode, node)
-                for x in vis:
-                    if x not in vis_counter:
-                        vis_counter[x] = 0
-                    vis_counter[x] += 1
-
+            found = 1
+            # Add intermediate nodes
+            added_intermediate = set()
             erase_edges = []
             new_edges = []
             for edge in node.out_edges:
                 onode = edge.to_node
-                if vis_counter[onode.get_id()] <= 1:
+                if onode.get_id() in added_intermediate:
                     continue
+                added_intermediate.add(onode.get_id())
 
                 last_id += 1
                 new_node = Node(last_id)
@@ -148,7 +142,7 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
                 graph.erase_edge(edge_id)
                 erase_edge.from_node.erase_edge(edge_id)
                 erase_edge.to_node.erase_edge(edge_id)
-            # End of Transformation (Diamond Branching Handling)
+            # End of intermediate nodes addition
 
             for edge in node.out_edges:
                 onode = edge.to_node
@@ -167,26 +161,12 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
         for erase_node in erase_nodes:
             graph.erase_node(erase_node.get_id())
 
-    # Erase Redundant Nodes
-    erase_nodes = []
-    for node in graph.nodes:
-        if len(node.edges) == 2 and len(node.out_edges) == 1 and len(node.in_edges) == 1 and len(node.info) == 0:
-            erase_nodes.append(node)
+        graph = collapse(graph)
+        last_id = graph.find_last_id()
+        if not found:
+            break
 
-    for erase_node in erase_nodes:
-        parent = node.in_edges[0].from_node
-        child = node.out_edges[0].to_node
-        last_id += 1
-        new_edge = Edge(parent, child)
-        new_edge.set_id(last_id)
-
-        parent.add_edge(new_edge)
-        child.add_edge(new_edge)
-        graph.add_edge(new_edge)
-
-        graph.erase_node(erase_node.get_id())
-
-    return compress_graph_component_id(graph)
+    return graph
 
 
 def uncollapse(input_graph: Graph):

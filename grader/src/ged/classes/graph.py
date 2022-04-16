@@ -48,3 +48,11 @@ class Graph:
         for node in self.nodes:
             ret += f'{node}\n'
         return ret
+
+    def find_last_id(self):
+        ret = 0
+        for node in self.nodes:
+            ret = max(ret, node.get_id())
+        for edge in self.edges:
+            ret = max(ret, edge.get_id())
+        return ret

@@ -39,7 +39,7 @@ def check_munkres():
     print(starred_indices)
 
 
-test_src = "./datasets/segiempat/juryssolution/test.py"
+test_src = "./datasets/segiempat/juryssolution/test2.py"
 
 jurys = ["./datasets/segiempat/juryssolution/segiempatcontoh.py",
          "./datasets/segiempat/juryssolution/segiempatcontoh2.py",
@@ -177,10 +177,10 @@ def test_draw_preprocessed_cfg(src):
 
 
 if __name__ == '__main__':
-    # test_draw_preprocessed_cfg(test_src)
+    test_draw_preprocessed_cfg(test_src)
     # test_ged(solutions[0], jurys[0])
     # test_ged(jurys[0], solutions[0])
-    test_all(True, print_result=True)
+    # test_all(True, print_result=True)
     # test_approximate_all(True, print_result=True)
     # test_all(False)
     # test_all(False, print_result=True)
