@@ -8,6 +8,7 @@ from grader.src.ged.utils.graph_collapser import uncollapse, collapse, propagate
 from grader.src.ged.utils.lsap_solver import Munkres
 from grader.src.ged.dfs_ged import DFSGED
 from grader.src.grader import grade
+from webservice.src.service.python_source_grader import get_python_scores
 
 
 def draw_graph(src, filename):
@@ -176,6 +177,17 @@ def test_draw_preprocessed_cfg(src):
         print(e)
 
 
+def __read_file(filename):
+    with open(filename, 'r') as file:
+        raw = file.read()
+        return raw
+
+def __read_files(filenames):
+    ret = []
+    for filename in filenames:
+        ret.append(__read_file(filename))
+    return ret
+
 if __name__ == '__main__':
     test_draw_preprocessed_cfg(test_src)
     # test_ged(solutions[0], jurys[0])
@@ -186,18 +198,9 @@ if __name__ == '__main__':
     # test_all(False, print_result=True)
     # test_json()
 
-    # draw_graph(solutions[0], "generatedimg/solution")
-    # draw_graph(jurys[2], "generatedimg/jury_delta")
-
-    # cfg = PythonCfgGenerator.generate_python_from_file(solutions[3])
-    # cfg = propagate_branching(cfg, node_key="label")
-    # digraph = graph_to_digraph(cfg, node_key="label")
-    # digraph.render(filename="generatedimg/something2", format="jpg")
-
-    # jury_cfgs = []
-    # for jury_file in jurys:
-    #     jury_cfgs.append(PythonCfgGenerator.generate_python_from_file(jury_file))
-    #
-    # for solution_file in solutions:
-    #     solution_cfg = PythonCfgGenerator.generate_python_from_file(solution_file)
-    #     print(f'{solution_file : <10}: {grade(solution_cfg, jury_cfgs)}')
+    # max_score, min_score, avg_score = 0, 0, 0
+    # try:
+    #     max_score, min_score, avg_score = get_python_scores(__read_file(test_src), __read_files(solutions))
+    #     print(f'max {max_score}, min {min_score}, avg {avg_score}')
+    # except Exception as e:
+    #     print(f'An error occured: {e.__class__.__name__}')

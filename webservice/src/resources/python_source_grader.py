@@ -39,5 +39,5 @@ class PythonSourceGrader(Resource):
             self.logger.info("Grading successful!")
             return response
         except Exception as e:
-            self.logger.error("An error occurred", e)
-            return get_response(err=True, msg='An error occurred', status_code=500)
+            self.logger.error(f'An error occurred: {e}')
+            return get_response(err=True, msg=f'An error occurred: {e.__class__.__name__}', status_code=500)
