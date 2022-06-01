@@ -1,0 +1,6 @@
+pycfg
+astunparse
+pygraphviz
+pillow
+munkres
+xlsxwriter
