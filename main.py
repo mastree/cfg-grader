@@ -188,8 +188,18 @@ def __read_files(filenames):
         ret.append(__read_file(filename))
     return ret
 
+def draw_report_resources(srcs):
+    try:
+        for src in srcs:
+            cfg = PythonCfgGenerator.generate_python_from_file(src)
+            digraph = graph_to_digraph(cfg, node_key="label")
+            digraph.render(filename=f"generatedimg/{src.split('/')[-1][:-3]}", format="jpg")
+    except Exception as e:
+        print(e)
+
 if __name__ == '__main__':
-    test_draw_preprocessed_cfg(test_src)
+    draw_report_resources(["./datasets/test/control-flow-sample.py"])
+    # test_draw_preprocessed_cfg(test_src)
     # test_ged(solutions[0], jurys[0])
     # test_ged(jurys[0], solutions[0])
     # test_all(True, print_result=True)
