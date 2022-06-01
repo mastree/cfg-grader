@@ -5,7 +5,7 @@
 /exploration
 .idea
 /temp/
-datasets
+datasets/**
 virtualenv
 
 # Byte-compiled / optimized / DLL files
