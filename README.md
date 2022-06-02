@@ -33,6 +33,23 @@ Note that even though it says `http://0.0.0.0:5000`, the service can only be acc
 
 Now you can open `localhost:5000/health-check` to see if it's successfully running or not.
 
+### Rebuild Docker Container
+
+```bash
+docker-compose up --build
+```
+
+### Common Problems
+
+In case you cannot run docker on windows, and got the following response.
+```cmd
+docker.errors.DockerException: Error while fetching server API version: (2, 'CreateFile', 'The system cannot find the file specified.')
+[12808] Failed to execute script docker-compose
+```
+
+You can solve the problem by simply running the docker desktop, 
+so the docker applicatoin will run as a service in the background.
+
 <!-- TODO: Add Documentation on API -->
 
 ---
