@@ -1,6 +1,3 @@
-from collections import namedtuple
-
-
 class NodeView:
     def __init__(self, id, info):
         self.id: int = id
@@ -15,7 +12,7 @@ class EdgeView:
 
 
 class GraphView:
-    def __init__(self, nodes, edges):
+    def __init__(self, nodes=[], edges=[]):
         self.nodes: list[NodeView] = []
         self.edges: list[EdgeView] = []
 

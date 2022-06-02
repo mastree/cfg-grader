@@ -7,8 +7,6 @@ from grader.src.ged.classes.general_cost_function import GeneralCostFunction
 from grader.src.ged.utils.graph_collapser import uncollapse, collapse, propagate_branching
 from grader.src.ged.utils.lsap_solver import Munkres
 from grader.src.ged.dfs_ged import DFSGED
-from grader.src.grader import grade
-from webservice.src.service.python_source_grader import get_python_scores
 
 
 def draw_graph(src, filename):
@@ -42,7 +40,7 @@ def check_munkres():
 
 test_src = "./datasets/segiempat/juryssolution/test2.py"
 
-jurys = ["./datasets/segiempat/juryssolution/segiempatcontoh.py",
+references = ["./datasets/segiempat/juryssolution/segiempatcontoh.py",
          "./datasets/segiempat/juryssolution/segiempatcontoh2.py",
          "./datasets/segiempat/juryssolution/segiempatcontoh_delta.py"]
 
@@ -53,7 +51,7 @@ solutions = ["./datasets/segiempat/solution/segiempat103.py",
 
 
 def check_digraph():
-    cfg = PythonCfgGenerator.generate_python_from_file(jurys[0])
+    cfg = PythonCfgGenerator.generate_python_from_file(references[0])
     digraph = graph_to_digraph(cfg)
     digraph.render(filename="generatedimg/something", format="jpg")
 
@@ -65,8 +63,8 @@ def bias_func(x):
 def test_all(graph_collapsed: bool = True, print_result = False):
     scores = []
     mx = 0
-    for jury in jurys:
-        graph_target = PythonCfgGenerator.generate_python_from_file(jury)
+    for reference in references:
+        graph_target = PythonCfgGenerator.generate_python_from_file(reference)
         if graph_collapsed:
             graph_target = propagate_branching(graph_target)
         else:
@@ -95,7 +93,7 @@ def test_all(graph_collapsed: bool = True, print_result = False):
             assert(normalized_ed >= approx_normalized_ed)
             mx = max(mx, normalized_ed)
             if print_result:
-                print(f'{jury.split("/")[-1]} {solution.split("/")[-1]}')
+                print(f'{reference.split("/")[-1]} {solution.split("/")[-1]}')
                 print(f'optimal? {dfs_ged.is_solution_optimal}\nexact: {normalized_ed}\napprox: {approx_normalized_ed}\n')
 
     print(f'average: {sum(scores) / len(scores)}, max: {mx}')
@@ -104,8 +102,8 @@ def test_all(graph_collapsed: bool = True, print_result = False):
 def test_approximate_all(graph_collapsed: bool = True, print_result = False):
     scores = []
     mx = 0
-    for jury in jurys:
-        graph_target = PythonCfgGenerator.generate_python_from_file(jury)
+    for reference in references:
+        graph_target = PythonCfgGenerator.generate_python_from_file(reference)
         if graph_collapsed:
             graph_target = propagate_branching(graph_target)
         else:
@@ -125,14 +123,14 @@ def test_approximate_all(graph_collapsed: bool = True, print_result = False):
             scores.append(normalized_ed)
             mx = max(mx, normalized_ed)
             if print_result:
-                print(f'{jury.split("/")[-1]} {solution.split("/")[-1]}')
+                print(f'{reference.split("/")[-1]} {solution.split("/")[-1]}')
                 print(f'GED: {ed}, score: {normalized_ed}')
 
     print(f'average: {sum(scores) / len(scores)}, max: {mx}')
 
 
 def test_ged(file1, file2, graph_collapsed=True):
-    print(f'sol: {file1.split("/")[-1]}, jury: {file2.split("/")[-1]}')
+    print(f'sol: {file1.split("/")[-1]}, reference: {file2.split("/")[-1]}')
 
     graph_source = PythonCfgGenerator.generate_python_from_file(file1)
     graph_target = PythonCfgGenerator.generate_python_from_file(file2)
@@ -198,11 +196,11 @@ def draw_report_resources(srcs):
         print(e)
 
 if __name__ == '__main__':
-    draw_report_resources(["./datasets/test/control-flow-sample.py"])
+    # draw_report_resources(["./datasets/test/control-flow-sample.py"])
     # test_draw_preprocessed_cfg(test_src)
-    # test_ged(solutions[0], jurys[0])
-    # test_ged(jurys[0], solutions[0])
-    # test_all(True, print_result=True)
+    # test_ged(solutions[0], references[0])
+    # test_ged(references[0], solutions[0])
+    test_all(True, print_result=True)
     # test_approximate_all(True, print_result=True)
     # test_all(False)
     # test_all(False, print_result=True)

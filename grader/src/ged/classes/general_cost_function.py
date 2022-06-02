@@ -1,3 +1,5 @@
+from enum import Enum
+
 from grader.src.ged.classes.cost_function import CostFunction
 from grader.src.ged.classes.graph_component import *
 
@@ -7,7 +9,7 @@ class GeneralCostFunction(CostFunction):
         EDGE_COST = 1
         NODE_COST = 1
 
-    class RelabelMethod:
+    class RelabelMethod(Enum):
         NONE = 0
         BOOLEAN_COUNT = 1
         COUNTER = 2

@@ -3,7 +3,6 @@ import json
 from flask import request
 from flask_restful import Resource
 
-from webservice.src.model.grader_response import GraderResponse
 from webservice.src.service.grader import get_scores
 from webservice.src.utils.logz import create_logger
 from webservice.src.utils.wrapper import get_response
@@ -19,16 +18,15 @@ class Grader(Resource):
         self.logger.info("Grading control flow graph...")
 
         try:
-            req_data = json.loads(data)
-            req_data = GraderRequest(**req_data)
-            self.logger.info(req_data)
-            self.logger.info(type(req_data))
+            request_data = json.loads(data)
+            request_data = GraderRequest(**request_data)
+            self.logger.info(request_data)
+            self.logger.info(type(request_data))
 
-            max_score, min_score, avg_score = get_scores(req_data)
-            grader_response = GraderResponse(max_score, min_score, avg_score)
-            response = get_response(err=False, msg='Success', data=grader_response)
+            response_data = get_scores(request_data)
+            response = get_response(err=False, msg='Success', data=response_data)
             self.logger.info("Grading successful!")
             return response
         except Exception as e:
-            self.logger.error(f'failed to load json: {e}')
+            self.logger.error(f'An error occurred: {e}')
             return get_response(err=True, msg='Failed to parse control flow graph', status_code=500)

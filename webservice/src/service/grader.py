@@ -4,6 +4,8 @@ from grader.src.ged.classes.graph import Graph
 from grader.src.ged.classes.graph_component import Node, Edge
 from grader.src.grader import grade
 from webservice.src.model.grader_request import GraderRequest
+from webservice.src.model.grader_response_data import GraderResponseData
+from webservice.src.model.grading_method import GradingMethod
 from webservice.src.model.graph_view import GraphView
 
 
@@ -41,13 +43,21 @@ def graph_view_to_graph(graph_view: GraphView) -> Graph:
 def get_scores(grader_request: GraderRequest) -> tuple[int, int, int]:
     graph_source = graph_view_to_graph(grader_request.solution)
     graph_targets: list[Graph] = []
+    time_limit = grader_request.time_limit
+    time_limit_per_unit = grader_request.time_limit_per_unit
+    grading_method = grader_request.grading_method
 
-    for jury_solution in grader_request.jury_solutions:
-        graph_targets.append(graph_view_to_graph(jury_solution))
+    for reference in grader_request.references:
+        graph_targets.append(graph_view_to_graph(reference))
 
-    scores, _ = grade(graph_source, graph_targets)
-    max_score = max(scores)
-    min_score = min(scores)
-    avg_score = sum(scores) / len(scores)
+    scores, errors, feedback = grade(graph_source, graph_targets, time_limit, time_limit_per_unit)
+    score = 0
+    if len(scores) > 0:
+        if grading_method == GradingMethod.AVERAGE:
+            score = sum(scores) / len(scores)
+        elif grading_method == GradingMethod.MINIMUM:
+            score = min(scores)
+        else:
+            score = max(scores)
 
-    return max_score, min_score, avg_score
+    return GraderResponseData(score, feedback)

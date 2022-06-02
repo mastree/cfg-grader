@@ -92,7 +92,7 @@ class DFSGED:
 
         while cur_node is not None:
             cur_time = time.time_ns()
-            if cur_time - self.start_time >= self.time_limit * 1e6:
+            if cur_time - self.start_time >= self.time_limit * 1000000:
                 self.is_solution_optimal = False
                 break
 

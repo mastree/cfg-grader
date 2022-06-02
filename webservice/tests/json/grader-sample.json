@@ -27,7 +27,7 @@
       }
     ]
   },
-  "jury_solutions": [
+  "references": [
     {
       "nodes": [
         {
@@ -56,5 +56,8 @@
         }
       ]
     }
-  ]
+  ],
+  "timeLimit": 5000,
+  "timeLimitPerUnit": 3000,
+  "gradingMethod": "AVERAGE"
 }
