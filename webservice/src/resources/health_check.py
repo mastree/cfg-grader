@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from flask_restful import Resource
 
 from webservice.src.utils.logz import create_logger
@@ -10,4 +11,4 @@ class HealthCheck(Resource):
 
     def get(self):
         self.logger.info("receiving health check endpoint")
-        return get_response(err=False, msg='Healthy')
+        return get_response(err=False, msg='Healthy', status_code=HTTPStatus.OK)
