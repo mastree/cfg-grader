@@ -76,9 +76,9 @@ class Grader:
             sol_out = str(subprocess.check_output(command, input=infile.read().encode(), timeout=2).decode()).rstrip()
             infile.close()
             
-            jurys_sol_out = get_file_contents(out_path).rstrip()
+            reference_out = get_file_contents(out_path).rstrip()
 
-            if (jurys_sol_out == sol_out):
+            if (reference_out == sol_out):
                 correct_count += 1
 
         return correct_count / output_count
@@ -95,12 +95,12 @@ def grade(input_path, output_path, solution_file):
     grader.set_ans_rel(output_path)
     return grader.grade(solution_file)
 
-def generate_and_grade(input_path, output_path, jury_solution_file, solution_file):
-    generate_outputs(input_path, output_path, jury_solution_file)
+def generate_and_grade(input_path, output_path, reference_file, solution_file):
+    generate_outputs(input_path, output_path, reference_file)
     return grade(input_path, output_path, solution_file)
 
-def grade_all(input_path, output_path, jury_solution_file, solution_path):
-    generate_outputs(input_path, output_path, jury_solution_file)
+def grade_all(input_path, output_path, reference_file, solution_path):
+    generate_outputs(input_path, output_path, reference_file)
     
     ret = []
     grader = Grader()
@@ -120,8 +120,8 @@ def grade_all(input_path, output_path, jury_solution_file, solution_path):
         
     return ret
 
-def grade_all_to_csv(input_path, output_path, jury_solution_file, solution_path, csv_file):
-    results = grade_all(input_path, output_path, jury_solution_file, solution_path)
+def grade_all_to_csv(input_path, output_path, reference_file, solution_path, csv_file):
+    results = grade_all(input_path, output_path, reference_file, solution_path)
     fields = ['filename', 'black_box_score']
 
     with open(csv_file, 'w', newline='') as file:
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     
     input_path = os.path.join(BASE_PATH, 'in')
     output_path = os.path.join(BASE_PATH, 'out')
-    jury_solution_file = os.path.join(BASE_PATH, 'juryssolution/segiempatcontoh.py')
+    reference_file = os.path.join(BASE_PATH, 'juryssolution/segiempatcontoh.py')
     solution_path = os.path.join(BASE_PATH, 'solution')
-    grade_all_to_csv(input_path, output_path, jury_solution_file, solution_path, "test.csv")
+    grade_all_to_csv(input_path, output_path, reference_file, solution_path, "test.csv")
         

@@ -1,0 +1,15 @@
+digraph {
+	1 [label="1: ['start', 'assign', 'assign', 'assign', 'assign']"]
+	2 [label="2: ['for/while']"]
+	3 [label="3: ['assign', 'if']"]
+	4 [label="4: ['expr', 'end']"]
+	5 [label="5: ['assign', 'assign']"]
+	6 [label="6: ['assign']"]
+	1 -> 2
+	2 -> 3
+	2 -> 4
+	3 -> 5
+	3 -> 6
+	5 -> 2
+	6 -> 2
+}
