@@ -17,13 +17,11 @@ def compress_graph_component_id(graph: Graph, start_id=1) -> Graph:
         result.add_node(new_node)
 
     for edge in graph.edges:
-        last_id += 1
-
         from_node = id_node[edge.from_node.get_id()]
         to_node = id_node[edge.to_node.get_id()]
 
-        new_edge = Edge(from_node, to_node, copy.deepcopy(edge.info))
-        new_edge.set_id(last_id)
+        last_id += 1
+        new_edge = Edge(last_id, from_node, to_node, copy.deepcopy(edge.info))
 
         from_node.add_edge(new_edge)
         if from_node.get_id() != to_node.get_id():

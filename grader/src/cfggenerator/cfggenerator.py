@@ -51,8 +51,7 @@ class PythonCfgGenerator:
                 to_node = id_node[out_edge.target.id]  # graph.find_node_with_id(out_edge.target.id)
 
                 last_id += 1
-                edge = Edge(from_node, to_node)
-                edge.set_id(last_id)
+                edge = Edge(last_id, from_node, to_node)
 
                 from_node.add_edge(edge)
                 if from_node.get_id() != to_node.get_id():
@@ -67,8 +66,7 @@ class PythonCfgGenerator:
                 last_id += 1
                 new_node = Node(last_id)
                 last_id += 1
-                new_edge = Edge(node, new_node)
-                new_edge.set_id(last_id)
+                new_edge = Edge(last_id, node, new_node)
 
                 node.add_edge(new_edge)
                 new_node.add_edge(new_edge)

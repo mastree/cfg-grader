@@ -45,13 +45,34 @@ def collapse(input_graph: Graph):
         if new_from_id != new_to_id or edge.from_node.get_id() == edge.to_node.get_id():
             from_node = id_node[new_from_id]
             to_node = id_node[new_to_id]
-            new_edge = Edge(from_node, to_node, copy.deepcopy(edge.info))
+            new_edge = Edge(edge.get_id(), from_node, to_node, copy.deepcopy(edge.info))
 
             from_node.add_edge(new_edge)
             if from_node.get_id() != to_node.get_id():
                 to_node.add_edge(new_edge)
-
             graph.add_edge(new_edge)
+
+    # Erase empty node if in-nodes and out-nodes can be connected directly
+    last_id = graph.find_last_id()
+    erased_nodes = []
+    for node in graph.nodes:
+        if len(node.info) == 0 and len(node.in_edges) == 1 and len(node.out_edges) == 1:
+            if node.in_edges[0].get_id() == node.out_edges[0].get_id():
+                continue
+            erased_nodes.append(node)
+
+    for node in erased_nodes:
+        prev_node = node.in_edges[0].from_node
+        next_node = node.out_edges[0].to_node
+        graph.erase_node(node.get_id())
+
+        last_id += 1
+        new_edge = Edge(last_id, prev_node, next_node)
+
+        prev_node.add_edge(new_edge)
+        if prev_node.get_id() != next_node.get_id():
+            next_node.add_edge(new_edge)
+        graph.add_edge(new_edge)
 
     return compress_graph_component_id(graph)
 
@@ -75,10 +96,10 @@ def __flood_fill(graph: Graph, root: Node, parent: Node) -> set:
     return ret
 
 
-"""
-Propagate branching on if statement
-"""
 def propagate_branching(input_graph: Graph, node_key: str = "label"):
+    """
+    Propagate branching on if statement
+    """
     graph = collapse(input_graph)
     last_id = 0
     for node in graph.nodes:
@@ -98,7 +119,7 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
                 continue
 
             parent = node.in_edges[0].from_node
-            if len(node.info) and len(parent.info):
+            if len(node.info) == 0 or len(parent.info) == 0:
                 continue
 
             parent_last = parent.info[-1][node_key]
@@ -114,17 +135,16 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
             for edge in node.out_edges:
                 onode = edge.to_node
                 if onode.get_id() in added_intermediate:
+                    erase_edges.append(edge)
                     continue
                 added_intermediate.add(onode.get_id())
 
                 last_id += 1
                 new_node = Node(last_id)
                 last_id += 1
-                new_edge = Edge(node, new_node)
-                new_edge.set_id(last_id)
+                new_edge = Edge(last_id, node, new_node)
                 last_id += 1
-                new_oedge = Edge(new_node, onode)
-                new_oedge.set_id(last_id)
+                new_oedge = Edge(last_id, new_node, onode)
 
                 new_edges.append(new_edge)
                 new_node.add_edge(new_edge)
@@ -153,9 +173,10 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
                 for oinfo in onode.info:
                     new_oinfo.append(oinfo)
                 onode.set_info(new_oinfo)
-                new_edge = Edge(parent, onode)
+
                 last_id += 1
-                new_edge.set_id(last_id)
+                new_edge = Edge(last_id, parent, onode)
+
                 parent.add_edge(new_edge)
                 onode.add_edge(new_edge)
                 graph.add_edge(new_edge)
@@ -191,10 +212,9 @@ def uncollapse(input_graph: Graph):
 
         from_node = id_nodes[input_from_id][-1]
         to_node = id_nodes[input_to_id][0]
-        last_id += 1
 
-        edge = Edge(from_node, to_node, copy.deepcopy(input_edge.info))
-        edge.set_id(last_id)
+        last_id += 1
+        edge = Edge(last_id, from_node, to_node, copy.deepcopy(input_edge.info))
 
         from_node.add_edge(edge)
         if from_node.get_id != to_node.get_id:
@@ -207,8 +227,7 @@ def uncollapse(input_graph: Graph):
         for to_node in nodes:
             if from_node is not None:
                 last_id += 1
-                edge = Edge(from_node, to_node)
-                edge.set_id(last_id)
+                edge = Edge(last_id, from_node, to_node)
 
                 from_node.add_edge(edge)
                 if from_node.get_id != to_node.get_id:

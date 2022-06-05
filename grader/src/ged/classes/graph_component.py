@@ -82,8 +82,8 @@ class Node(GraphComponent):
 
 
 class Edge(GraphComponent):
-    def __init__(self, from_node=None, to_node=None, info=[]):
-        super().__init__(info=info)
+    def __init__(self, component_id=None, from_node=None, to_node=None, info=[]):
+        super().__init__(component_id, info)
         self.from_node: Node = from_node
         self.to_node: Node = to_node
 
@@ -112,3 +112,6 @@ class Edge(GraphComponent):
         elif node.get_id() == self.to_node.get_id():
             return 1
         return 3
+
+    def __str__(self):
+        return f'{self.get_id(): <3}: {(self.from_node.get_id(), self.to_node.get_id())}'

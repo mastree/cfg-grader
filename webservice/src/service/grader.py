@@ -13,12 +13,14 @@ def graph_view_to_graph(graph_view: GraphView) -> Graph:
     graph = Graph()
     id_node = {}
 
+    last_id = 0
     for node_view in graph_view.nodes:
         info = []
         if isinstance(node_view.info, list):
             info = copy.deepcopy(node_view.info)
 
         node = Node(node_view.id, info)
+        last_id = max(last_id, node.get_id())
         id_node[node.get_id()] = node
         graph.add_node(node)
 
@@ -30,7 +32,8 @@ def graph_view_to_graph(graph_view: GraphView) -> Graph:
         from_node = id_node[edge_view.from_node]
         to_node = id_node[edge_view.to_node]
 
-        edge = Edge(from_node, to_node, info)
+        last_id += 1
+        edge = Edge(last_id, from_node, to_node, info)
         from_node.add_edge(edge)
         if from_node.get_id() != to_node:
             to_node.add_edge(edge)
