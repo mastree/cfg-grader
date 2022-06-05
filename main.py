@@ -10,7 +10,7 @@ from grader.src.ged.dfs_ged import DFSGED
 
 
 def draw_graph(src, filename):
-    PythonCfgGenerator.draw_python_from_file(src, filename)
+    PythonCfgGenerator.draw_python_from_file(src, f"generatedimg/{filename}")
 
 
 def check_graph_draw():
@@ -180,11 +180,13 @@ def __read_file(filename):
         raw = file.read()
         return raw
 
+
 def __read_files(filenames):
     ret = []
     for filename in filenames:
         ret.append(__read_file(filename))
     return ret
+
 
 def draw_report_resources(srcs):
     try:
@@ -195,20 +197,12 @@ def draw_report_resources(srcs):
     except Exception as e:
         print(e)
 
+
 if __name__ == '__main__':
     # draw_report_resources(["./datasets/test/control-flow-sample.py"])
-    # test_draw_preprocessed_cfg(test_src)
+    test_draw_preprocessed_cfg(test_src)
+    # draw_graph(test_src, "something")
     # test_ged(solutions[0], references[0])
-    # test_ged(references[0], solutions[0])
-    test_all(True, print_result=True)
+    # test_all(True, print_result=True)
     # test_approximate_all(True, print_result=True)
-    # test_all(False)
     # test_all(False, print_result=True)
-    # test_json()
-
-    # max_score, min_score, avg_score = 0, 0, 0
-    # try:
-    #     max_score, min_score, avg_score = get_python_scores(__read_file(test_src), __read_files(solutions))
-    #     print(f'max {max_score}, min {min_score}, avg {avg_score}')
-    # except Exception as e:
-    #     print(f'An error occured: {e.__class__.__name__}')

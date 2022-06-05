@@ -1,35 +1,32 @@
 digraph {
-	1 [label="1: ['start', 'expr']"]
-	2 [label="2: ['for/while']"]
-	3 [label="3: ['if']"]
-	4 [label="4: ['end']"]
-	5 [label="5: ['expr']"]
-	6 [label="6: ['expr', 'if']"]
-	7 [label="7: ['for/while']"]
+	1 [label="1: ['expr']"]
+	2 [label="2: ['for/while', 'if']"]
+	3 [label="3: ['expr']"]
+	4 [label="4: ['expr', 'if']"]
+	5 [label="5: ['for/while']"]
+	6 [label="6: ['expr']"]
+	7 [label="7: ['assign']"]
 	8 [label="8: ['expr']"]
-	9 [label="9: ['assign']"]
-	10 [label="10: ['expr']"]
-	11 [label="11: ['expr', 'expr']"]
+	9 [label="9: ['expr', 'expr']"]
+	10 [label="10: ['expr', 'expr']"]
+	11 [label="11: ['expr', 'expr', 'assign']"]
 	12 [label="12: ['expr', 'expr']"]
-	13 [label="13: ['expr', 'expr', 'assign']"]
-	14 [label="14: ['expr', 'expr']"]
 	1 -> 2
 	2 -> 3
-	2 -> 4
-	3 -> 5
-	3 -> 11
-	3 -> 12
-	5 -> 6
+	2 -> 9
+	2 -> 10
+	3 -> 4
+	4 -> 6
+	4 -> 8
+	4 -> 11
+	4 -> 12
+	5 -> 7
+	5 -> 4
 	6 -> 8
-	6 -> 13
-	6 -> 14
-	7 -> 9
-	7 -> 6
-	8 -> 10
-	9 -> 7
-	10 -> 2
-	11 -> 7
-	12 -> 6
-	13 -> 10
-	14 -> 10
+	7 -> 5
+	8 -> 2
+	9 -> 5
+	10 -> 4
+	11 -> 8
+	12 -> 8
 }
