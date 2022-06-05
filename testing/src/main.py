@@ -47,6 +47,22 @@ def write_csv(filename, columns, data=list[dict]):
         writer.writerows(data)
 
 
+def draw_file(dirname, target_nim, filename):
+    dir_path = os.path.join(ROOT_DIR, "datasets", dirname)
+    folders = [f for f in os.listdir(dir_path)]
+    for folder in folders:
+        source_root = os.path.join(dir_path, folder)
+        if filename in os.listdir(source_root):
+            source_path = os.path.join(dir_path, folder, filename)
+            nim = folder.split()[0]
+            if str(nim) == str(target_nim):
+                print("drawing..")
+                try:
+                    PythonCfgGenerator.draw_python_from_file(source_path, nim)
+                except Exception as e:
+                    print(e)
+
+
 if __name__ == '__main__':
     praktikum3_dirs = [
         "4658 Praktikum 3 Shift 1 - 07.30-09.30",
@@ -60,13 +76,16 @@ if __name__ == '__main__':
         "4920 Praktikum 6 - Shift 3 (13.00 - 15.00)",
         "4921 Praktikum 6 - Shift 4 (15.45 - 17.45)"
     ]
-    data = read_results_data("segiempat.xlsx")
+
+
+    problem_name = "segiempat"
+    data = read_results_data(f"{problem_name}.xlsx")
     # print(data.iloc[:10])
     # print(data.columns.tolist())
     unit_time_limit = 3000
-    references = generate_reference_cfgs("segiempat")
+    references = generate_reference_cfgs(f"{problem_name}")
     students_score = {}
-    for nim, cfg in generate_source_cfgs(praktikum3_dirs[-1], "segiempat.py"):
+    for nim, cfg in generate_source_cfgs(praktikum3_dirs[-1], f"{problem_name}.py"):
         print(f"Grading student {nim}...")
         if cfg is None:
             students_score[nim] = 0
@@ -86,4 +105,4 @@ if __name__ == '__main__':
             'new_wb_score': kamal_score
         })
     csv_columns = ['nim', 'bb_score', 'old_wb_score', 'new_wb_score']
-    write_csv("segitiga.csv", csv_columns, new_data)
+    write_csv(f"{problem_name}.csv", csv_columns, new_data)
