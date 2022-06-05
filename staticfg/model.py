@@ -239,3 +239,19 @@ class CFG(object):
 
         for subcfg in self.functioncfgs.values():
             yield from subcfg
+
+    def blocks_iter(self):
+        """
+        Generator that yields all the blocks in the current graph
+        """
+        visited = set()
+        to_visit = [self.entryblock]
+
+        while to_visit:
+            block = to_visit.pop(0)
+            visited.add(block)
+            for exit_ in block.exits:
+                if exit_.target in visited or exit_.target in to_visit:
+                    continue
+                to_visit.append(exit_.target)
+            yield block

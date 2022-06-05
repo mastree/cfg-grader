@@ -21,10 +21,6 @@ class PythonCfgGenerator:
                 "rawLine": (astor.to_source(statement)).split('\n')[0],
                 "label": cls._get_statement_type_string(statement)
             }
-            if current["rawLine"] == "START_BLOCK()":
-                current["label"] = "start"
-            elif current["rawLine"] == "END_BLOCK()":
-                current["label"] = "end"
             info.append(current)
         node = Node(block.id, info)
         return node
@@ -64,6 +60,24 @@ class PythonCfgGenerator:
 
                 graph.add_edge(edge)
 
+        # Add an exit for 'if' blocks with only one exit
+        new_nodes = []
+        for node in graph.nodes:
+            if len(node.info) > 0 and node.info[-1]['label'].lower() == 'if' and len(node.out_edges) == 1:
+                last_id += 1
+                new_node = Node(last_id)
+                last_id += 1
+                new_edge = Edge(node, new_node)
+                new_edge.set_id(last_id)
+
+                node.add_edge(new_edge)
+                new_node.add_edge(new_edge)
+                new_nodes.append(new_node)
+                graph.add_edge(new_edge)
+
+        for new_node in new_nodes:
+            graph.add_node(new_node)
+
         return graph
 
     @classmethod
@@ -74,14 +88,11 @@ class PythonCfgGenerator:
 
     @classmethod
     def generate_python(cls, raw_code) -> Graph:
-        raw_code = f'START_BLOCK()\n{raw_code}\nEND_BLOCK()\n'
         cfg = CFGBuilder().build_from_src("", raw_code)
         return cls._cfg_to_graph(cfg)
 
     @classmethod
     def generate_python_from_file(cls, filename) -> Graph:
-        # cfg = CFGBuilder().build_from_file("", filename)
-        # return cls._cfg_to_graph(cfg)
         with open(filename, 'r') as file:
             raw_code = file.read()
             return cls.generate_python(raw_code)
