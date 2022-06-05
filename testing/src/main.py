@@ -63,29 +63,14 @@ def draw_file(dirname, target_nim, filename):
                     print(e)
 
 
-if __name__ == '__main__':
-    praktikum3_dirs = [
-        "4658 Praktikum 3 Shift 1 - 07.30-09.30",
-        "4659 Praktikum 3 Shift 2 - 10.00-12.00",
-        "4660 Praktikum 3 Shift 3 - 13.00-15.00",
-        "4661 Praktikum 3 Shift 4 - 15.45-17.45"
-    ]
-    praktikum6_dirs = [
-        "4918 Praktikum 6 - Shift 1 (08.00 - 10.00)",
-        "4919 Praktikum 6 - Shift 2 (10.00 - 12.00)",
-        "4920 Praktikum 6 - Shift 3 (13.00 - 15.00)",
-        "4921 Praktikum 6 - Shift 4 (15.45 - 17.45)"
-    ]
-
-
-    problem_name = "segiempat"
+def do_testing(data_dir, problem_name):
     data = read_results_data(f"{problem_name}.xlsx")
     # print(data.iloc[:10])
     # print(data.columns.tolist())
     unit_time_limit = 3000
     references = generate_reference_cfgs(f"{problem_name}")
     students_score = {}
-    for nim, cfg in generate_source_cfgs(praktikum3_dirs[-1], f"{problem_name}.py"):
+    for nim, cfg in generate_source_cfgs(data_dir, f"{problem_name}.py"):
         print(f"Grading student {nim}...")
         if cfg is None:
             students_score[nim] = 0
@@ -106,3 +91,21 @@ if __name__ == '__main__':
         })
     csv_columns = ['nim', 'bb_score', 'old_wb_score', 'new_wb_score']
     write_csv(f"{problem_name}.csv", csv_columns, new_data)
+
+
+if __name__ == '__main__':
+    praktikum3_dirs = [
+        "4658 Praktikum 3 Shift 1 - 07.30-09.30",
+        "4659 Praktikum 3 Shift 2 - 10.00-12.00",
+        "4660 Praktikum 3 Shift 3 - 13.00-15.00",
+        "4661 Praktikum 3 Shift 4 - 15.45-17.45"
+    ]
+    praktikum6_dirs = [
+        "4918 Praktikum 6 - Shift 1 (08.00 - 10.00)",
+        "4919 Praktikum 6 - Shift 2 (10.00 - 12.00)",
+        "4920 Praktikum 6 - Shift 3 (13.00 - 15.00)",
+        "4921 Praktikum 6 - Shift 4 (15.45 - 17.45)"
+    ]
+
+    do_testing(praktikum3_dirs[-1], "segiempat")
+    do_testing(praktikum6_dirs[-1], "countvokal")
