@@ -1,10 +1,13 @@
 # Additional
 .venv-wsl/
-generatedimg/
+blackbox/
 datasets/
+generatedimg/
 testing/
 main.py
-pipsize.py
+./definitions.py
+./pipsize.py
+./main.py
 
 # Git
 .git

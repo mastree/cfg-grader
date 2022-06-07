@@ -116,6 +116,6 @@ if __name__ == '__main__':
         "4696 Praktikum 4 Shift 4 - 15.45-17.45"
     ]
 
-    do_testing(praktikum3_dirs[-1], "segiempat")
+    # do_testing(praktikum3_dirs[-1], "segiempat")
     # do_testing(praktikum4_dirs[-1], "empatinteger")
-    do_testing(praktikum6_dirs[-1], "countvokal")
+    # do_testing(praktikum6_dirs[-1], "countvokal")
