@@ -119,5 +119,3 @@ if __name__ == '__main__':
     do_testing(praktikum3_dirs[-1], "segiempat")
     # do_testing(praktikum4_dirs[-1], "empatinteger")
     do_testing(praktikum6_dirs[-1], "countvokal")
-
-    # draw_file(praktikum4_dirs[-1], "16519198", "empatinteger.py")

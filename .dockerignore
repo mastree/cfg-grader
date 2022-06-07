@@ -2,6 +2,7 @@
 .venv-wsl/
 generatedimg/
 datasets/
+testing/
 main.py
 pipsize.py
 
