@@ -115,6 +115,8 @@ class GeneralCostFunction(CostFunction):
                 if (k in a_dict) != (k in b_dict):
                     count += 1
 
+            if len(all_dict) == 0:
+                return 0
             return count / len(all_dict)
         elif self.relabel_method == self.RelabelMethod.COUNTER:
             n = len(a.info)
@@ -140,6 +142,8 @@ class GeneralCostFunction(CostFunction):
             for v in diff.values():
                 tot_diff += abs(v)
 
+            if total == 0:
+                return 0
             return tot_diff / total
         elif self.relabel_method == self.RelabelMethod.DAMERAU_LD:
             n = len(a.info)
@@ -175,6 +179,8 @@ class GeneralCostFunction(CostFunction):
 
                 dpos_a[ca] = i
 
+            if max(n, m) == 0:
+                return 0
             return dp[n][m] / max(n, m)
         elif self.relabel_method == self.RelabelMethod.EXACT:
             n = len(a.info)
@@ -187,6 +193,8 @@ class GeneralCostFunction(CostFunction):
                 if a.info[i][key] != b.info[i][key]:
                     count += 1
 
+            if n == 0:
+                return 0
             return count / n
 
         return 0

@@ -81,6 +81,8 @@ class Grader:
             if (reference_out == sol_out):
                 correct_count += 1
 
+        if output_count == 0:
+            return 1
         return correct_count / output_count
 
 def generate_outputs(input_path, output_path, solution_file):

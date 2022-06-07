@@ -58,9 +58,15 @@ def draw_file(dirname, target_nim, filename):
             if str(nim) == str(target_nim):
                 print("drawing..")
                 try:
-                    PythonCfgGenerator.draw_python_from_file(source_path, nim)
+                    PythonCfgGenerator.draw_python_from_file(source_path, os.path.join(ROOT_DIR, "generatedimg", nim))
                 except Exception as e:
                     print(e)
+                # try:
+                #     cfg = PythonCfgGenerator.generate_python_from_file(source_path)
+                #     print(cfg)
+                # except Exception as e:
+                #     print(e)
+                #     print(e.__traceback__.format_exec())
 
 
 def do_testing(data_dir, problem_name):
@@ -75,7 +81,7 @@ def do_testing(data_dir, problem_name):
         if cfg is None:
             students_score[nim] = 0
             continue
-        scores, _, _ = grade(cfg, references, unit_time_limit * (len(references) + 1), unit_time_limit)
+        scores, errors, feedback = grade(cfg, references, unit_time_limit * (len(references) + 1), unit_time_limit)
         students_score[nim] = max(scores)
 
     new_data = []
@@ -106,6 +112,12 @@ if __name__ == '__main__':
         "4920 Praktikum 6 - Shift 3 (13.00 - 15.00)",
         "4921 Praktikum 6 - Shift 4 (15.45 - 17.45)"
     ]
+    praktikum4_dirs = [
+        "4696 Praktikum 4 Shift 4 - 15.45-17.45"
+    ]
 
     do_testing(praktikum3_dirs[-1], "segiempat")
+    # do_testing(praktikum4_dirs[-1], "empatinteger")
     do_testing(praktikum6_dirs[-1], "countvokal")
+
+    # draw_file(praktikum4_dirs[-1], "16519198", "empatinteger.py")

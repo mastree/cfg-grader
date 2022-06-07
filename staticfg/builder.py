@@ -140,7 +140,7 @@ class CFGBuilder(ast.NodeVisitor):
         Returns:
             The CFG produced from the source file.
         """
-        with open(filepath, 'r') as src_file:
+        with open(filepath, 'r', encoding='UTF-8') as src_file:
             src = src_file.read()
             return self.build_from_src(name, src)
 

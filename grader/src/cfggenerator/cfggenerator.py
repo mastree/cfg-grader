@@ -91,6 +91,6 @@ class PythonCfgGenerator:
 
     @classmethod
     def generate_python_from_file(cls, filename) -> Graph:
-        with open(filename, 'r') as file:
+        with open(filename, 'r', encoding='UTF-8') as file:
             raw_code = file.read()
             return cls.generate_python(raw_code)
