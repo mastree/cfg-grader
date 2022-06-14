@@ -1,6 +1,6 @@
 from grader.src.cfggenerator.cfggenerator import PythonCfgGenerator
 from grader.src.ged.classes.graph import Graph
-from grader.src.grader import grade
+from grader.src.grader import Grader
 from webservice.src.model.grader_response_data import GraderResponseData
 from webservice.src.model.grading_method import GradingMethod
 from webservice.src.model.source_grader_request import SourceGraderRequest
@@ -13,20 +13,22 @@ def get_python_scores(grader_request: SourceGraderRequest) -> tuple[int, int, in
     time_limit_per_unit = grader_request.time_limit_per_unit
     grading_method = grader_request.grading_method
 
-    graph_source = PythonCfgGenerator.generate_python(solution_source)
+    python_cfg_generator = PythonCfgGenerator()
+
+    graph_source = python_cfg_generator.generate_python(solution_source)
     graph_targets: list[Graph] = []
 
     feedback = []
     missing_positions = []
     for reference in reference_sources:
         try:
-            graph_targets.append(PythonCfgGenerator.generate_python(reference))
+            graph_targets.append(python_cfg_generator.generate_python(reference))
             missing_positions.append(len(feedback))
             feedback.append(-1)
         except Exception as e:
             feedback.append("Failed to generate reference CFG")
 
-    scores, errors, grade_feedback = grade(graph_source, graph_targets, time_limit, time_limit_per_unit)
+    scores, errors, grade_feedback = Grader().grade(graph_source, graph_targets, time_limit, time_limit_per_unit)
     for i in range(len(grade_feedback)):
         feedback[missing_positions[i]] = grade_feedback[i]
 

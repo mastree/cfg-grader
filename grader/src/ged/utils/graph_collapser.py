@@ -8,10 +8,12 @@ from grader.src.ged.classes.graph import Graph
 from grader.src.ged.classes.graph_component import *
 
 
-"""
-Note: Graph collapsing would not preserve information in edges that were collapsed
-"""
 def collapse(input_graph: Graph):
+    """
+    Collapse graph nodes and edges if merging is possible.
+
+    Note: Graph collapsing would not preserve information in edges that were collapsed
+    """
     input_graph = compress_graph_component_id(input_graph)
     nodes = input_graph.nodes
     edges = input_graph.edges
@@ -77,25 +79,6 @@ def collapse(input_graph: Graph):
     return compress_graph_component_id(graph)
 
 
-def __flood_fill(graph: Graph, root: Node, parent: Node) -> set:
-    ret = set()
-    q = deque()
-    q.append(root)
-    ret.add(root.get_id())
-    ret.add(parent.get_id())
-
-    while len(q) > 0:
-        node = q.popleft()
-        for edge in node.out_edges:
-            nnode = edge.to_node
-            if nnode.get_id() in ret:
-                continue
-            q.append(nnode)
-            ret.add(nnode.get_id())
-
-    return ret
-
-
 def propagate_branching(input_graph: Graph, node_key: str = "label"):
     """
     Propagate branching on if statement
@@ -111,23 +94,21 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
         for edge in node.out_edges:
             last_id = max(last_id, edge.get_id())
 
-    while (1):
+    while True:
         erase_nodes = []
-        found = 0
+        found = False
         for node in graph.nodes:
             if not (len(node.in_edges) == 1 and len(node.out_edges) > 1):
                 continue
-
             parent = node.in_edges[0].from_node
             if len(node.info) == 0 or len(parent.info) == 0:
                 continue
-
             parent_last = parent.info[-1][node_key]
             last = node.info[-1][node_key]
             if last != parent_last or node.get_id() == parent.get_id():
                 continue
+            found = True
 
-            found = 1
             # Add intermediate nodes
             added_intermediate = set()
             erase_edges = []

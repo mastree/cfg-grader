@@ -4,7 +4,7 @@ import os.path
 import pandas as pd
 from definitions import ROOT_DIR
 from grader.src.cfggenerator.cfggenerator import PythonCfgGenerator
-from grader.src.grader import grade
+from grader.src.grader import Grader
 
 
 def read_results_data(filename):
@@ -23,7 +23,7 @@ def generate_source_cfgs(dirname, filename):
             nim = folder.split()[0]
             cur_cfg = None
             try:
-                cur_cfg = PythonCfgGenerator.generate_python_from_file(source_path)
+                cur_cfg = PythonCfgGenerator().generate_python_from_file(source_path)
             except Exception as e:
                 cur_cfg = None
                 # print(e)
@@ -35,7 +35,7 @@ def generate_reference_cfgs(dirname):
     ret = []
     for file in os.listdir(dir_path):
         file_path = os.path.join(dir_path, file)
-        ret.append(PythonCfgGenerator.generate_python_from_file(file_path))
+        ret.append(PythonCfgGenerator().generate_python_from_file(file_path))
     return ret
 
 
@@ -58,11 +58,11 @@ def draw_file(dirname, target_nim, filename):
             if str(nim) == str(target_nim):
                 print("drawing..")
                 try:
-                    PythonCfgGenerator.draw_python_from_file(source_path, os.path.join(ROOT_DIR, "generatedimg", nim))
+                    PythonCfgGenerator().draw_python_from_file(source_path, os.path.join(ROOT_DIR, "generatedimg", nim))
                 except Exception as e:
                     print(e)
                 # try:
-                #     cfg = PythonCfgGenerator.generate_python_from_file(source_path)
+                #     cfg = PythonCfgGenerator().generate_python_from_file(source_path)
                 #     print(cfg)
                 # except Exception as e:
                 #     print(e)
@@ -81,7 +81,7 @@ def do_testing(data_dir, problem_name):
         if cfg is None:
             students_score[nim] = 0
             continue
-        scores, errors, feedback = grade(cfg, references, unit_time_limit * (len(references) + 1), unit_time_limit)
+        scores, errors, feedback = Grader().grade(cfg, references, unit_time_limit * (len(references) + 1), unit_time_limit)
         students_score[nim] = max(scores)
 
     new_data = []

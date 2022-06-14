@@ -2,7 +2,7 @@ import copy
 
 from grader.src.ged.classes.graph import Graph
 from grader.src.ged.classes.graph_component import Node, Edge
-from grader.src.grader import grade
+from grader.src.grader import Grader
 from webservice.src.model.grader_request import GraderRequest
 from webservice.src.model.grader_response_data import GraderResponseData
 from webservice.src.model.grading_method import GradingMethod
@@ -53,7 +53,7 @@ def get_scores(grader_request: GraderRequest) -> tuple[int, int, int]:
     for reference in grader_request.references:
         graph_targets.append(graph_view_to_graph(reference))
 
-    scores, errors, feedback = grade(graph_source, graph_targets, time_limit, time_limit_per_unit)
+    scores, errors, feedback = Grader().grade(graph_source, graph_targets, time_limit, time_limit_per_unit)
     score = 0
     if len(scores) > 0:
         if grading_method == GradingMethod.AVERAGE:

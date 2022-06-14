@@ -6,41 +6,40 @@ from grader.src.ged.classes.graph_component import Node, Edge
 
 
 class PythonCfgGenerator:
-    @classmethod
-    def _get_statement_type_string(cls, statement):
+    def __init__(self):
+        self.cfg_builder = CFGBuilder()
+
+    def __get_statement_type_string(self, statement):
         ret = type(statement).__name__.lower()
         if ret == "for" or ret == "while":
             ret = "for/while"
         return ret
 
-    @classmethod
-    def _block_to_node(cls, block: Block):
+    def __block_to_node(self, block: Block):
         info = []
         for statement in block.statements:
             current = {
                 "rawLine": (astor.to_source(statement)).split('\n')[0],
-                "label": cls._get_statement_type_string(statement)
+                "label": self.__get_statement_type_string(statement)
             }
             info.append(current)
         node = Node(block.id, info)
         return node
 
-    @classmethod
-    def _compress_blocks_id(cls, cfg: CFG, start=1):
+    def __compress_blocks_id(self, cfg: CFG, start=1):
         for block in cfg:
             block.id = start
             start += 1
         return cfg
 
-    @classmethod
-    def _cfg_to_graph(cls, cfg: CFG):
-        cls._compress_blocks_id(cfg)
+    def __cfg_to_graph(self, cfg: CFG):
+        self.__compress_blocks_id(cfg)
 
         graph = Graph()
         last_id = 0
         id_node = {}
         for block in cfg:
-            node = cls._block_to_node(block)
+            node = self.__block_to_node(block)
             id_node[node.get_id()] = node
             last_id = max(last_id, node.get_id())
             graph.add_node(node)
@@ -78,19 +77,16 @@ class PythonCfgGenerator:
 
         return graph
 
-    @classmethod
-    def draw_python_from_file(cls, filename, img_filename):
-        cfg = CFGBuilder().build_from_file("", filename)
-        cfg = cls._compress_blocks_id(cfg)
+    def draw_python_from_file(self, filename, img_filename):
+        cfg = self.cfg_builder.build_from_file("", filename)
+        cfg = self.__compress_blocks_id(cfg)
         cfg.build_visual(img_filename, "jpg")
 
-    @classmethod
-    def generate_python(cls, raw_code) -> Graph:
-        cfg = CFGBuilder().build_from_src("", raw_code)
-        return cls._cfg_to_graph(cfg)
+    def generate_python(self, raw_code) -> Graph:
+        cfg = self.cfg_builder.build_from_src("", raw_code)
+        return self.__cfg_to_graph(cfg)
 
-    @classmethod
-    def generate_python_from_file(cls, filename) -> Graph:
+    def generate_python_from_file(self, filename) -> Graph:
         with open(filename, 'r', encoding='UTF-8') as file:
             raw_code = file.read()
-            return cls.generate_python(raw_code)
+            return self.generate_python(raw_code)

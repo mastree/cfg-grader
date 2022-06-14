@@ -9,14 +9,16 @@ from grader.src.ged.utils.lsap_solver import Munkres
 from grader.src.ged.dfs_ged import DFSGED
 
 
+python_cfg_generator = PythonCfgGenerator()
+
 def draw_graph(src, filename):
-    PythonCfgGenerator.draw_python_from_file(src, f"generatedimg/{filename}")
+    python_cfg_generator.draw_python_from_file(src, f"generatedimg/{filename}")
 
 
 def check_graph_draw():
-    PythonCfgGenerator.draw_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh.py",
+    python_cfg_generator.draw_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh.py",
                                              "generatedimg/segiempatcontoh")
-    PythonCfgGenerator.draw_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh_delta.py",
+    python_cfg_generator.draw_python_from_file("./datasets/segiempat/juryssolution/segiempatcontoh_delta.py",
                                              "generatedimg/segiempatcontoh_delta")
 
 
@@ -51,7 +53,7 @@ solutions = ["./datasets/segiempat/solution/segiempat103.py",
 
 
 def check_digraph():
-    cfg = PythonCfgGenerator.generate_python_from_file(references[0])
+    cfg = python_cfg_generator.generate_python_from_file(references[0])
     digraph = graph_to_digraph(cfg)
     digraph.render(filename="generatedimg/something", format="jpg")
 
@@ -64,14 +66,14 @@ def test_all(graph_collapsed: bool = True, print_result = False):
     scores = []
     mx = 0
     for reference in references:
-        graph_target = PythonCfgGenerator.generate_python_from_file(reference)
+        graph_target = python_cfg_generator.generate_python_from_file(reference)
         if graph_collapsed:
             graph_target = propagate_branching(graph_target)
         else:
             graph_target = uncollapse(graph_target)
 
         for solution in solutions:
-            graph_source = PythonCfgGenerator.generate_python_from_file(solution)
+            graph_source = python_cfg_generator.generate_python_from_file(solution)
             if graph_collapsed:
                 graph_source = propagate_branching(graph_source)
             else:
@@ -103,14 +105,14 @@ def test_approximate_all(graph_collapsed: bool = True, print_result = False):
     scores = []
     mx = 0
     for reference in references:
-        graph_target = PythonCfgGenerator.generate_python_from_file(reference)
+        graph_target = python_cfg_generator.generate_python_from_file(reference)
         if graph_collapsed:
             graph_target = propagate_branching(graph_target)
         else:
             graph_target = uncollapse(graph_target)
 
         for solution in solutions:
-            graph_source = PythonCfgGenerator.generate_python_from_file(solution)
+            graph_source = python_cfg_generator.generate_python_from_file(solution)
             if graph_collapsed:
                 graph_source = propagate_branching(graph_source)
             else:
@@ -132,8 +134,8 @@ def test_approximate_all(graph_collapsed: bool = True, print_result = False):
 def test_ged(file1, file2, graph_collapsed=True):
     print(f'sol: {file1.split("/")[-1]}, reference: {file2.split("/")[-1]}')
 
-    graph_source = PythonCfgGenerator.generate_python_from_file(file1)
-    graph_target = PythonCfgGenerator.generate_python_from_file(file2)
+    graph_source = python_cfg_generator.generate_python_from_file(file1)
+    graph_target = python_cfg_generator.generate_python_from_file(file2)
     if graph_collapsed:
         graph_source = propagate_branching(graph_source)
         graph_target = propagate_branching(graph_target)
@@ -165,7 +167,7 @@ def test_json():
 
 def test_draw_preprocessed_cfg(src):
     try:
-        cfg = PythonCfgGenerator.generate_python_from_file(src)
+        cfg = python_cfg_generator.generate_python_from_file(src)
         # cfg = collapse(cfg)
         cfg = propagate_branching(cfg)
         digraph = graph_to_digraph(cfg, node_key="label")
@@ -191,7 +193,7 @@ def __read_files(filenames):
 def draw_report_resources(srcs):
     try:
         for src in srcs:
-            cfg = PythonCfgGenerator.generate_python_from_file(src)
+            cfg = python_cfg_generator.generate_python_from_file(src)
             digraph = graph_to_digraph(cfg, node_key="label")
             digraph.render(filename=f"generatedimg/{src.split('/')[-1][:-3]}", format="jpg")
     except Exception as e:
