@@ -71,7 +71,7 @@ class DFSGED:
 
         if is_exact_computation:
             self.is_solution_optimal = True
-            self._search_ged(root)
+            self.__search_ged(root)
 
         return self.ub_cost
 
@@ -84,10 +84,10 @@ class DFSGED:
         sedge_size = len(self.source.edges)
         tedge_size = len(self.target.edges)
 
-        return self.ub_cost / ((snode_size + tnode_size) * self.cost_function.Cost.NODE_COST +
+        return self.ub_cost / (max(snode_size, tnode_size) * self.cost_function.Cost.NODE_COST +
                                (sedge_size + tedge_size) * self.cost_function.Cost.EDGE_COST)
 
-    def _search_ged(self, no_edit: EditPath):
+    def __search_ged(self, no_edit: EditPath):
         cur_node = SearchNode(no_edit)
 
         while cur_node is not None:
@@ -97,7 +97,7 @@ class DFSGED:
                 break
 
             if len(cur_node.children) == 0 and not cur_node.sorted:  # check if not generated yet
-                self._generate_children(cur_node)
+                self.__generate_children(cur_node)
 
             if len(cur_node.children) == 0:
                 edit_path = cur_node.edit_path
@@ -118,7 +118,7 @@ class DFSGED:
                 candidate_node = cur_node.parent
             cur_node = candidate_node
 
-    def _generate_children(self, search_node: SearchNode):
+    def __generate_children(self, search_node: SearchNode):
         edit_path = search_node.edit_path
         if len(edit_path.pending_nodes1) > 0:
             node1 = edit_path.pending_nodes1[0]
