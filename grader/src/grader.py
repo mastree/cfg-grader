@@ -12,7 +12,7 @@ from grader.src.ged.utils.graph_collapser import *
 class GraphPreprocessType:
     UNCOLLAPSE = 0
     COLLAPSE = 1
-    COLLAPSE_AND_PROPAGATE_BRANCHING = 2
+    PROPAGATE_BRANCHING = 2
 
 
 class Grader:
@@ -21,7 +21,7 @@ class Grader:
             graph = uncollapse(graph)
         elif preproc_type == GraphPreprocessType.COLLAPSE:
             graph = collapse(graph)
-        elif preproc_type == GraphPreprocessType.COLLAPSE_AND_PROPAGATE_BRANCHING:
+        elif preproc_type == GraphPreprocessType.PROPAGATE_BRANCHING:
             graph = propagate_branching(graph)
         return graph
 
@@ -44,7 +44,7 @@ class Grader:
               time_limit: int,
               time_limit_per_unit: int,
               use_node_relabel=True,
-              graph_preprocess_type=GraphPreprocessType.COLLAPSE_AND_PROPAGATE_BRANCHING,
+              graph_preprocess_type=GraphPreprocessType.PROPAGATE_BRANCHING,
               node_key: str = "label") -> tuple[list, list]:
         graph_source = self.__preprocess_graph(graph_source, graph_preprocess_type)
         graph_targets = [self.__preprocess_graph(graph, graph_preprocess_type) for graph in graph_targets]
