@@ -83,13 +83,13 @@ def test_all(graph_collapsed: bool = True, print_result = False):
             dfs_ged.set_use_node_relabel(True)
 
             approx_ed = dfs_ged.calculate_edit_distance(False)
-            approx_normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
+            approx_normalized_ed = dfs_ged.get_similarity_score()
 
             # approx_ed_rel = dfs_ged.calculate_edit_distance(False, True)
-            # approx_normalized_ed_rel = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance(), bias_func)
+            # approx_normalized_ed_rel = dfs_ged.get_similarity_score(bias_func)
 
             ed = dfs_ged.calculate_edit_distance()
-            normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
+            normalized_ed = dfs_ged.get_similarity_score()
 
             scores.append(normalized_ed)
             assert(normalized_ed >= approx_normalized_ed)
@@ -120,7 +120,7 @@ def test_approximate_all(graph_collapsed: bool = True, print_result = False):
 
             dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(True), time_limit=3000)
             ed = dfs_ged.calculate_edit_distance(False)
-            normalized_ed = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
+            normalized_ed = dfs_ged.get_similarity_score()
 
             scores.append(normalized_ed)
             mx = max(mx, normalized_ed)
@@ -147,7 +147,7 @@ def test_ged(file1, file2, graph_collapsed=True):
 
     dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(True), time_limit=1000)
     ed = dfs_ged.calculate_edit_distance()
-    normalized_score = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
+    normalized_score = dfs_ged.get_similarity_score()
     print(dfs_ged.get_node_matching_string())
     print(f'GED: {ed}')
     print(f'optimal? {dfs_ged.is_solution_optimal}')

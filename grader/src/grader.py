@@ -1,6 +1,5 @@
 import time
 
-from grader.src.api.functions import edit_distance_to_similarity_score
 from grader.src.constants import Constants
 from grader.src.ged.classes.cost_function import CostFunction
 from grader.src.ged.classes.general_cost_function import GeneralCostFunction
@@ -35,7 +34,7 @@ class Grader:
 
         dfs_ged = DFSGED(graph_source, graph_target, cost_function, time_limit)
         dfs_ged.calculate_edit_distance()
-        score = edit_distance_to_similarity_score(dfs_ged.get_normalized_edit_distance())
+        score = dfs_ged.get_similarity_score()
 
         return score * Constants.MAX_SCORE
 

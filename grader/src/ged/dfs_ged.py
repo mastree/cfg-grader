@@ -1,4 +1,5 @@
 import time
+from typing import Callable
 
 from grader.src.ged.classes.edit_path import EditPath
 from grader.src.ged.classes.graph import Graph
@@ -13,7 +14,7 @@ class DFSGED:
     - each graph nodes should have component_id in the range [1, len(nodes)]
     - each graph edges should have component_id in the range [len(nodes) + 1, len(nodes) + len(edges)]
 
-    reason for these precondition is to sped up computation
+    note: precondition exist to sped up computation
     """
     def __init__(self, source: Graph, target: Graph, cost_function: CostFunction, time_limit=3000, sort_node_dfs=False):
         self.source = source
@@ -86,6 +87,11 @@ class DFSGED:
 
         return self.ub_cost / (max(snode_size, tnode_size) * self.cost_function.Cost.NODE_COST +
                                (sedge_size + tedge_size) * self.cost_function.Cost.EDGE_COST)
+
+    def get_similarity_score(self, func: Callable[[float], float]=None) -> float:
+        if func is None:
+            return 1 - self.get_normalized_edit_distance()
+        return func(1 - self.get_normalized_edit_distance())
 
     def __search_ged(self, no_edit: EditPath):
         cur_node = SearchNode(no_edit)
