@@ -32,30 +32,13 @@ class EditPath:
         return edit_path
 
     @classmethod
-    def create_root(cls, cost_function: CostFunction, source: Graph, target: Graph, sort_source=False):
+    def create_root(cls, cost_function: CostFunction, source: Graph, target: Graph):
         edit_path = EditPath(cost_function, source, target)
         munkres = Munkres()
-
-        if sort_source:
-            edit_path.pending_nodes1 = []
-            tmp_pending_nodes1 = []
-
-            tmp_pending_nodes1.extend(edit_path.source.nodes)
-            matrix = edit_path.build_node_matrix(tmp_pending_nodes1, edit_path.pending_nodes2)
-            total_cost = munkres.compute(matrix)
-            starred_indices = munkres.get_starred_indices()
-            edit_path.first_ub = starred_indices
-
-            starred_indices.sort(key=lambda x: matrix[x[0]][x[1]])
-            for x in starred_indices:
-                if x[0] < len(edit_path.source.nodes):
-                    edit_path.pending_nodes1.append(tmp_pending_nodes1[x[0]])
-        else:
-            matrix = edit_path.build_node_matrix(edit_path.pending_nodes1, edit_path.pending_nodes2)
-            total_cost = munkres.compute(matrix)
-            starred_indices = munkres.get_starred_indices()
-            edit_path.first_ub = starred_indices
-
+        matrix = edit_path.build_node_matrix(edit_path.pending_nodes1, edit_path.pending_nodes2)
+        total_cost = munkres.compute(matrix)
+        starred_indices = munkres.get_starred_indices()
+        edit_path.first_ub = starred_indices
         return edit_path
 
     @classmethod

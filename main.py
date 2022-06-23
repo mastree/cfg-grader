@@ -202,9 +202,9 @@ def draw_report_resources(srcs):
 
 if __name__ == '__main__':
     # draw_report_resources(["./datasets/test/control-flow-sample.py"])
-    test_draw_preprocessed_cfg(test_src)
+    # test_draw_preprocessed_cfg(test_src)
     # draw_graph(test_src, "something")
     # test_ged(solutions[0], references[0])
-    # test_all(True, print_result=True)
+    test_all(True, print_result=True)
     # test_approximate_all(True, print_result=True)
     # test_all(False, print_result=True)

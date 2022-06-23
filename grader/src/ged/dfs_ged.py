@@ -16,7 +16,7 @@ class DFSGED:
 
     note: precondition exist to sped up computation
     """
-    def __init__(self, source: Graph, target: Graph, cost_function: CostFunction, time_limit=3000, sort_node_dfs=False):
+    def __init__(self, source: Graph, target: Graph, cost_function: CostFunction, time_limit=3000):
         self.source = source
         self.target = target
         self.cost_function = cost_function
@@ -31,7 +31,6 @@ class DFSGED:
         self.ub_cost: float = Constants.INF
 
         self.is_solution_optimal = False
-        self.sort_node_dfs = sort_node_dfs
 
     def set_use_node_relabel(self, use_node_relabel: bool):
         self.cost_function.clear_precompute()
@@ -48,50 +47,6 @@ class DFSGED:
             if v.is_eps():
                 ret.append(f'{"EPS" : <4} -> {k.get_id()}')
         return '\n'.join(ret)
-
-    def calculate_edit_distance(self, is_exact_computation=True, approximation_use_node_relabel=None) -> float:
-        self.cost_function.clear_precompute()
-
-        # start timer
-        self.start_time = time.time_ns()
-
-        self.ub_cost = Constants.INF
-
-        # creates root
-        root = None
-        if approximation_use_node_relabel is not None:
-            use_node_relabel = self.cost_function.use_node_relabel
-            self.set_use_node_relabel(approximation_use_node_relabel)
-            root = EditPath.create_root(self.cost_function, self.source, self.target, self.sort_node_dfs)
-            self.set_use_node_relabel(use_node_relabel)
-        else:
-            root = EditPath.create_root(self.cost_function, self.source, self.target, self.sort_node_dfs)
-
-        self.ub_path = EditPath.create_path(self.cost_function, self.source, self.target, root.first_ub)
-        self.ub_cost = self.ub_path.predict_cost()
-
-        if is_exact_computation:
-            self.is_solution_optimal = True
-            self.__search_ged(root)
-
-        return self.ub_cost
-
-    def get_edit_distance(self) -> float:
-        return self.ub_cost
-
-    def get_normalized_edit_distance(self) -> float:
-        snode_size = len(self.source.nodes)
-        tnode_size = len(self.target.nodes)
-        sedge_size = len(self.source.edges)
-        tedge_size = len(self.target.edges)
-
-        return self.ub_cost / (max(snode_size, tnode_size) * self.cost_function.Cost.NODE_COST +
-                               (sedge_size + tedge_size) * self.cost_function.Cost.EDGE_COST)
-
-    def get_similarity_score(self, func: Callable[[float], float]=None) -> float:
-        if func is None:
-            return 1 - self.get_normalized_edit_distance()
-        return func(1 - self.get_normalized_edit_distance())
 
     def __search_ged(self, no_edit: EditPath):
         cur_node = SearchNode(no_edit)
@@ -138,3 +93,47 @@ class DFSGED:
             ch_edit_path.add_distortion(node1, Constants.NODE_EPS)
             if ch_edit_path.predict_cost() < self.ub_cost:
                 search_node.add_child(ch_edit_path)
+
+    def calculate_edit_distance(self, is_exact_computation=True, approximation_use_node_relabel=None) -> float:
+        self.cost_function.clear_precompute()
+
+        # start timer
+        self.start_time = time.time_ns()
+
+        self.ub_cost = Constants.INF
+
+        # creates root
+        root = None
+        if approximation_use_node_relabel is not None:
+            use_node_relabel = self.cost_function.use_node_relabel
+            self.set_use_node_relabel(approximation_use_node_relabel)
+            root = EditPath.create_root(self.cost_function, self.source, self.target)
+            self.set_use_node_relabel(use_node_relabel)
+        else:
+            root = EditPath.create_root(self.cost_function, self.source, self.target)
+
+        self.ub_path = EditPath.create_path(self.cost_function, self.source, self.target, root.first_ub)
+        self.ub_cost = self.ub_path.predict_cost()
+
+        if is_exact_computation:
+            self.is_solution_optimal = True
+            self.__search_ged(root)
+
+        return self.ub_cost
+
+    def get_edit_distance(self) -> float:
+        return self.ub_cost
+
+    def get_normalized_edit_distance(self) -> float:
+        snode_size = len(self.source.nodes)
+        tnode_size = len(self.target.nodes)
+        sedge_size = len(self.source.edges)
+        tedge_size = len(self.target.edges)
+
+        return self.ub_cost / (max(snode_size, tnode_size) * self.cost_function.Cost.NODE_COST +
+                               (sedge_size + tedge_size) * self.cost_function.Cost.EDGE_COST)
+
+    def get_similarity_score(self, func: Callable[[float], float]=None) -> float:
+        if func is None:
+            return 1 - self.get_normalized_edit_distance()
+        return func(1 - self.get_normalized_edit_distance())
