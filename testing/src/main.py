@@ -5,6 +5,7 @@ import pandas as pd
 from definitions import ROOT_DIR
 from grader.src.cfggenerator.cfggenerator import PythonCfgGenerator
 from grader.src.grader import Grader
+from testing.src.encrypt import encrypt
 
 
 def read_results_data(filename):
@@ -90,12 +91,12 @@ def do_testing(data_dir, problem_name):
         blackbox_score = row["Blackscore"]
         kevin_score = row["Whitescore"]
         new_data.append({
-            'nim': int(nim),
+            'id': encrypt(int(nim)),
             'bb_score': blackbox_score,
             'old_wb_score': kevin_score,
             'new_wb_score': kamal_score
         })
-    csv_columns = ['nim', 'bb_score', 'old_wb_score', 'new_wb_score']
+    csv_columns = ['id', 'bb_score', 'old_wb_score', 'new_wb_score']
     write_csv(f"{problem_name}.csv", csv_columns, new_data)
 
 
