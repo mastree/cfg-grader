@@ -1,6 +1,7 @@
 import time
 from typing import Callable
 
+from grader.src.api.functions import is_graph_components_id_ordered
 from grader.src.ged.classes.edit_path import EditPath
 from grader.src.ged.classes.graph import Graph
 from grader.src.ged.classes.cost_function import CostFunction
@@ -17,6 +18,8 @@ class DFSGED:
     note: precondition exist to sped up computation
     """
     def __init__(self, source: Graph, target: Graph, cost_function: CostFunction, time_limit=3000):
+        assert(is_graph_components_id_ordered(source) and is_graph_components_id_ordered(target))
+
         self.source = source
         self.target = target
         self.cost_function = cost_function

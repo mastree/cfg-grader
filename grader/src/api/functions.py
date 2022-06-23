@@ -2,6 +2,7 @@ import copy
 import graphviz
 from typing import Callable
 
+from grader.src.constants import Constants
 from grader.src.ged.classes.graph import Graph
 from grader.src.ged.classes.graph_component import *
 
@@ -30,6 +31,21 @@ def compress_graph_component_id(graph: Graph, start_id=1) -> Graph:
         result.add_edge(new_edge)
 
     return result
+
+
+def is_graph_components_id_ordered(graph: Graph):
+    node_size = len(graph.nodes)
+    edge_size = len(graph.edges)
+    _set = set()
+    for node in graph.nodes:
+        if node.get_id() <= 0 or node_size < node.get_id() or node.get_id() in _set:
+            return False
+        _set.add(node.get_id())
+    for edge in graph.edges:
+        if edge.get_id() <= node_size or node_size + edge_size < node.get_id() or edge.get_id() in _set:
+            return False
+        _set.add(edge.get_id())
+    return len(_set) == node_size + edge_size
 
 
 def graph_to_digraph(graph: Graph, node_key: str = "rawLine") -> graphviz.Digraph:
