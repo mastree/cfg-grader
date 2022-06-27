@@ -53,34 +53,29 @@ class DFSGED:
 
     def __search_ged(self, no_edit: EditPath):
         cur_node = SearchNode(no_edit)
-
         while cur_node is not None:
             cur_time = time.time_ns()
             if cur_time - self.start_time >= self.time_limit * 1000000:
                 self.is_solution_optimal = False
                 break
 
-            if len(cur_node.children) == 0 and not cur_node.sorted:  # check if not generated yet
-                self.__generate_children(cur_node)
-
-            if len(cur_node.children) == 0:
-                edit_path = cur_node.edit_path
-                if len(edit_path.pending_nodes1) == 0:
-                    edit_path.complete()
-                    total_edit_cost = edit_path.predict_cost()
-                    if self.ub_cost > total_edit_cost:
-                        self.ub_cost = total_edit_cost
-                        self.ub_path = edit_path
+            if cur_node.edit_path.is_one_side_complete():
+                cur_node.edit_path.complete()
+                total_edit_cost = cur_node.edit_path.predict_cost()
+                if self.ub_cost > total_edit_cost:
+                    self.ub_cost = total_edit_cost
+                    self.ub_path = cur_node.edit_path
                 cur_node = cur_node.parent
-                continue
-
-            candidate_node = cur_node.remove_min_child()
-            while len(cur_node.children) > 0 and candidate_node.edit_path.predict_cost() > self.ub_cost:
-                candidate_node = cur_node.remove_min_child()
-
-            if candidate_node.edit_path.predict_cost() > self.ub_cost:
-                candidate_node = cur_node.parent
-            cur_node = candidate_node
+            else:
+                if len(cur_node.children) == 0 and not cur_node.sorted:  # check if not generated yet
+                    self.__generate_children(cur_node)
+                if len(cur_node.children) == 0:
+                    cur_node = cur_node.parent
+                else:
+                    candidate_node = cur_node.remove_min_child()
+                    if candidate_node.edit_path.predict_cost() >= self.ub_cost:
+                        candidate_node = cur_node.parent
+                    cur_node = candidate_node
 
     def __generate_children(self, search_node: SearchNode):
         edit_path = search_node.edit_path
@@ -89,11 +84,15 @@ class DFSGED:
             for node2 in edit_path.pending_nodes2:
                 ch_edit_path = EditPath.clone(edit_path)
                 ch_edit_path.add_distortion(node1, node2)
+                if ch_edit_path.is_one_side_complete():
+                    ch_edit_path.complete()
                 if ch_edit_path.predict_cost() < self.ub_cost:
                     search_node.add_child(ch_edit_path)
 
             ch_edit_path = EditPath.clone(edit_path)
             ch_edit_path.add_distortion(node1, Constants.NODE_EPS)
+            if ch_edit_path.is_one_side_complete():
+                ch_edit_path.complete()
             if ch_edit_path.predict_cost() < self.ub_cost:
                 search_node.add_child(ch_edit_path)
 
@@ -133,7 +132,9 @@ class DFSGED:
         sedge_size = len(self.source.edges)
         tedge_size = len(self.target.edges)
 
-        return self.ub_cost / (max(snode_size, tnode_size) * self.cost_function.Cost.NODE_COST +
+        # return self.ub_cost / (max(snode_size, tnode_size) * self.cost_function.Cost.NODE_COST +
+        #                        (sedge_size + tedge_size) * self.cost_function.Cost.EDGE_COST)
+        return self.ub_cost / ((snode_size + tnode_size) * self.cost_function.Cost.NODE_COST +
                                (sedge_size + tedge_size) * self.cost_function.Cost.EDGE_COST)
 
     def get_similarity_score(self, func: Callable[[float], float]=None) -> float:

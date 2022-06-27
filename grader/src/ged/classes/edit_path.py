@@ -134,6 +134,9 @@ class EditPath:
     def predict_cost(self):
         return self.total_cost + self.compute_heuristic_cost()
 
+    def is_one_side_complete(self):
+        return len(self.pending_nodes1) == 0 or len(self.pending_nodes2) == 0
+
     def complete(self):
         while len(self.pending_nodes2) > 0:
             self.add_distortion(Constants.NODE_EPS, self.pending_nodes2[0])

@@ -74,7 +74,7 @@ def do_testing(data_dir, problem_name):
     data = read_results_data(f"{problem_name}.xlsx")
     # print(data.iloc[:10])
     # print(data.columns.tolist())
-    unit_time_limit = 3000
+    unit_time_limit = 5000
     references = generate_reference_cfgs(f"{problem_name}")
     students_score = {}
     for nim, cfg in generate_source_cfgs(data_dir, f"{problem_name}.py"):
