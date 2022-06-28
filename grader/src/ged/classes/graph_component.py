@@ -6,15 +6,6 @@ class GraphComponent:
         self.component_id: int = component_id
         self.info: list[dict] = info
 
-    def set_info(self, info):
-        self.info = info
-
-    def get_info(self):
-        return self.info
-
-    def set_id(self, component_id):
-        self.component_id = component_id
-
     def get_id(self):
         return self.component_id
 
@@ -86,18 +77,6 @@ class Edge(GraphComponent):
         super().__init__(component_id, info)
         self.from_node: Node = from_node
         self.to_node: Node = to_node
-
-    def set_from_node(self, from_node):
-        self.from_node = from_node
-
-    def set_to_node(self, to_node):
-        self.to_node = to_node
-
-    def get_from_node(self):
-        return self.from_node
-
-    def get_to_node(self):
-        return self.to_node
 
     def get_other_end(self, node: Node):
         if node.get_id() == self.from_node.get_id():

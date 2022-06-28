@@ -7,9 +7,6 @@ class Graph:
         self.edges: list[Edge] = []
         self.id: str = ''
 
-    def erase_edge(self, edge_id: int):
-        self.edges = list(filter(lambda x: x.get_id() != edge_id, self.edges))
-
     def erase_node(self, node_id: int):
         node = self.find_node_with_id(node_id)
         if node is None:
@@ -22,14 +19,8 @@ class Graph:
 
         self.nodes = list(filter(lambda x: x.get_id() != node_id, self.nodes))
 
-    def set_nodes(self, nodes: list):
-        self.nodes = nodes
-
-    def set_edges(self, edges: list):
-        self.edges = edges
-
-    def set_id(self, graph_id):
-        self.id = graph_id
+    def erase_edge(self, edge_id: int):
+        self.edges = list(filter(lambda x: x.get_id() != edge_id, self.edges))
 
     def add_node(self, node: Node):
         self.nodes.append(node)
@@ -43,16 +34,16 @@ class Graph:
                 return node
         return None
 
-    def __str__(self):
-        ret = ""
-        for node in self.nodes:
-            ret += f'{node}\n'
-        return ret
-
     def find_last_id(self):
         ret = 0
         for node in self.nodes:
             ret = max(ret, node.get_id())
         for edge in self.edges:
             ret = max(ret, edge.get_id())
+        return ret
+
+    def __str__(self):
+        ret = ""
+        for node in self.nodes:
+            ret += f'{node}\n'
         return ret

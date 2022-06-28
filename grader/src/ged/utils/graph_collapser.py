@@ -88,7 +88,7 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
         new_info = []
         for info in node.info:
             new_info.append({ikey: info[ikey] for ikey in info if ikey == node_key})
-        node.set_info(new_info)
+        node.info = new_info
         last_id = max(last_id, node.get_id())
         for edge in node.out_edges:
             last_id = max(last_id, edge.get_id())
@@ -152,7 +152,7 @@ def propagate_branching(input_graph: Graph, node_key: str = "label"):
                 new_oinfo = copy.deepcopy(node.info[:-1])
                 for oinfo in onode.info:
                     new_oinfo.append(oinfo)
-                onode.set_info(new_oinfo)
+                onode.info = new_oinfo
 
                 last_id += 1
                 new_edge = Edge(last_id, parent, onode)
