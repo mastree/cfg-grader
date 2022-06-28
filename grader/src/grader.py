@@ -33,7 +33,7 @@ class Grader:
             cost_function = GeneralCostFunction(node_key=node_key)
 
         dfs_ged = DFSGED(graph_source, graph_target, cost_function, time_limit)
-        dfs_ged.calculate_edit_distance()
+        dfs_ged.compute_edit_distance()
         score = dfs_ged.get_similarity_score()
 
         return score * Constants.MAX_SCORE

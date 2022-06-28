@@ -13,15 +13,12 @@ class GeneralCostFunction(CostFunction):
         NONE = 0
         BOOLEAN_COUNT = 1
         COUNTER = 2
-        DAMERAU_LD = 3
+        DAMERAU_LD = 3  # levenshtein distance
         EXACT = 4
 
     def __init__(self, use_node_relabel=True, relabel_method=RelabelMethod.BOOLEAN_COUNT, node_key: str = "label"):
         super().__init__(use_node_relabel)
         self.relabel_method = relabel_method
-        self.node_key = node_key
-
-    def set_node_key(self, node_key: str):
         self.node_key = node_key
 
     def get_node_cost(self, a: Node, b: Node) -> float:
@@ -33,11 +30,11 @@ class GeneralCostFunction(CostFunction):
             if b.is_not_eps():
                 t_id = b.get_id()
             if self.node_precompute[s_id][t_id] < 0.0:
-                self.node_precompute[s_id][t_id] = self._calculate_node_difference(a, b) * self.Cost.NODE_COST
+                self.node_precompute[s_id][t_id] = self.__calculate_node_difference(a, b) * self.Cost.NODE_COST
 
             return self.node_precompute[s_id][t_id]
 
-        return self._calculate_node_difference(a, b) * self.Cost.NODE_COST
+        return self.__calculate_node_difference(a, b) * self.Cost.NODE_COST
 
     def get_edge_cost(self, a: Edge, b: Edge, a_node: Node, b_node: Node) -> float:
         # check if edge is epsilon
@@ -84,7 +81,7 @@ class GeneralCostFunction(CostFunction):
             ret[t] += 1
         return ret
 
-    def _calculate_node_difference(self, a: Node, b: Node) -> float:
+    def __calculate_node_difference(self, a: Node, b: Node) -> float:
         if not self.use_node_relabel or self.relabel_method == self.RelabelMethod.NONE:
             return 0
 

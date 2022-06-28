@@ -26,8 +26,8 @@ class DFSGED:
         self.cost_function.set_precompute(source, target)
 
         # time limit in milliseconds
-        self.start_time = None
-        self.time_limit = time_limit
+        self.__start_time = None
+        self.__time_limit = time_limit
 
         # bound
         self.ub_path: EditPath = None
@@ -40,22 +40,13 @@ class DFSGED:
         self.cost_function.use_node_relabel = use_node_relabel
 
     def set_time_limit(self, time_limit):
-        self.time_limit = time_limit
-
-    def get_node_matching_string(self):
-        ret = []
-        for k, v in self.ub_path.snode_distortion.items():
-            ret.append(f'{k.get_id() : <4} -> {v.get_id()}')
-        for k, v in self.ub_path.tnode_distortion.items():
-            if v.is_eps():
-                ret.append(f'{"EPS" : <4} -> {k.get_id()}')
-        return '\n'.join(ret)
+        self.__time_limit = time_limit
 
     def __search_ged(self, no_edit: EditPath):
         cur_node = SearchNode(no_edit)
         while cur_node is not None:
             cur_time = time.time_ns()
-            if cur_time - self.start_time >= self.time_limit * 1000000:
+            if cur_time - self.__start_time >= self.__time_limit * 1000000:
                 self.is_solution_optimal = False
                 break
 
@@ -83,24 +74,24 @@ class DFSGED:
             node1 = edit_path.pending_nodes1[0]
             for node2 in edit_path.pending_nodes2:
                 ch_edit_path = EditPath.clone(edit_path)
-                ch_edit_path.add_distortion(node1, node2)
+                ch_edit_path.add_mapping(node1, node2)
                 if ch_edit_path.is_one_side_complete():
                     ch_edit_path.complete()
                 if ch_edit_path.predict_cost() < self.ub_cost:
                     search_node.add_child(ch_edit_path)
 
             ch_edit_path = EditPath.clone(edit_path)
-            ch_edit_path.add_distortion(node1, Constants.NODE_EPS)
+            ch_edit_path.add_mapping(node1, Constants.NODE_EPS)
             if ch_edit_path.is_one_side_complete():
                 ch_edit_path.complete()
             if ch_edit_path.predict_cost() < self.ub_cost:
                 search_node.add_child(ch_edit_path)
 
-    def calculate_edit_distance(self, is_exact_computation=True, approximation_use_node_relabel=None) -> float:
+    def compute_edit_distance(self, is_exact_computation=True, approximation_use_node_relabel=None) -> float:
         self.cost_function.clear_precompute()
 
         # start timer
-        self.start_time = time.time_ns()
+        self.__start_time = time.time_ns()
 
         self.ub_cost = Constants.INF
 
@@ -123,6 +114,15 @@ class DFSGED:
 
         return self.ub_cost
 
+    def get_string_node_map(self):
+        ret = []
+        for k, v in self.ub_path.snode_mapping.items():
+            ret.append(f'{k.get_id() : <4} -> {v.get_id()}')
+        for k, v in self.ub_path.tnode_mapping.items():
+            if v.is_eps():
+                ret.append(f'{"EPS" : <4} -> {k.get_id()}')
+        return '\n'.join(ret)
+
     def get_edit_distance(self) -> float:
         return self.ub_cost
 
@@ -132,8 +132,8 @@ class DFSGED:
         sedge_size = len(self.source.edges)
         tedge_size = len(self.target.edges)
 
-        # return self.ub_cost / (max(snode_size, tnode_size) * self.cost_function.Cost.NODE_COST +
-        #                        (sedge_size + tedge_size) * self.cost_function.Cost.EDGE_COST)
+        # return self.ub_cost / (max(snode_size, tnode_size) * self.__cost_function.Cost.NODE_COST +
+        #                        (sedge_size + tedge_size) * self.__cost_function.Cost.EDGE_COST)
         return self.ub_cost / ((snode_size + tnode_size) * self.cost_function.Cost.NODE_COST +
                                (sedge_size + tedge_size) * self.cost_function.Cost.EDGE_COST)
 
