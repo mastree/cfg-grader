@@ -28,15 +28,17 @@ class Grader:
                            graph_target: Graph,
                            time_limit: int,
                            cost_function: CostFunction = None,
+                           ub_normal_cost=Constants.INF,
                            node_key: str = "label") -> float:
         if cost_function is None:
             cost_function = GeneralCostFunction(node_key=node_key)
 
         dfs_ged = DFSGED(graph_source, graph_target, cost_function, time_limit)
-        dfs_ged.compute_edit_distance()
+        dfs_ged.compute_edit_distance(ub_cost=dfs_ged.normalized_ed_to_ed(ub_normal_cost))
+        new_ub_normal_cost = dfs_ged.get_normalized_edit_distance()
         score = dfs_ged.get_similarity_score()
 
-        return score * Constants.MAX_SCORE
+        return score * Constants.MAX_SCORE, new_ub_normal_cost
 
     def grade(self, graph_source: Graph,
               graph_targets: list[Graph],
@@ -44,6 +46,7 @@ class Grader:
               time_limit_per_unit: int,
               use_node_relabel=True,
               graph_preprocess_type=GraphPreprocessType.PROPAGATE_BRANCHING,
+              use_ub=False,
               node_key: str = "label") -> tuple[list, list]:
         graph_source = self.__preprocess_graph(graph_source, graph_preprocess_type)
         graph_targets = [self.__preprocess_graph(graph, graph_preprocess_type) for graph in graph_targets]
@@ -53,13 +56,16 @@ class Grader:
         feedback = []
 
         start_time = time.time_ns()
+        ub_normal_cost = Constants.INF
         for graph_target in graph_targets:
             cur_time = time.time_ns()
             if cur_time - start_time < time_limit * 1000000:
                 remaining_time = (time_limit * 1000000 - (cur_time - start_time)) // 1000000
                 try:
-                    score = self.__grade_one_on_one(
-                        graph_source, graph_target, min(time_limit_per_unit, remaining_time), cost_function)
+                    score, cur_ub_normal_cost = self.__grade_one_on_one(
+                        graph_source, graph_target, min(time_limit_per_unit, remaining_time), cost_function, ub_normal_cost)
+                    if use_ub:
+                        ub_normal_cost = min(ub_normal_cost, cur_ub_normal_cost)
                     scores.append(score)
                     errors.append(None)
                     feedback.append("Success")

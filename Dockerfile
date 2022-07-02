@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 ENV PYTHONPATH "."
 
-RUN python3.9 -m pip install -r requirements.txt
+RUN python3.9 -m pip install -r requirements/prod.txt
 
 EXPOSE 5000
 
