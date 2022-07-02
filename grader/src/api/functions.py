@@ -48,7 +48,7 @@ def is_graph_components_id_ordered(graph: Graph):
     return len(_set) == node_size + edge_size
 
 
-def graph_to_digraph(graph: Graph, node_key: str = "rawLine") -> graphviz.Digraph:
+def graph_to_digraph(graph: Graph, node_key: str = "label") -> graphviz.Digraph:
     digraph = graphviz.Digraph()
 
     edges = []

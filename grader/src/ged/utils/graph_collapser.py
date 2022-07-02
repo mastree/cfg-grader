@@ -178,13 +178,20 @@ def uncollapse(input_graph: Graph):
     graph = Graph()
     last_id = 0
     input_size = len(input_graph.nodes) + 1
-    id_nodes = [[] for i in range(input_size)]
+    id_nodes = {}
     for input_node in input_graph.nodes:
-        for input_info in input_node.info:
+        id_nodes[input_node.get_id()] = []
+        if len(input_node.info) == 0:
             last_id += 1
-            node = Node(last_id, [copy.deepcopy(input_info)])
+            node = Node(last_id, [])
             id_nodes[input_node.get_id()].append(node)
             graph.add_node(node)
+        else:
+            for input_info in input_node.info:
+                last_id += 1
+                node = Node(last_id, [copy.deepcopy(input_info)])
+                id_nodes[input_node.get_id()].append(node)
+                graph.add_node(node)
 
     for input_edge in input_graph.edges:
         input_from_id = input_edge.from_node.get_id()
@@ -202,7 +209,7 @@ def uncollapse(input_graph: Graph):
 
         graph.add_edge(edge)
 
-    for nodes in id_nodes:
+    for nodes in id_nodes.values():
         from_node = None
         for to_node in nodes:
             if from_node is not None:
