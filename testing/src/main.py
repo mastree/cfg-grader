@@ -7,7 +7,6 @@ from definitions import ROOT_DIR
 from grader.src.cfggenerator.cfggenerator import PythonCfgGenerator
 from grader.src.grader import Grader, GraphPreprocessType
 from testing.src.encrypt import encrypt
-from testing.src.sendjaja import generate_cfg_from_file, compare, collapse
 
 
 def read_results_data(filename):

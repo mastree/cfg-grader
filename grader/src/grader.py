@@ -47,7 +47,7 @@ class Grader:
               use_node_relabel=True,
               graph_preprocess_type=GraphPreprocessType.PROPAGATE_BRANCHING,
               use_ub=False,
-              node_key: str = "label") -> tuple[list, list]:
+              node_key: str = "label") -> tuple[list, list, list]:
         graph_source = self.__preprocess_graph(graph_source, graph_preprocess_type)
         graph_targets = [self.__preprocess_graph(graph, graph_preprocess_type) for graph in graph_targets]
         cost_function = GeneralCostFunction(use_node_relabel=use_node_relabel, node_key=node_key)
