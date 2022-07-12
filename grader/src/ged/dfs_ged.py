@@ -36,10 +36,6 @@ class DFSGED:
 
         self.is_solution_optimal = False
 
-    def set_use_node_relabel(self, use_node_relabel: bool):
-        self.cost_function.clear_precompute()
-        self.cost_function.use_node_relabel = use_node_relabel
-
     def set_time_limit(self, time_limit):
         self.__time_limit = time_limit
 
@@ -88,8 +84,7 @@ class DFSGED:
             if ch_edit_path.predict_cost() < self.ub_cost:
                 search_node.add_child(ch_edit_path)
 
-    def compute_edit_distance(self, is_exact_computation=True, ub_cost=Constants.INF,
-                              approximation_use_node_relabel=None) -> float:
+    def compute_edit_distance(self, is_exact_computation=True, ub_cost=Constants.INF) -> float:
         self.cost_function.clear_precompute()
 
         # start timer
@@ -97,14 +92,7 @@ class DFSGED:
         self.ub_cost = ub_cost
 
         # creates root
-        root = None
-        if approximation_use_node_relabel is not None:
-            use_node_relabel = self.cost_function.use_node_relabel
-            self.set_use_node_relabel(approximation_use_node_relabel)
-            root = EditPath.create_root(self.cost_function, self.source, self.target)
-            self.set_use_node_relabel(use_node_relabel)
-        else:
-            root = EditPath.create_root(self.cost_function, self.source, self.target)
+        root, hu_approximation = EditPath.create_root(self.cost_function, self.source, self.target)
 
         self.ub_path = EditPath.create_path(self.cost_function, self.source, self.target, root.first_ub)
         self.ub_cost = min(self.ub_path.predict_cost(), self.ub_cost)
@@ -113,7 +101,10 @@ class DFSGED:
             self.is_solution_optimal = True
             self.__search_ged(root)
 
-        return self.ub_cost
+            return self.ub_cost
+        else:
+            self.ub_cost = min(hu_approximation, self.ub_cost)
+            return self.ub_cost
 
     def normalized_ed_to_ed(self, distance):
         if distance > 1:
@@ -125,8 +116,8 @@ class DFSGED:
         sedge_size = len(self.source.edges)
         tedge_size = len(self.target.edges)
 
-        return distance * ((snode_size + tnode_size) * self.cost_function.Cost.NODE_COST +
-                           (sedge_size + tedge_size) * self.cost_function.Cost.EDGE_COST)
+        return distance * ((snode_size + tnode_size) * self.cost_function.node_cost +
+                           (sedge_size + tedge_size) * self.cost_function.edge_cost)
 
     def get_string_node_map(self):
         ret = []
@@ -146,10 +137,9 @@ class DFSGED:
         sedge_size = len(self.source.edges)
         tedge_size = len(self.target.edges)
 
-        # return self.ub_cost / (max(snode_size, tnode_size) * self.__cost_function.Cost.NODE_COST +
-        #                        (sedge_size + tedge_size) * self.__cost_function.Cost.EDGE_COST)
-        return self.ub_cost / ((snode_size + tnode_size) * self.cost_function.Cost.NODE_COST +
-                               (sedge_size + tedge_size) * self.cost_function.Cost.EDGE_COST)
+        ret = self.ub_cost / ((snode_size + tnode_size) * self.cost_function.node_cost +
+                               (sedge_size + tedge_size) * self.cost_function.edge_cost)
+        return min(1, ret)
 
     def get_similarity_score(self, func: Callable[[float], float] = None) -> float:
         if func is None:

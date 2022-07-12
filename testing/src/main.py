@@ -5,6 +5,7 @@ import random
 import pandas as pd
 from definitions import ROOT_DIR
 from grader.src.cfggenerator.cfggenerator import PythonCfgGenerator
+from grader.src.ged.classes.general_cost_function import RelabelMethod
 from grader.src.grader import Grader, GraphPreprocessType
 from testing.src.encrypt import encrypt
 
@@ -48,11 +49,16 @@ def write_csv(filename, columns, data=list[dict]):
         writer.writerows(data)
 
 
-def do_testing(data_dirs, problem_name):
+def do_testing(data_dirs, problem_name,
+               relabel_method=RelabelMethod.BOOLEAN_COUNT,
+               graph_preprocess_type=GraphPreprocessType.COLLAPSE,
+               node_cost=1,
+               edge_cost=1,
+               is_exact_computation=True):
     if isinstance(data_dirs, str):
         data_dirs = [data_dirs]
     data = read_results_data(f"{problem_name}.xlsx")
-    unit_time_limit = 5000
+    unit_time_limit = 3000
     references = generate_reference_cfgs(f"{problem_name}")
     students_score = {}
 
@@ -62,7 +68,13 @@ def do_testing(data_dirs, problem_name):
                 students_score[nim] = 0
                 continue
             print(f"Grading student {nim}...")
-            scores, errors, feedback = Grader().grade(cfg, references, unit_time_limit * (len(references) + 1), unit_time_limit)
+            scores, errors, feedback = Grader().grade(cfg, references, unit_time_limit * (len(references) + 1),
+                                                      unit_time_limit,
+                                                      relabel_method=relabel_method,
+                                                      node_cost=node_cost,
+                                                      edge_cost=edge_cost,
+                                                      graph_preprocess_type=graph_preprocess_type,
+                                                      is_exact_computation=is_exact_computation)
             students_score[nim] = max(scores)
 
     new_data = []

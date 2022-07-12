@@ -3,7 +3,7 @@ import math
 from grader.src.api.functions import *
 from grader.src.cfggenerator.cfggenerator import PythonCfgGenerator
 
-from grader.src.ged.classes.general_cost_function import GeneralCostFunction
+from grader.src.ged.classes.general_cost_function import GeneralCostFunction, RelabelMethod
 from grader.src.ged.utils.graph_collapser import uncollapse, collapse, propagate_branching
 from grader.src.ged.utils.lsap_solver import Munkres
 from grader.src.ged.dfs_ged import DFSGED
@@ -79,8 +79,7 @@ def test_all(graph_collapsed: bool = True, print_result = False):
             else:
                 graph_source = uncollapse(graph_source)
 
-            dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(False), time_limit=3000)
-            dfs_ged.set_use_node_relabel(True)
+            dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(relabel_method=RelabelMethod.NONE), time_limit=3000)
 
             approx_ed = dfs_ged.compute_edit_distance(False)
             approx_normalized_ed = dfs_ged.get_similarity_score()
@@ -92,6 +91,8 @@ def test_all(graph_collapsed: bool = True, print_result = False):
             normalized_ed = dfs_ged.get_similarity_score()
 
             scores.append(normalized_ed)
+            # if normalized_ed < approx_normalized_ed:
+            #     print(f'failed assertion {normalized_ed} >= {approx_normalized_ed}')
             assert(normalized_ed >= approx_normalized_ed)
             mx = max(mx, normalized_ed)
             if print_result:
@@ -118,7 +119,7 @@ def test_approximate_all(graph_collapsed: bool = True, print_result = False):
             else:
                 graph_source = uncollapse(graph_source)
 
-            dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(True), time_limit=3000)
+            dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(), time_limit=3000)
             ed = dfs_ged.compute_edit_distance(False)
             normalized_ed = dfs_ged.get_similarity_score()
 
@@ -145,7 +146,7 @@ def test_ged(file1, file2, graph_collapsed=True):
 
     print(f'size1: {len(graph_source.nodes)}, size2: {len(graph_target.nodes)}')
 
-    dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(True), time_limit=1000)
+    dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(), time_limit=1000)
     ed = dfs_ged.compute_edit_distance()
     normalized_score = dfs_ged.get_similarity_score()
     print(dfs_ged.get_string_node_map())

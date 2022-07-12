@@ -3,7 +3,12 @@ from webservice.src.model.graph_view import GraphView
 
 
 class GraderRequest:
-    def __init__(self, solution, references, timeLimit=5000, timeLimitPerUnit=3000, gradingMethod=GradingMethod.MAXIMUM.name, **kwargs):
+    def __init__(self, solution,
+                 references,
+                 timeLimit=5000,
+                 timeLimitPerUnit=3000,
+                 gradingMethod=GradingMethod.MAXIMUM.name,
+                 **kwargs):
         self.solution = GraphView(**solution)
         self.references: list[GraphView] = []
         self.time_limit = timeLimit

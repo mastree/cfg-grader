@@ -4,7 +4,15 @@ from webservice.src.model.grading_method import GradingMethod
 
 
 class SourceGraderRequest:
-    def __init__(self, solution, solutionFileName, references, referencesFileNames, timeLimit=5000, timeLimitPerUnit=3000, gradingMethod=GradingMethod.MAXIMUM.name, language="Python", **kwargs):
+    def __init__(self, solution,
+                 solutionFileName,
+                 references,
+                 referencesFileNames,
+                 timeLimit=5000,
+                 timeLimitPerUnit=3000,
+                 gradingMethod=GradingMethod.MAXIMUM.name,
+                 language="Python",
+                 **kwargs):
         self.solution = base64.b64decode(solution).decode('utf-8')
         self.solution_file_name = solutionFileName
         self.references: list[str] = []

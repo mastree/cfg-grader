@@ -1,17 +1,19 @@
 import time
+from enum import Enum
 
 from grader.src.constants import Constants
 from grader.src.ged.classes.cost_function import CostFunction
-from grader.src.ged.classes.general_cost_function import GeneralCostFunction
+from grader.src.ged.classes.general_cost_function import GeneralCostFunction, RelabelMethod
 from grader.src.ged.classes.graph import Graph
 from grader.src.ged.dfs_ged import DFSGED
 from grader.src.ged.utils.graph_collapser import *
 
 
-class GraphPreprocessType:
+class GraphPreprocessType(Enum):
     UNCOLLAPSE = 0
     COLLAPSE = 1
-    PROPAGATE_BRANCHING = 2
+    COLLAPSE_NBE = 2
+    PROPAGATE_BRANCHING = 3
 
 
 class Grader:
@@ -20,6 +22,8 @@ class Grader:
             graph = uncollapse(graph)
         elif preproc_type == GraphPreprocessType.COLLAPSE:
             graph = collapse(graph)
+        elif preproc_type == GraphPreprocessType.COLLAPSE_NBE:
+            graph = collapse(graph, collapse_branch_entry=False)
         elif preproc_type == GraphPreprocessType.PROPAGATE_BRANCHING:
             graph = propagate_branching(graph)
         return graph
@@ -28,13 +32,15 @@ class Grader:
                            graph_target: Graph,
                            time_limit: int,
                            cost_function: CostFunction = None,
+                           is_exact_computation=True,
                            ub_normal_cost=Constants.INF,
                            node_key: str = "label") -> float:
         if cost_function is None:
             cost_function = GeneralCostFunction(node_key=node_key)
 
         dfs_ged = DFSGED(graph_source, graph_target, cost_function, time_limit)
-        dfs_ged.compute_edit_distance(ub_cost=dfs_ged.normalized_ed_to_ed(ub_normal_cost))
+        dfs_ged.compute_edit_distance(is_exact_computation=is_exact_computation,
+                                      ub_cost=dfs_ged.normalized_ed_to_ed(ub_normal_cost))
         new_ub_normal_cost = dfs_ged.get_normalized_edit_distance()
         score = dfs_ged.get_similarity_score()
 
@@ -44,13 +50,16 @@ class Grader:
               graph_targets: list[Graph],
               time_limit: int,
               time_limit_per_unit: int,
-              use_node_relabel=True,
-              graph_preprocess_type=GraphPreprocessType.PROPAGATE_BRANCHING,
+              relabel_method=RelabelMethod.BOOLEAN_COUNT,
+              node_cost=3,
+              edge_cost=1,
+              graph_preprocess_type=GraphPreprocessType.UNCOLLAPSE,
+              is_exact_computation=True,
               use_ub=False,
               node_key: str = "label") -> tuple[list, list, list]:
         graph_source = self.__preprocess_graph(graph_source, graph_preprocess_type)
         graph_targets = [self.__preprocess_graph(graph, graph_preprocess_type) for graph in graph_targets]
-        cost_function = GeneralCostFunction(use_node_relabel=use_node_relabel, node_key=node_key)
+        cost_function = GeneralCostFunction(relabel_method=relabel_method, node_cost=node_cost, edge_cost=edge_cost, node_key=node_key)
         scores = []
         errors = []
         feedback = []
@@ -62,8 +71,12 @@ class Grader:
             if cur_time - start_time < time_limit * 1000000:
                 remaining_time = (time_limit * 1000000 - (cur_time - start_time)) // 1000000
                 try:
-                    score, cur_ub_normal_cost = self.__grade_one_on_one(
-                        graph_source, graph_target, min(time_limit_per_unit, remaining_time), cost_function, ub_normal_cost)
+                    score, cur_ub_normal_cost = self.__grade_one_on_one(graph_source,
+                                                                        graph_target,
+                                                                        min(time_limit_per_unit, remaining_time),
+                                                                        cost_function,
+                                                                        is_exact_computation=is_exact_computation,
+                                                                        ub_normal_cost=ub_normal_cost)
                     if use_ub:
                         ub_normal_cost = min(ub_normal_cost, cur_ub_normal_cost)
                     scores.append(score)
