@@ -51,7 +51,7 @@ def write_csv(filename, columns, data=list[dict]):
 
 def do_testing(data_dirs, problem_name,
                relabel_method=RelabelMethod.BOOLEAN_COUNT,
-               graph_preprocess_type=GraphPreprocessType.COLLAPSE,
+               graph_preprocess_type=GraphPreprocessType.PROPAGATE_BRANCHING,
                node_cost=1,
                edge_cost=1,
                is_exact_computation=True):
@@ -74,7 +74,8 @@ def do_testing(data_dirs, problem_name,
                                                       node_cost=node_cost,
                                                       edge_cost=edge_cost,
                                                       graph_preprocess_type=graph_preprocess_type,
-                                                      is_exact_computation=is_exact_computation)
+                                                      is_exact_computation=is_exact_computation,
+                                                      use_ub=True)
             students_score[nim] = max(scores)
 
     new_data = []
