@@ -79,13 +79,14 @@ def test_all(graph_collapsed: bool = True, print_result = False):
             else:
                 graph_source = uncollapse(graph_source)
 
-            dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(relabel_method=RelabelMethod.NONE), time_limit=3000)
+            dfs_ged = DFSGED(graph_source, graph_target, GeneralCostFunction(relabel_method=RelabelMethod.BOOLEAN_COUNT), time_limit=5000)
 
             approx_ed = dfs_ged.compute_edit_distance(False)
             approx_normalized_ed = dfs_ged.get_similarity_score()
 
             # approx_ed_rel = dfs_ged.calculate_edit_distance(False, True)
             # approx_normalized_ed_rel = dfs_ged.get_similarity_score(bias_func)
+            dfs_ged.reset()
 
             ed = dfs_ged.compute_edit_distance()
             normalized_ed = dfs_ged.get_similarity_score()
@@ -94,7 +95,7 @@ def test_all(graph_collapsed: bool = True, print_result = False):
             mx = max(mx, normalized_ed)
             if print_result:
                 print(f'{reference.split("/")[-1]} {solution.split("/")[-1]}')
-                print(f'optimal? {dfs_ged.is_solution_optimal}\nexact: {normalized_ed}\napprox: {approx_normalized_ed}\n')
+                print(f'optimal? {dfs_ged.is_solution_optimal}\nvalid: {dfs_ged.is_valid_exact_computation()}\nexact: {normalized_ed}\napprox: {approx_normalized_ed}\n')
 
     print(f'average: {sum(scores) / len(scores)}, max: {mx}')
 
