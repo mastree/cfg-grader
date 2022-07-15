@@ -55,7 +55,7 @@ class Grader:
               edge_cost=1,
               graph_preprocess_type=GraphPreprocessType.PROPAGATE_BRANCHING,
               is_exact_computation=True,
-              use_ub=True,
+              use_ub=False,
               node_key: str = "label") -> tuple[list, list, list]:
         graph_source = self.preprocess_graph(graph_source, graph_preprocess_type)
         graph_targets = [self.preprocess_graph(graph, graph_preprocess_type) for graph in graph_targets]

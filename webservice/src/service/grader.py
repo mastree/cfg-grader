@@ -53,7 +53,12 @@ def get_scores(grader_request: GraderRequest) -> tuple[int, int, int]:
     for reference in grader_request.references:
         graph_targets.append(graph_view_to_graph(reference))
 
-    scores, errors, feedback = Grader().grade(graph_source, graph_targets, time_limit, time_limit_per_unit)
+    use_ub = (grading_method == GradingMethod.MAXIMUM)
+    scores, errors, feedback = Grader().grade(graph_source,
+                                              graph_targets,
+                                              time_limit,
+                                              time_limit_per_unit,
+                                              use_ub=use_ub)
     score = 0
     if len(scores) > 0:
         if grading_method == GradingMethod.AVERAGE:

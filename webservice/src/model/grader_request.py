@@ -10,10 +10,7 @@ class GraderRequest:
                  gradingMethod=GradingMethod.MAXIMUM.name,
                  **kwargs):
         self.solution = GraphView(**solution)
-        self.references: list[GraphView] = []
+        self.references = [GraphView(**reference) for reference in references]
         self.time_limit = timeLimit
         self.time_limit_per_unit = max(self.time_limit // max(len(self.references), 1), timeLimitPerUnit)
         self.grading_method = GradingMethod[gradingMethod.upper()]
-
-        for reference in references:
-            self.references.append(GraphView(**reference))

@@ -28,7 +28,12 @@ def get_python_scores(grader_request: SourceGraderRequest) -> tuple[int, int, in
         except Exception as e:
             feedback.append("Failed to generate reference CFG")
 
-    scores, errors, grade_feedback = Grader().grade(graph_source, graph_targets, time_limit, time_limit_per_unit)
+    use_ub = (grading_method == GradingMethod.MAXIMUM)
+    scores, errors, grade_feedback = Grader().grade(graph_source,
+                                                    graph_targets,
+                                                    time_limit,
+                                                    time_limit_per_unit,
+                                                    use_ub=use_ub)
     for i in range(len(grade_feedback)):
         feedback[missing_positions[i]] = grade_feedback[i]
 

@@ -15,12 +15,9 @@ class SourceGraderRequest:
                  **kwargs):
         self.solution = base64.b64decode(solution).decode('utf-8')
         self.solution_file_name = solutionFileName
-        self.references: list[str] = []
+        self.references = [base64.b64decode(reference).decode('utf-8') for reference in references]
         self.references_file_names = referencesFileNames
         self.time_limit = timeLimit
         self.time_limit_per_unit = max(self.time_limit // max(len(self.references), 1), timeLimitPerUnit)
         self.grading_method = GradingMethod[gradingMethod.upper()]
         self.language = language
-
-        for reference in references:
-            self.references.append(base64.b64decode(reference).decode('utf-8'))
