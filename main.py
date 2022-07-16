@@ -7,7 +7,8 @@ from grader.src.ged.classes.general_cost_function import GeneralCostFunction, Re
 from grader.src.ged.utils.graph_collapser import uncollapse, collapse, propagate_branching
 from grader.src.ged.utils.lsap_solver import Munkres
 from grader.src.ged.dfs_ged import DFSGED
-
+from web_service.src.model.source_grader_request import SourceGraderRequest
+from web_service.src.service.source_grader import SourceGraderService
 
 python_cfg_generator = PythonCfgGenerator()
 
@@ -200,10 +201,20 @@ def draw_report_resources(srcs):
 
 
 if __name__ == '__main__':
-    # draw_report_resources(["./datasets/test/control-flow-sample.py"])
-    # test_draw_preprocessed_cfg(test_src)
-    # draw_graph(test_src, "something")
-    # test_ged(solutions[0], references[0])
     test_all(True, print_result=True)
-    # test_approximate_all(True, print_result=True)
-    # test_all(False, print_result=True)
+
+    # service = SourceGraderService()
+    # func = getattr(service, 'python', service.python)
+    # print(type(func))
+    # req = {
+    #     "references": [
+    #         "ZGVmIG1heF8zKGEsIGIsIGMpOgogICAgaWYgYSA+PSBiIGFuZCBhID49IGM6CiAgICAgICAgcmV0dXJuIGEKICAgIGVsaWYgYiA+PSBhIGFuZCBiID49IGM6CiAgICAgICAgcmV0dXJuIGIKICAgIGVsc2U6CiAgICAgICAgcmV0dXJuIGMKCgo="
+    #     ],
+    #     "solution": "ZGVmIG1heF8zXzEoYSwgYiwgYyk6CiAgICBpZiBhID4gYiBhbmQgYSA+IGM6CiAgICAgICAgcmV0dXJuIGEKICAgIGVsaWYgYiA+IGEgYW5kIGIgPiBjOgogICAgICAgIHJldHVybiBiCiAgICBlbHNlOgogICAgICAgIHJldHVybiBjCgo=",
+    #     "referencesFileNames": [
+    #         "max_3.py"
+    #     ],
+    #     "solutionFileName": "max_3_1.py",
+    #     "timeLimit": 10000
+    # }
+    # print(func(SourceGraderRequest(**req)).__dict__)

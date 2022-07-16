@@ -1,5 +1,5 @@
-from webservice.src.model.grading_method import GradingMethod
-from webservice.src.model.graph_view import GraphView
+from web_service.src.model.grading_method import GradingMethod
+from web_service.src.model.graph_view import GraphView
 
 
 class GraderRequest:

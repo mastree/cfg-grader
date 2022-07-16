@@ -9,4 +9,4 @@ RUN python3.9 -m pip install -r requirements/prod.txt
 EXPOSE 5000
 
 ENTRYPOINT ["python3.9"]
-CMD ["webservice/src/main.py"]
+CMD ["web_service/src/main.py"]

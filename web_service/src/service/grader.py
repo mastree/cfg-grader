@@ -3,10 +3,10 @@ import copy
 from grader.src.ged.classes.graph import Graph
 from grader.src.ged.classes.graph_component import Node, Edge
 from grader.src.grader import Grader
-from webservice.src.model.grader_request import GraderRequest
-from webservice.src.model.grader_response_data import GraderResponseData
-from webservice.src.model.grading_method import GradingMethod
-from webservice.src.model.graph_view import GraphView
+from web_service.src.model.grader_request import GraderRequest
+from web_service.src.model.grader_response_data import GraderResponseData
+from web_service.src.model.grading_method import GradingMethod
+from web_service.src.model.graph_view import GraphView
 
 
 def graph_view_to_graph(graph_view: GraphView) -> Graph:
@@ -43,7 +43,7 @@ def graph_view_to_graph(graph_view: GraphView) -> Graph:
     return graph
 
 
-def get_scores(grader_request: GraderRequest) -> tuple[int, int, int]:
+def get_score(grader_request: GraderRequest):
     graph_source = graph_view_to_graph(grader_request.solution)
     graph_targets: list[Graph] = []
     time_limit = grader_request.time_limit

@@ -1,6 +1,6 @@
 from werkzeug.datastructures import FileStorage
 
-from webservice.src.utils.constants import Constants
+from web_service.src.utils.constants import Constants
 
 
 def allowed_file(filename: str):

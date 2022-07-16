@@ -1,6 +1,6 @@
 import base64
 
-from webservice.src.model.grading_method import GradingMethod
+from web_service.src.model.grading_method import GradingMethod
 
 
 class SourceGraderRequest:
