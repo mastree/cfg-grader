@@ -15,6 +15,6 @@ class Description(Resource):
         responseData = {
             "imageName": "kamalshafi/cfg-similarity-grader",
             "displayedName": "White Box Structural Autograder",
-            "description": "Structural White Box Autograder Using Control Flow Graph Similarity (currently for Python only)",
+            "description": "Structural White Box Autograder Using Control Flow Graph Similarity (currently for Notal and Python only)",
         }
         return get_response(err=False, msg="success", data=responseData, status_code=HTTPStatus.ACCEPTED)

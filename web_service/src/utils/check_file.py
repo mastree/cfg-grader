@@ -14,3 +14,7 @@ def check_file(file: FileStorage):
     if file and not allowed_file(file.filename):
         return True, 'Extension file not supported'
     return False, ''
+
+
+def get_extension(filename: str):
+    return filename.rsplit('.', 1)[1].lower()

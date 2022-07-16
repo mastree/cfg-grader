@@ -8,7 +8,7 @@ from grader.src.ged.utils.graph_collapser import uncollapse, collapse, propagate
 from grader.src.ged.utils.lsap_solver import Munkres
 from grader.src.ged.dfs_ged import DFSGED
 from web_service.src.model.source_grader_request import SourceGraderRequest
-from web_service.src.service.source_grader import SourceGraderService
+from web_service.src.service.source_grader import SourceGraderService, get_score
 
 python_cfg_generator = PythonCfgGenerator()
 
@@ -203,9 +203,6 @@ def draw_report_resources(srcs):
 if __name__ == '__main__':
     test_all(True, print_result=True)
 
-    # service = SourceGraderService()
-    # func = getattr(service, 'python', service.python)
-    # print(type(func))
     # req = {
     #     "references": [
     #         "ZGVmIG1heF8zKGEsIGIsIGMpOgogICAgaWYgYSA+PSBiIGFuZCBhID49IGM6CiAgICAgICAgcmV0dXJuIGEKICAgIGVsaWYgYiA+PSBhIGFuZCBiID49IGM6CiAgICAgICAgcmV0dXJuIGIKICAgIGVsc2U6CiAgICAgICAgcmV0dXJuIGMKCgo="
@@ -217,4 +214,19 @@ if __name__ == '__main__':
     #     "solutionFileName": "max_3_1.py",
     #     "timeLimit": 10000
     # }
-    # print(func(SourceGraderRequest(**req)).__dict__)
+    # print(get_score(SourceGraderRequest(**req)).__dict__)
+    #
+    # req = {
+    #     "references": [
+    #         "UFJPR1JBTSBkZW1vXzEKCktBTVVTCiAgICBzdW0sIGksIG46IGludGVnZXIKCiAgICBmdW5jdGlvbiBwYW5na2F0KGEsIG46IGludGVnZXIpIC0+IGludGVnZXIKCkFMR09SSVRNQQogICAgaW5wdXQobikKICAgIGkgPC0gMQogICAgc3VtIDwtIDAKCiAgICByZXBlYXQKICAgICAgICBzdW0gPC0gc3VtICsgcGFuZ2thdCgyLCBpKQogICAgICAgIGkgPC0gaSArIDEKICAgIHVudGlsIChpID0gbikKCiAgICBvdXRwdXQoc3VtKQoKZnVuY3Rpb24gcGFuZ2thdChhLCBuOiBpbnRlZ2VyKSAtPiBpbnRlZ2VyCgpLQU1VUyBMT0tBTAogICAgcmVzLCBpOiBpbnRlZ2VyCgpBTEdPUklUTUEKICAgIHJlcyA8LSAxCiAgICByZXBlYXQgbiB0aW1lcwogICAgICAgIHJlcyA8LSByZXMgKiBhCiAgICAtPiByZXMK",
+    #         "eyBNZW5naGFzaWxrYW4gMSEgKyAyISArIDMhICsgLi4uICsgbiEgfQpQUk9HUkFNIHN1bV9vZl9mYWN0b3JpYWwKS0FNVVMKICAgIG4sIGksIGo6IGludGVnZXIKICAgIHN1bSwgZmFrdG9yaWFsOiBpbnRlZ2VyCkFMR09SSVRNQQogICAgaW5wdXQobikKICAgIGkgPC0gMQogICAgc3VtIDwtIDAKICAgIHdoaWxlIChpIDw9IG4pIGRvCiAgICAgICAgaiA8LSAxCiAgICAgICAgZmFrdG9yaWFsIDwtIDEKICAgICAgICByZXBlYXQKICAgICAgICAgICAgZmFrdG9yaWFsIDwtIGZha3RvcmlhbCAqIGoKICAgICAgICAgICAgaiA8LSBqICsgMQogICAgICAgIHVudGlsIChqID0gaSkKICAgICAgICBzdW0gPC0gc3VtICsgZmFrdG9yaWFsCiAgICAgICAgaSA8LSBpICsgMQogICAgb3V0cHV0KHN1bSk="
+    #     ],
+    #     "solution": "UFJPR1JBTSByZXBlYXRfdW50aWwKS0FNVVMKIGksIGosIG46IGludGVnZXIKCkFMR09SSVRNQQogaW5wdXQobikKIGkgPC0gMQogcmVwZWF0CiAgaiA8LSAxCiAgcmVwZWF0CiAgIGlmIChqIG1vZCAyID0gMSkgdGhlbgogICAgb3V0cHV0KCcqJykKICAgZWxzZQogICAgb3V0cHV0KCcrJykKICAgaiA8LSBqICsgMQogIHVudGlsIChqID4gaSArIDEpCiAgaSA8LSBpICsgMQogdW50aWwgKGkgPiBuICsgMSkKIG91dHB1dCgiRG9uZSIp",
+    #     "referencesFileNames": [
+    #         "input_1.in",
+    #         "input_2.in"
+    #     ],
+    #     "solutionFileName": "repeat_until.in",
+    #     "timeLimit": 10000
+    # }
+    # print(get_score(SourceGraderRequest(**req)).__dict__)
