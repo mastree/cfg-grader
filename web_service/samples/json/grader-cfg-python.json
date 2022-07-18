@@ -1,0 +1,166 @@
+{
+    "solution": {
+        "nodes": [
+            {
+                "id": 1,
+                "info": [
+                    {
+                        "rawLine": "def max_3_1(a, b, c):",
+                        "label": "functiondef"
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "info": [
+                    {
+                        "rawLine": "if a > b and a > c:",
+                        "label": "if"
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "info": [
+                    {
+                        "rawLine": "return a",
+                        "label": "return"
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "info": [
+                    {
+                        "rawLine": "if b > a and b > c:",
+                        "label": "if"
+                    }
+                ]
+            },
+            {
+                "id": 5,
+                "info": [
+                    {
+                        "rawLine": "return b",
+                        "label": "return"
+                    }
+                ]
+            },
+            {
+                "id": 6,
+                "info": [
+                    {
+                        "rawLine": "return c",
+                        "label": "return"
+                    }
+                ]
+            }
+        ],
+        "edges": [
+            {
+                "from_node": 2,
+                "to_node": 3,
+                "info": []
+            },
+            {
+                "from_node": 2,
+                "to_node": 4,
+                "info": []
+            },
+            {
+                "from_node": 4,
+                "to_node": 5,
+                "info": []
+            },
+            {
+                "from_node": 4,
+                "to_node": 6,
+                "info": []
+            }
+        ]
+    },
+    "references": [
+        {
+            "nodes": [
+                {
+                    "id": 1,
+                    "info": [
+                        {
+                            "rawLine": "def max_3(a, b, c):",
+                            "label": "functiondef"
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "info": [
+                        {
+                            "rawLine": "if a >= b and a >= c:",
+                            "label": "if"
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "info": [
+                        {
+                            "rawLine": "return a",
+                            "label": "return"
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "info": [
+                        {
+                            "rawLine": "if b >= a and b >= c:",
+                            "label": "if"
+                        }
+                    ]
+                },
+                {
+                    "id": 5,
+                    "info": [
+                        {
+                            "rawLine": "return b",
+                            "label": "return"
+                        }
+                    ]
+                },
+                {
+                    "id": 6,
+                    "info": [
+                        {
+                            "rawLine": "return c",
+                            "label": "return"
+                        }
+                    ]
+                }
+            ],
+            "edges": [
+                {
+                    "from_node": 2,
+                    "to_node": 3,
+                    "info": []
+                },
+                {
+                    "from_node": 2,
+                    "to_node": 4,
+                    "info": []
+                },
+                {
+                    "from_node": 4,
+                    "to_node": 5,
+                    "info": []
+                },
+                {
+                    "from_node": 4,
+                    "to_node": 6,
+                    "info": []
+                }
+            ]
+        }
+    ],
+    "timeLimit": 3000,
+    "gradingMethod": "MAXIMUM"
+}
